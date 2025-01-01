@@ -45,7 +45,7 @@ class GpxHandler(val pts: MutableList<ExtendedLocation>) : DefaultHandler() {
       qName: String,
       attributes: Attributes
    ) {
-      currentElement = true;
+      currentElement = true
       currentValue = ""
 
       if (localName.equals("gpx", ignoreCase = true)) {

@@ -22,7 +22,6 @@
 package com.nksoftware.library.grib
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.location.Location
 import android.net.Uri
 import android.util.Log
@@ -31,32 +30,29 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
-import com.nksoftware.library.utilities.nkHandleException
+import com.nksoftware.library.R
+import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
+import com.nksoftware.library.map.NkMarker
+import com.nksoftware.library.map.getWindSpeedIcon
+import com.nksoftware.library.map.windIcons
+import com.nksoftware.library.utilities.convertUnits
+import com.nksoftware.library.utilities.nkHandleException
 import org.osmdroid.util.BoundingBox
+import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.util.Calendar
+import java.util.Date
+import kotlin.collections.forEach
+import kotlin.collections.forEachIndexed
 import kotlin.collections.get
+import kotlin.collections.isNotEmpty
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.pow
 import kotlin.math.sqrt
-import com.nksoftware.library.R
-import com.nksoftware.library.core.DataModel
-import com.nksoftware.library.map.NkMarker
-import com.nksoftware.library.map.getWindSpeedIcon
-import com.nksoftware.library.map.windIcons
-import com.nksoftware.library.route.routeActiveKey
-import com.nksoftware.library.route.sailingModeKey
-import com.nksoftware.library.route.tackAngleKey
-import com.nksoftware.library.utilities.convertUnits
-import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
-import java.util.Date
-import kotlin.collections.forEach
-import kotlin.collections.forEachIndexed
-import kotlin.collections.isNotEmpty
 
 
 val logTag = "Grib Parser"

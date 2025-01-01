@@ -50,26 +50,25 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.nksoftware.skipper.R
 import com.nksoftware.library.anchor.AnchorAlarmCommands
 import com.nksoftware.library.astronavigation.AstroNavigationCommands
 import com.nksoftware.library.composables.NkFloatingActionButton
 import com.nksoftware.library.composables.NkIcon
 import com.nksoftware.library.composables.NkText
 import com.nksoftware.library.core.DataModel
-import com.nksoftware.skipper.core.SkipperViewModel
-import com.nksoftware.library.utilities.nkHandleException
-import com.nksoftware.skipper.core.logTag
-import com.nksoftware.skipper.coreui.ScreenMode
 import com.nksoftware.library.grib.GribCommands
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.route.RouteCommands
 import com.nksoftware.library.track.TrackCommands
+import com.nksoftware.library.utilities.nkHandleException
 import com.nksoftware.library.weather.WeatherCommands
+import com.nksoftware.skipper.R
+import com.nksoftware.skipper.core.SkipperViewModel
+import com.nksoftware.skipper.core.logTag
+import com.nksoftware.skipper.coreui.ScreenMode
 
 
 @SuppressLint("MutableCollectionMutableState")

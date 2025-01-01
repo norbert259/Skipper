@@ -22,7 +22,6 @@
 package com.nksoftware.library.core
 
 import android.content.SharedPreferences
-import android.location.Location
 import com.nksoftware.library.location.ExtendedLocation
 import org.osmdroid.views.MapView
 

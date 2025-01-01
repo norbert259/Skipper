@@ -43,7 +43,6 @@ fun TrackCommands(
 ) {
 
    val gpx = Gpx(LocalContext.current)
-   val ctx = LocalContext.current
 
    val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("*/*")) {
          uri: Uri? ->

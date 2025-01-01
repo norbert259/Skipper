@@ -31,7 +31,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import com.nksoftware.library.R
-import com.nksoftware.library.composables.SingleSelectList
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.map.NkMarker
@@ -44,17 +43,10 @@ import kotlinx.coroutines.withContext
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
-import org.xml.sax.Attributes
-import org.xml.sax.SAXException
-import org.xml.sax.helpers.DefaultHandler
 import java.io.File
-import java.io.InputStream
 import java.net.URL
-import java.time.ZonedDateTime
 import java.util.Calendar
-import java.util.Locale
 import java.util.zip.ZipFile
-import javax.xml.parsers.SAXParserFactory
 import kotlin.collections.set
 
 const val forecastPeriodKey = "WeatherForecastPeriod"

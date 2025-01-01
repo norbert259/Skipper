@@ -22,7 +22,6 @@
 package com.nksoftware.library.anchor
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.graphics.Color
 import android.location.Location
 import androidx.compose.runtime.getValue
@@ -30,12 +29,12 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
+import com.nksoftware.library.R
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.locationservice.LocationService
 import com.nksoftware.library.map.NkMarker
 import com.nksoftware.library.map.NkPolyline
-import com.nksoftware.library.R
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 
