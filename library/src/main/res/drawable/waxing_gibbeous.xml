@@ -1,0 +1,34 @@
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: waxing_gibbeous.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android" android:height="48dp" android:viewportHeight="128" android:viewportWidth="128" android:width="48dp">
+      
+    <path android:fillColor="#2f2f2f" android:pathData="M127.76,64c0,35.22 -28.54,63.76 -63.77,63.76C28.79,127.76 0.24,99.22 0.24,64S28.79,0.24 64,0.24c35.22,0 63.76,28.54 63.76,63.76z"/>
+      
+    <group>
+            
+        <clip-path android:pathData="M127.76,64c0,35.22 -28.54,63.76 -63.77,63.76C28.79,127.76 0.24,99.22 0.24,64S28.79,0.24 64,0.24c35.22,0 63.76,28.54 63.76,63.76z"/>
+            
+        <path android:fillColor="#fcc21b" android:pathData="M142.84,64c0,35.22 -25.83,63.76 -57.68,63.76 -31.86,0 -57.69,-28.54 -57.69,-63.76S53.29,0.23 85.16,0.23c31.85,0.01 57.68,28.55 57.68,63.77z"/>
+          
+    </group>
+    
+</vector>

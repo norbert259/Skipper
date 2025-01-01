@@ -1,0 +1,37 @@
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: first_quarter.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="128dp"
+    android:height="128dp"
+    android:viewportWidth="128"
+    android:viewportHeight="128">
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="M127.76,64c0,35.22 -28.54,63.77 -63.77,63.77C28.79,127.76 0.24,99.22 0.24,64C0.24,28.79 28.79,0.24 64,0.24C99.22,0.24 127.76,28.79 127.76,64z"/>
+  <group>
+    <clip-path
+        android:pathData="M127.76,64c0,35.22 -28.54,63.77 -63.77,63.77C28.79,127.76 0.24,99.22 0.24,64C0.24,28.79 28.79,0.24 64,0.24C99.22,0.24 127.76,28.79 127.76,64z"/>
+    <path
+        android:pathData="M64,-17.32h88.89v158.99h-88.89z"
+        android:fillColor="#FCC21B"/>
+  </group>
+</vector>

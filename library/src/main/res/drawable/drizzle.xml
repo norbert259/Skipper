@@ -1,0 +1,37 @@
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: drizzle.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="128dp"
+    android:height="100dp"
+    android:viewportWidth="128"
+    android:viewportHeight="100">
+  <path
+      android:pathData="M33,72m4,0h-4a20,20 0,1 1,4.88 -39.4a24,24 0,0 1,43.2 -9.49a16.25,16.25 0,0 1,16.92 9.89a20,20 0,0 1,-6.24 39h-4"
+      android:strokeWidth="3"
+      android:fillColor="#00000000"
+      android:strokeColor="#828487"/>
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="M59.5,90l-22,-30m7.5,0l22,30m7.5,0l-22,-30m7.5,0l22,30m7.5,0l-22,-30"
+      android:strokeWidth="2"
+      android:strokeColor="#66a1ba"/>
+</vector>

@@ -1,0 +1,42 @@
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: sunmoon.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="128dp"
+    android:height="100dp"
+    android:viewportWidth="128"
+    android:viewportHeight="100">
+  <path
+      android:pathData="M44,45m-18,0a18,18 0,1 1,36 0a18,18 0,1 1,-36 0"
+      android:strokeWidth="3"
+      android:fillColor="#00000000"
+      android:strokeColor="#f6bc68"/>
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="M68,45L82,45M60.97,61.97L70.87,71.87M44,69L44,83M27.03,61.97L17.13,71.87M20,45L6,45M27.03,28.03L17.13,18.13M44,21L44,7M60.97,28.03L70.87,18.13"
+      android:strokeWidth="3"
+      android:strokeColor="#f6bc68"/>
+  <path
+      android:pathData="M99,45a26,26 0,0 1,-22 39a24,24 0,1 0,22 -39z"
+      android:strokeWidth="3"
+      android:fillColor="#00000000"
+      android:strokeColor="#da4935"/>
+</vector>

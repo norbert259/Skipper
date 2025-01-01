@@ -1,0 +1,42 @@
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: cloudy_night_wind.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="128dp"
+    android:height="100dp"
+    android:viewportWidth="128"
+    android:viewportHeight="100">
+  <path
+      android:pathData="M69,20a14.4,14.4 0,0 1,25.8 -5.4h2a9.75,9.75 0,0 1,9 6a12,12 0,0 1,0.3 22.68"
+      android:strokeWidth="1.8"
+      android:fillColor="#00000000"
+      android:strokeColor="#828487"/>
+  <path
+      android:pathData="M33,78m4,0h-4a20,20 0,1 1,4.88 -39.4a24,24 0,0 1,43.2 -9.49a16.25,16.25 0,0 1,16.92 9.89a20,20 0,0 1,-6.24 39h-4"
+      android:strokeWidth="3"
+      android:fillColor="#00000000"
+      android:strokeColor="#828487"/>
+  <path
+      android:pathData="M41,66.5h20a6,6 0,1 0,-6 -6M41,74h37.5a6,6 0,1 0,-6 -6M41,81.5h28.75a6,6 0,1 1,-6 6"
+      android:strokeWidth="3.0"
+      android:fillColor="#00000000"
+      android:strokeColor="#404040"/>
+</vector>

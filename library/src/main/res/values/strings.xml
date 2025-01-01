@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: strings.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<resources>
+    <string name="lat">Lat: %s</string>
+    <string name="lon">Lon: %s</string>
+    <string name="location">Location:</string>
+    <string name="speed">Speed</string>
+    <string name="heading">Heading</string>
+    <string name="altitude">Altitude</string>
+    <string name="time">Time</string>
+    <string name="time_zone">Time zone</string>
+    <string name="dimensions">Dimensions</string>
+    <string name="format_for_gps_coordinates">Format GPS coodinates</string>
+    <string name="magnetic_deviation">Magnetic deviation</string>
+    <string name="show_magnetic_heading_bearing">Show magnetic bearing</string>
+    <string name="exception_unable_to_start_mail_app">Unable to start Mail app</string>
+    <string name="weather_model">Weather model</string>
+    <string name="parameters_for_grid">Grid parameter</string>
+    <string name="grid_resolution">Grid Resolution</string>
+    <string name="forecast_increment_hours">Forecast increment hours</string>
+    <string name="forecast_for_days">Forecast for days</string>
+    <string name="pressure">Pressure</string>
+    <string name="temperature">Temperature</string>
+    <string name="dewpoint">Dewpoint</string>
+    <string name="winddirection">Wind direction</string>
+    <string name="windspeed">Wind speed</string>
+    <string name="windgust">Wind gusts</string>
+    <string name="effcloudcover">Eff. cloud cover</string>
+    <string name="totcloudcover">Total cloud cover</string>
+    <string name="significantweather">Sign. weather</string>
+    <string name="precipitation">Precipitation</string>
+    <string name="visibility">Visibility</string>
+    <string name="failure_getting_weather_dwd_data">Failure loading dwd weather data</string>
+    <string name="station_elevation">Station: %s\nElevation: %dm</string>
+    <string name="dwd_weather_forecast">DWD weather forecast</string>
+    <string name="days">days ahead</string>
+    <string name="hour_steps">Hour steps</string>
+    <string name="station_s" translatable="false">Station: %s</string>
+    <string name="elev">Elevation</string>
+    <string name="dist">Distance</string>
+    <string name="issued">Issued</string>
+    <string name="forecast_table">Forecast</string>
+    <string name="windforecast">Wind forecast</string>
+    <string name="temperaturetrend">Temperature trend</string>
+    <string name="forecastrain">Forecast rain</string>
+    <string name="error_cannot_export_gpx_file">Error: cannot export GPX file</string>
+    <string name="track" translatable="false">Track</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="name" translatable="false">Name</string>
+    <string name="tracksegments">Track segments</string>
+    <string name="no">No</string>
+    <string name="course">Course</string>
+    <string name="track_distances">Track distances</string>
+    <string name="track_elevation">Track elevation</string>
+    <string name="waypoint">Waypoint</string>
+    <string name="bearing">Bearing</string>
+    <string name="supposed_tack_angle">Supposed tack angle</string>
+    <string name="route" translatable="false">Route</string>
+    <string name="points">Points</string>
+    <string name="total">Total</string>
+    <string name="remaining">Remaining</string>
+    <string name="routesegements">Route segments</string>
+    <string name="wpelevationdiff">Elevation diff.</string>
+    <string name="error_cannot_import_gpx_file">Error: cannot import GPX file</string>
+    <string name="cannot_add_routing_point">Error: Cannot add route point</string>
+    <string name="cannot_insert_routing_point">Error: Cannot insert route point</string>
+    <string name="cannot_delete_routing_point">Error: Cannot delete route point</string>
+    <string name="warning_current_time_ist_outside_of_grib_time_window">Warning: Current time outside of grib time window</string>
+    <string name="warning_current_location_outside_of_grib_window">Warning: Actual location outside of GRIB area</string>
+    <string name="exception_scanning_grib_file">Exception: Scanning GRIB gile</string>
+    <string name="grib_file_successfully_scanned">Grib data successfully scanned</string>
+    <string name="exception_scanning_grib_v2_file">Exception: Scanning GRIB V2 file</string>
+    <string name="doesn_t_look_like_a_valid_grib_file">Error: Doesn\'t look like a valid GRIV file</string>
+    <string name="grib_file_version_not_supported">Error: Grib file version unsupported</string>
+    <string name="error_cannot_load_grib_file">Error: Grib file cannot be loaded</string>
+    <string name="grib_file">Grib file</string>
+    <string name="anchor_alarm">Anchor Alarm</string>
+    <string name="diameter_of_anchorage">Diameter of anchorage</string>
+    <string name="sun_positions">Sun positions</string>
+    <string name="altitude_s">Altitude: %s</string>
+    <string name="azimuth" translatable="false">Azimuth: %s°</string>
+    <string name="moon_positions">Moon positions</string>
+    <string name="fix_type_option">Fix typ</string>
+    <string name="sun_edge">Sun edge: %s</string>
+    <string name="eye_level_index_correction">Eye level</string>
+    <string name="please_enter_angle_5">Please enter angle > 5°</string>
+    <string name="noon">Noon: %s</string>
+    <string name="fix" translatable="false">Fix</string>
+    <string name="measure">Measure</string>
+    <string name="corr_meas">Corrected measure</string>
+    <string name="grt" translatable="false">GRT</string>
+    <string name="declination">Declination</string>
+    <string name="time_str">Time: %s</string>
+    <string name="wind_speed_1f_km_h_wind_dir_0f">Wind speed: %.0f wind direction: %.0f</string>
+    <string name="latitude">Latitude</string>
+    <string name="longitude">Longitude</string>
+</resources>

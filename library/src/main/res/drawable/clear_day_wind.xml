@@ -1,0 +1,42 @@
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: clear_day_wind.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="128dp"
+    android:height="100dp"
+    android:viewportWidth="128"
+    android:viewportHeight="100">
+  <path
+      android:pathData="M43,44m-18,0a18,18 0,1 1,36 0a18,18 0,1 1,-36 0"
+      android:strokeWidth="3"
+      android:fillColor="#00000000"
+      android:strokeColor="#f6bc68"/>
+  <path
+      android:fillColor="#FF000000"
+      android:pathData="M67,44L81,44M59.97,60.97L69.87,70.87M43,68L43,82M26.03,60.97L16.13,70.87M19,44L5,44M26.03,27.03L16.13,17.13M43,20L43,6M59.97,27.03L69.87,17.13"
+      android:strokeWidth="3"
+      android:strokeColor="#f6bc68"/>
+  <path
+      android:pathData="M77,66.5h20a6,6 0,1 0,-6 -6M77,74h37.5a6,6 0,1 0,-6 -6M77,81.5h28.75a6,6 0,1 1,-6 6"
+      android:strokeWidth="3.0"
+      android:fillColor="#00000000"
+      android:strokeColor="#404040"/>
+</vector>

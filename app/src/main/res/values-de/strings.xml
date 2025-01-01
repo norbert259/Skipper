@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: strings.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<resources>
+    <string name="options">Einstellungen</string>
+    <string name="option_general">Allgemein</string>
+    <string name="speed">Geschw.</string>
+    <string name="heading">Kurs</string>
+    <string name="altitude">Höhe</string>
+    <string name="time">Zeit</string>
+    <string name="map_type">Kartentyp</string>
+    <string name="map_cache_management">Karten-Speichermanagement</string>
+    <string name="cache_capacity">Speicherkapazität</string>
+    <string name="cache_usage">Speichernutzung</string>
+    <string name="error_cannot_load_mbtiles_file">Fehler: Laden der mbtiles Datei fehlgeschlagen</string>
+    <string name="lat">Breite: %1s</string>
+    <string name="lon">Länge: %1s</string>
+    <string name="bearing">Peilung</string>
+    <string name="points">Punkte</string>
+    <string name="measure">Messung</string>
+    <string name="exception_setting_location_marker_in_map">Fehler: beim Setzen des Location Markers</string>
+    <string name="exception_failure_in_osmdroid_update_routine">Fehler: in der OsmMap update funktion</string>
+</resources>

@@ -1,0 +1,49 @@
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: strings.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<resources>
+    <string name="app_name" translatable="false">Skipper</string>
+    <string name="options">Options</string>
+    <string name="option_general">General</string>
+    <string name="option_saildocs" translatable="false">Saildocs</string>
+    <string name="option_sextant" translatable="false">Sextant</string>
+    <string name="position" translatable="false">Position</string>
+    <string name="speed">Speed</string>
+    <string name="heading">Heading</string>
+    <string name="altitude">Altitude</string>
+    <string name="time">Time</string>
+    <string name="map_type">Map Type</string>
+    <string name="map_cache_management">Map cache management</string>
+    <string name="cache_capacity">Cache capacity</string>
+    <string name="cache_usage">Cache usage</string>
+    <string name="error_cannot_load_mbtiles_file">Error: Cannot load mbtiles file</string>
+    <string name="lat">Lat: %1s</string>
+    <string name="lon">Lon: %1s</string>
+    <string name="bearing">Bearing</string>
+    <string name="vmg" translatable="false">VMG</string>
+    <string name="points">Points</string>
+    <string name="route" translatable="false">Route</string>
+    <string name="name" translatable="false">Name</string>
+    <string name="measure">Measure</string>
+    <string name="exception_setting_location_marker_in_map">Error: setting location marker in map</string>
+    <string name="exception_failure_in_osmdroid_update_routine">Error: Exception in OsmMap update routine</string>
+    <string name="zoom_level" translatable="false">Zoom Level</string>
+</resources>

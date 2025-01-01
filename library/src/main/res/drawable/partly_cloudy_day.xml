@@ -1,0 +1,37 @@
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: partly_cloudy_day.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="128dp"
+    android:height="100dp"
+    android:viewportWidth="128"
+    android:viewportHeight="100">
+  <path
+      android:pathData="M46,32.27A14,14 0,1 0,24.74 43.97M18.56,45.44L10.79,53.21M13,32L2,32M18.56,18.56L10.79,10.79M32,13L32,2M45.44,18.56L53.21,10.79"
+      android:strokeWidth="3"
+      android:fillColor="#00000000"
+      android:strokeColor="#f6bc68"/>
+  <path
+      android:pathData="M39,78a20,20 0,1 1,4.88 -39.4a24,24 0,0 1,43.2 -9.49a16.25,16.25 0,0 1,16.92 9.89a20,20 0,0 1,-6.24 39z"
+      android:strokeWidth="3"
+      android:fillColor="#00000000"
+      android:strokeColor="#828487"/>
+</vector>

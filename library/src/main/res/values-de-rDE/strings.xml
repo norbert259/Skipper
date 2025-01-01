@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: strings.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<resources>
+    <string name="lat">Breite: %s</string>
+    <string name="lon">Länge: %s</string>
+    <string name="location">Position:</string>
+    <string name="speed">Geschw.</string>
+    <string name="heading">Kurs</string>
+    <string name="altitude">Höhe</string>
+    <string name="time">Zeit</string>
+    <string name="time_zone">Zeitzone</string>
+    <string name="dimensions">Einheiten</string>
+    <string name="format_for_gps_coordinates">Format GPS Koordinaten</string>
+    <string name="magnetic_deviation">Magnetabweichung</string>
+    <string name="show_magnetic_heading_bearing">Anzeige Magnetkurs</string>
+    <string name="exception_unable_to_start_mail_app">Mail App kann nicht gestartet werden</string>
+    <string name="weather_model">Wettermodell</string>
+    <string name="parameters_for_grid">Grid Parameter</string>
+    <string name="grid_resolution">Grid Auflösung</string>
+    <string name="forecast_increment_hours">Vorhersage Auflösung</string>
+    <string name="forecast_for_days">Vorhersage für Tage</string>
+    <string name="pressure">Luftdruck</string>
+    <string name="temperature">Temperatur</string>
+    <string name="dewpoint">Taupunkt</string>
+    <string name="winddirection">Windrichtung</string>
+    <string name="windspeed">Windgeschwindigkeit</string>
+    <string name="windgust">Windböen</string>
+    <string name="effcloudcover">Eff. Bedeckung</string>
+    <string name="totcloudcover">Bedeckung</string>
+    <string name="significantweather">Signifik. Wetter</string>
+    <string name="precipitation">Niederschlag</string>
+    <string name="visibility">Sichtweite</string>
+    <string name="failure_getting_weather_dwd_data">Fehler beim Laden der DWD Daten</string>
+    <string name="station_elevation">Station: %s\nHöhe: %dm</string>
+    <string name="dwd_weather_forecast">DWD Wettervorhersage</string>
+    <string name="days">Tage voraus</string>
+    <string name="hour_steps">Stundenabstand</string>
+    <string name="elev">Höhe</string>
+    <string name="dist">Entfernung</string>
+    <string name="issued">Ausgabe</string>
+    <string name="forecast_table">Vorhersage</string>
+    <string name="windforecast">Windvorhersage</string>
+    <string name="temperaturetrend">Temperaturtrend</string>
+    <string name="forecastrain">Regenvorhersage</string>
+    <string name="error_cannot_export_gpx_file">Fehler: GPX Datei kann nicht exportiert werden</string>
+    <string name="start">Beginn</string>
+    <string name="end">Ende</string>
+    <string name="tracksegments">Track Segmente</string>
+    <string name="no">Nr</string>
+    <string name="course">Kurs</string>
+    <string name="track_distances">Track Entfernungen</string>
+    <string name="track_elevation">Track Meereshöhen</string>
+    <string name="waypoint">Wegepunkt</string>
+    <string name="bearing">Peilung</string>
+    <string name="supposed_tack_angle">Wendewinkel</string>
+    <string name="points">Punkte</string>
+    <string name="total">Gesamt</string>
+    <string name="remaining">Rest</string>
+    <string name="routesegements">Routensegmente</string>
+    <string name="wpelevationdiff">Höhenunterschied</string>
+    <string name="error_cannot_import_gpx_file">Fehler: GPX Datei kann nicht importiert werden</string>
+    <string name="cannot_add_routing_point">Fehler: Wegepunkt kann nicht hinzugefügt werden</string>
+    <string name="cannot_insert_routing_point">Fehler: Wegepunkt kann nicht ingefügt werden</string>
+    <string name="cannot_delete_routing_point">Fehler: Wegepunkt kann nicht gelöscht werden</string>
+    <string name="warning_current_time_ist_outside_of_grib_time_window">Warnung: Aktuelle Zeit außerhalb der Vorhersagefensters</string>
+    <string name="warning_current_location_outside_of_grib_window">"Warnung: Aktuelle Position außerhalb der GRIB Abdeckung "</string>
+    <string name="exception_scanning_grib_file">Fehler: Beim Lesen der GRIB Datei</string>
+    <string name="grib_file_successfully_scanned">Grib Datei erfolgreich gelesen</string>
+    <string name="exception_scanning_grib_v2_file">Fehler: Beim Lesen einer GRIB V2 Datei</string>
+    <string name="doesn_t_look_like_a_valid_grib_file">Fehler: Offensichtlich keine GRIB Datei</string>
+    <string name="grib_file_version_not_supported">Fehler: Grib Version wird nicht unterstützt</string>
+    <string name="error_cannot_load_grib_file">Fehler: Grid Datei kann nichtg geladen werden</string>
+    <string name="grib_file">Grib Datei</string>
+    <string name="anchor_alarm">Ankeralarm</string>
+    <string name="diameter_of_anchorage">Durchmesser Ankerplatz</string>
+    <string name="sun_positions">Sonnenstand</string>
+    <string name="altitude_s">Höhe: %s</string>
+    <string name="moon_positions">Stand des Mondes</string>
+    <string name="fix_type_option">Bestimmungsart</string>
+    <string name="sun_edge">Messung: %s</string>
+    <string name="eye_level_index_correction">Augenhöhe</string>
+    <string name="please_enter_angle_5">Bitte Winkel > 5° eingeben</string>
+    <string name="noon">Mittag: %s</string>
+    <string name="measure">Messung</string>
+    <string name="corr_meas">Korrigierte Messung</string>
+    <string name="declination">Deklination</string>
+    <string name="time_str">Zeit: %s</string>
+    <string name="wind_speed_1f_km_h_wind_dir_0f">Windgeschwindigkeit: %.0f Windrichtung: %.0f</string>
+    <string name="latitude">Breite</string>
+    <string name="longitude">Länge</string>
+</resources>

@@ -1,0 +1,33 @@
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: snowflake.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="128dp"
+    android:height="100dp"
+    android:viewportWidth="128"
+    android:viewportHeight="100">
+  <path
+      android:pathData="M64,10l0,80m-34.64,-60l69.28,40m-69.28,-0l69.28,-40m-34.64,-20m11.55,6.67l-11.55,6.67l-11.55,-6.67m11.55,-6.67m-34.64,20m11.55,-6.67l-0,13.33l-11.55,6.67m0,-13.33m-0,40m0,-13.33l11.55,6.67l0,13.33m-11.55,-6.67m34.64,20m-11.55,-6.67l11.55,-6.67l11.55,6.67m-11.55,6.67m34.64,-20m-11.55,6.67l0,-13.33l11.55,-6.67m-0,13.33m0,-40m-0,13.33l-11.55,-6.67l-0,-13.33m11.55,6.67"
+      android:strokeWidth="6.0"
+      android:fillColor="#00000000"
+      android:strokeColor="#66a1ba"
+      android:strokeLineCap="round"/>
+</vector>

@@ -1,0 +1,33 @@
+<!--
+  ~ Copyright (c) Norbert Kraft 2025. All rights reserved.
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU General Public License as published by
+  ~ the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  ~
+  ~ File: snowflake_icon_15px.xml
+  ~ Last modified: 01/01/2025, 14:01
+  ~
+  -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="15dp"
+    android:height="15dp"
+    android:viewportWidth="15"
+    android:viewportHeight="15">
+  <path
+      android:pathData="M7.5,0.55l0,13.9m-6.019,-10.425l12.038,6.95m-12.038,-0l12.038,-6.95m-6.019,-3.475m2.006,1.158l-2.006,1.158l-2.006,-1.158m2.006,-1.158m-6.019,3.475m2.006,-1.158l-0,2.317l-2.006,1.158m0,-2.317m-0,6.95m0,-2.317l2.006,1.158l0,2.317m-2.006,-1.158m6.019,3.475m-2.006,-1.158l2.006,-1.158l2.006,1.158m-2.006,1.158m6.019,-3.475m-2.006,1.158l0,-2.317l2.006,-1.158m-0,2.317m0,-6.95m-0,2.317l-2.006,-1.158l-0,-2.317m2.006,1.158"
+      android:strokeWidth="1.0425"
+      android:fillColor="#00000000"
+      android:strokeColor="#66a1ba"
+      android:strokeLineCap="round"/>
+</vector>
