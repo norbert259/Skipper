@@ -23,22 +23,82 @@ package com.nksoftware.library.grib
 
 import android.util.Log
 import com.nksoftware.library.utilities.nkHandleException
+import java.io.InputStream
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import kotlin.math.pow
 
 
+class V2GribFileEntry(inp: InputStream) : GribFileEntry() {
+
+   private var section0: V2Section0
+   private var section1: V2Section1? = null
+   private var section2: V2Section2? = null
+   private var section3: V2Section3? = null
+   private var section4: V2Section4? = null
+   private var section5: V2Section5? = null
+   private var section6: V2Section6? = null
+   private var section7: V2Section7? = null
+
+   init {
+      val data = ByteBuffer.allocate(16)
+
+      inp.read(data.array())
+
+      section0 = V2Section0(data)
+      var nextSection = getNextSection(inp)
+
+      while (nextSection.array().size > 4) {
+         when (nextSection.get(4).toInt()) {
+            1    -> section1 = V2Section1(nextSection)
+            2    -> section2 = V2Section2(nextSection)
+            3    -> section3 = V2Section3(nextSection)
+            4    -> section4 = V2Section4(nextSection)
+            5    -> section5 = V2Section5(nextSection)
+            6    -> section6 = V2Section6(nextSection)
+            7    -> section7 = V2Section7(nextSection)
+            else -> {}
+         }
+         nextSection = getNextSection(inp)
+      }
+   }
+
+   private fun getNextSection(inp: InputStream): ByteBuffer {
+      val start = ByteBuffer.allocate(4)
+      inp.read(start.array())
+
+      if (String(start.array()) in listOf("GRIB", "7777"))
+         return start
+      else {
+         val length = start.getInt(0)
+         val data = ByteBuffer.allocate(length)
+
+         data.put(start.array(), 0, 4)
+         inp.read(data.array(), 4, length - 4)
+
+         return data
+      }
+   }
 
 
+   override fun getParameter(): String {
+      return section4!!.getParameter(section0.discipline)
+   }
 
-private fun convertUnits(parameter: Int, value: Float): Float {
-   return when(parameter) {
-      2 -> value / 100f
-      11 -> value - 273.15f
-      else -> value
+   override fun getReferenceTime(): Calendar {
+      return section4!!.getTime(section1!!.referenceTime)
+   }
+
+   override fun getGridInfo(type: GribFile.GridInfo): Float {
+      return section3!!.getGridInfo(type)
+   }
+
+   override fun getGridValues(): MutableList<GpsGridPoint> {
+      return section3!!.getGridData(section5!!, section7!!)
    }
 }
+
 
 private fun getShort(data: ByteBuffer, ind: Int): Int {
    val firstByte = data.get(ind).toUByte()

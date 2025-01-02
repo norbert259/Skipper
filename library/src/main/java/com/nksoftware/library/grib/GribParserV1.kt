@@ -23,6 +23,7 @@ package com.nksoftware.library.grib
 
 import android.util.Log
 import com.nksoftware.library.utilities.nkHandleException
+import java.io.InputStream
 import java.nio.ByteBuffer
 import java.text.DateFormat
 import java.util.Calendar
@@ -30,6 +31,90 @@ import java.util.GregorianCalendar
 import java.util.Locale
 import java.util.TimeZone
 import kotlin.math.pow
+
+
+class V1GribFileEntry(inp: InputStream) : GribFileEntry() {
+
+   private var section0: V1Section0
+   private var section1: V1Section1
+   private var section2: V1Section2? = null
+   private var section3: V1Section3? = null
+   private var section4: V1Section4
+
+   init {
+      val data = ByteBuffer.allocate(8)
+      inp.read(data.array())
+
+      section0 = V1Section0(data)
+      section1 = V1Section1(getNextSection(inp))
+
+      if (section1.section2)
+         section2 = V1Section2(getNextSection(inp))
+
+      if (section1.section3)
+         section3 = V1Section3(getNextSection(inp))
+
+      section4 = V1Section4(getNextSection(inp))
+
+      checkPattern(inp, "7777")
+   }
+
+
+   private fun getNextSection(inp: InputStream): ByteBuffer {
+      val start = ByteBuffer.allocate(4)
+      inp.read(start.array())
+
+      val length = (start.getShort(0).toUShort().toInt() shl 8) + start.get(2).toUByte().toInt()
+      val data = ByteBuffer.allocate(length)
+
+      data.put(start.array(), 0, 4)
+      inp.read(data.array(), 4, length - 4)
+
+      return data
+   }
+
+
+   private fun checkPattern(input: InputStream, pattern: String) {
+      val pbuf = ByteBuffer.allocate(pattern.length)
+
+      if (input.read(pbuf.array()) > 0) {
+         when (val str = String(pbuf.array())) {
+            "GRIB" -> Log.d(logTag, "Grib entry found")
+            "7777" -> Log.d(logTag, "End of GRIB file found")
+            else   -> throw Exception("Wrong pattern: $str found - expected: $pattern")
+         }
+      }
+   }
+
+
+   override fun getParameter(): String {
+      return section1.getParameter()
+   }
+
+
+   override fun getReferenceTime(): Calendar {
+      return section1.referenceTime
+   }
+
+
+   override fun getGridInfo(type: GribFile.GridInfo): Float {
+      return when (type) {
+         GribFile.GridInfo.MinLat -> (section2!!.gridDefinition.firstLat) / 1000.0f
+         GribFile.GridInfo.MinLon -> (section2!!.gridDefinition.firstLon) / 1000.0f
+         GribFile.GridInfo.MaxLat -> (section2!!.gridDefinition.lastLat) / 1000.0f
+         GribFile.GridInfo.MaxLon -> (section2!!.gridDefinition.lastLon) / 1000.0f
+         GribFile.GridInfo.NoLat  -> (section2!!.gridDefinition.noLat).toFloat()
+         GribFile.GridInfo.NoLon  -> (section2!!.gridDefinition.noLon).toFloat()
+         GribFile.GridInfo.LatInc -> (section2!!.gridDefinition.latIncrement) / 1000.0f
+         GribFile.GridInfo.LonInc -> (section2!!.gridDefinition.lonIncrement) / 1000.0f
+      }
+   }
+
+
+   override fun getGridValues(): MutableList<GpsGridPoint> {
+      return section2!!.getGridData(section4, section1.decimalScaleFactor)
+   }
+}
 
 
 open class V1Section(private val buffer: ByteBuffer) {

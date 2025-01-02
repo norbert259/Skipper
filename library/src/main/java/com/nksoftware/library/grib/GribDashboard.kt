@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkCardWithHeadline
 import com.nksoftware.library.composables.NkIconButton
 import com.nksoftware.library.composables.NkPopupMenu
@@ -49,7 +50,6 @@ import com.nksoftware.library.composables.NkValueField
 import com.nksoftware.library.location.ExtendedLocation
 import kotlin.math.max
 import kotlin.math.min
-import com.nksoftware.library.R
 
 
 @Composable
@@ -145,7 +145,7 @@ fun GribDashboard(
          ) {
             NkValueField(
                modifier = Modifier.width(120.dp),
-               label = "Min. " + stringResource(R.string.lat),
+               label = "Min. " + stringResource(R.string.latitude),
                value = ExtendedLocation.convertCoordinate(gribFile.minLat),
             )
             NkValueField(
@@ -155,7 +155,7 @@ fun GribDashboard(
             )
             NkValueField(
                modifier = Modifier.width(120.dp),
-               label = "Max. " + stringResource(R.string.lat),
+               label = "Max. " + stringResource(R.string.latitude),
                value = ExtendedLocation.convertCoordinate(gribFile.maxLat),
             )
          }
@@ -166,7 +166,7 @@ fun GribDashboard(
          ) {
             NkValueField(
                modifier = Modifier.width(120.dp),
-               label = "Min. " + stringResource(R.string.lon),
+               label = "Min. " + stringResource(R.string.longitude),
                value = ExtendedLocation.convertCoordinate(gribFile.minLon, vertical = false),
             )
             NkValueField(
@@ -176,7 +176,7 @@ fun GribDashboard(
             )
             NkValueField(
                modifier = Modifier.width(120.dp),
-               label = "Max. " + stringResource(R.string.lon),
+               label = "Max. " + stringResource(R.string.longitude),
                value = ExtendedLocation.convertCoordinate(gribFile.maxLon, vertical = false),
             )
          }

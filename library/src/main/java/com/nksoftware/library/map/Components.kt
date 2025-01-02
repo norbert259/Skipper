@@ -22,6 +22,7 @@
 package com.nksoftware.library.map
 
 import android.graphics.Color
+import com.nksoftware.library.R
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
@@ -29,7 +30,6 @@ import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.Polyline
 import kotlin.math.pow
 import kotlin.math.sqrt
-import com.nksoftware.library.R
 
 
 class NkMarker(
@@ -41,7 +41,7 @@ class NkMarker(
    init {
       setAnchor(ANCHOR_CENTER, ANCHOR_CENTER)
 
-      textLabelFontSize = 24
+      textLabelFontSize = 28
       textLabelBackgroundColor = Color.WHITE
 
       if (!mapview.overlays.contains(this))

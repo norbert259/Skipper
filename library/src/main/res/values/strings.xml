@@ -123,4 +123,6 @@
     <string name="map_cache_management">Map cache management</string>
     <string name="cache_capacity">Cache capacity</string>
     <string name="cache_usage">Cache usage</string>
+    <string name="windspeed_s">Wind speed: %.0f km/h</string>
+    <string name="winddirection_s">Wind direction: %.0f °</string>
 </resources>

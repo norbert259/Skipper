@@ -115,4 +115,6 @@
     <string name="map_cache_management">Cache Verwaltung für Karten</string>
     <string name="cache_capacity">Cache Kapazität</string>
     <string name="cache_usage">Cache Nutzungsgrad</string>
+    <string name="windspeed_s">Windgeschwindigkeit: %.0f km/h</string>
+    <string name="winddirection_s">Windichtung: %.0f °</string>
 </resources>

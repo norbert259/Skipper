@@ -75,158 +75,8 @@ abstract class GribFileEntry {
 }
 
 
-class V1GribFileEntry(inp: InputStream) : GribFileEntry() {
-
-   private var section0: V1Section0
-   private var section1: V1Section1
-   private var section2: V1Section2? = null
-   private var section3: V1Section3? = null
-   private var section4: V1Section4
-
-   init {
-      val data = ByteBuffer.allocate(8)
-      inp.read(data.array())
-
-      section0 = V1Section0(data)
-      section1 = V1Section1(getNextSection(inp))
-
-      if (section1.section2)
-         section2 = V1Section2(getNextSection(inp))
-
-      if (section1.section3)
-         section3 = V1Section3(getNextSection(inp))
-
-      section4 = V1Section4(getNextSection(inp))
-
-      checkPattern(inp, "7777")
-   }
 
 
-   private fun getNextSection(inp: InputStream): ByteBuffer {
-      val start = ByteBuffer.allocate(4)
-      inp.read(start.array())
-
-      val length = (start.getShort(0).toUShort().toInt() shl 8) + start.get(2).toUByte().toInt()
-      val data = ByteBuffer.allocate(length)
-
-      data.put(start.array(), 0, 4)
-      inp.read(data.array(), 4, length - 4)
-
-      return data
-   }
-
-
-   private fun checkPattern(input: InputStream, pattern: String) {
-      val pbuf = ByteBuffer.allocate(pattern.length)
-
-      if (input.read(pbuf.array()) > 0) {
-         when (val str = String(pbuf.array())) {
-            "GRIB" -> Log.d(logTag, "Grib entry found")
-            "7777" -> Log.d(logTag, "End of GRIB file found")
-            else   -> throw Exception("Wrong pattern: $str found - expected: $pattern")
-         }
-      }
-   }
-
-
-   override fun getParameter(): String {
-      return section1.getParameter()
-   }
-
-
-   override fun getReferenceTime(): Calendar {
-      return section1.referenceTime
-   }
-
-
-   override fun getGridInfo(type: GribFile.GridInfo): Float {
-      return when (type) {
-         GribFile.GridInfo.MinLat -> (section2!!.gridDefinition.firstLat) / 1000.0f
-         GribFile.GridInfo.MinLon -> (section2!!.gridDefinition.firstLon) / 1000.0f
-         GribFile.GridInfo.MaxLat -> (section2!!.gridDefinition.lastLat) / 1000.0f
-         GribFile.GridInfo.MaxLon -> (section2!!.gridDefinition.lastLon) / 1000.0f
-         GribFile.GridInfo.NoLat  -> (section2!!.gridDefinition.noLat).toFloat()
-         GribFile.GridInfo.NoLon  -> (section2!!.gridDefinition.noLon).toFloat()
-         GribFile.GridInfo.LatInc -> (section2!!.gridDefinition.latIncrement) / 1000.0f
-         GribFile.GridInfo.LonInc -> (section2!!.gridDefinition.lonIncrement) / 1000.0f
-      }
-   }
-
-
-   override fun getGridValues(): MutableList<GpsGridPoint> {
-      return section2!!.getGridData(section4, section1.decimalScaleFactor)
-   }
-}
-
-
-class V2GribFileEntry(inp: InputStream) : GribFileEntry() {
-
-   private var section0: V2Section0
-   private var section1: V2Section1? = null
-   private var section2: V2Section2? = null
-   private var section3: V2Section3? = null
-   private var section4: V2Section4? = null
-   private var section5: V2Section5? = null
-   private var section6: V2Section6? = null
-   private var section7: V2Section7? = null
-
-   init {
-      val data = ByteBuffer.allocate(16)
-
-      inp.read(data.array())
-
-      section0 = V2Section0(data)
-      var nextSection = getNextSection(inp)
-
-      while (nextSection.array().size > 4) {
-         when (nextSection.get(4).toInt()) {
-            1    -> section1 = V2Section1(nextSection)
-            2    -> section2 = V2Section2(nextSection)
-            3    -> section3 = V2Section3(nextSection)
-            4    -> section4 = V2Section4(nextSection)
-            5    -> section5 = V2Section5(nextSection)
-            6    -> section6 = V2Section6(nextSection)
-            7    -> section7 = V2Section7(nextSection)
-            else -> {}
-         }
-         nextSection = getNextSection(inp)
-      }
-   }
-
-   private fun getNextSection(inp: InputStream): ByteBuffer {
-      val start = ByteBuffer.allocate(4)
-      inp.read(start.array())
-
-      if (String(start.array()) in listOf("GRIB", "7777"))
-         return start
-      else {
-         val length = start.getInt(0)
-         val data = ByteBuffer.allocate(length)
-
-         data.put(start.array(), 0, 4)
-         inp.read(data.array(), 4, length - 4)
-
-         return data
-      }
-   }
-
-
-   override fun getParameter(): String {
-      return section4!!.getParameter(section0.discipline)
-   }
-
-   override fun getReferenceTime(): Calendar {
-      return section4!!.getTime(section1!!.referenceTime)
-   }
-
-   override fun getGridInfo(type: GribFile.GridInfo): Float {
-      return section3!!.getGridInfo(type)
-   }
-
-   override fun getGridValues(): MutableList<GpsGridPoint> {
-      return section3!!.getGridData(section5!!, section7!!)
-   }
-}
 
 
 class GribFile(private val ctx: Context, val mapMode: Int) : DataModel(mapMode) {
@@ -511,7 +361,8 @@ class GribFile(private val ctx: Context, val mapMode: Int) : DataModel(mapMode) 
                      gribMarker[i].apply {
                         closeInfoWindow()
                         position = GeoPoint(value.lat.toDouble(), value.lon.toDouble())
-                        title = ctx.getString(R.string.wind_speed_1f_km_h_wind_dir_0f, value.value, value.value2)
+                        title = ctx.getString(R.string.windspeed_s, value.value) + "\n" +
+                                ctx.getString(R.string.winddirection_s, value.value2)
                         icon = ContextCompat.getDrawable(ctx, windIcons[getWindSpeedIcon(value.value)])
                         rotation = -90f - value.value2
                         isEnabled = true
