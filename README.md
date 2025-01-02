@@ -1,4 +1,4 @@
-![](Skipper\graphics\Skipper.jpg)
+![](Skipper.jpg)
 
 # The Skipper development project
 
