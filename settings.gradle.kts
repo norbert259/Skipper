@@ -43,5 +43,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Skipper"
-include(":app")
+include(":Skipper")
 include(":library")

@@ -15,16 +15,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * File: OsmMap.kt
- * Last modified: 01/01/2025, 14:01
+ * Last modified: 02/01/2025, 11:04
  *
  */
 
-package com.nksoftware.skipper.map
+package com.nksoftware.library.map
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.graphics.Paint
 import android.net.Uri
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -34,11 +35,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.documentfile.provider.DocumentFile
-import com.nksoftware.library.map.NkMarker
+import com.nksoftware.library.R
+import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.utilities.nkHandleException
-import com.nksoftware.skipper.R
-import com.nksoftware.skipper.core.SkipperViewModel
-import com.nksoftware.skipper.core.logTag
 import org.osmdroid.config.Configuration
 import org.osmdroid.events.MapListener
 import org.osmdroid.events.ScrollEvent
@@ -63,19 +62,23 @@ import java.io.FilenameFilter
 import java.io.InputStream
 import java.nio.ByteBuffer
 
+
 const val chartKey = "Chart"
 const val openSeaMapKey = "OpenSeaMap"
+const val logTag = "Map"
 
 
 @SuppressLint("ViewConstructor")
 class OsmMap(
    private val ctx: Context,
    private val sharedPreferences: SharedPreferences,
-   val vm: SkipperViewModel,
-   private val dir: String?
+   private val dir: String?,
+   private val updateLocation: (Double, Double) -> Unit
 ) : MapView(ctx), MapListener {
 
    var chart by mutableIntStateOf(0)
+   var actualChart by mutableIntStateOf(chart)
+
    var openSeaMap by mutableStateOf(false)
 
    var chartTypes = mutableMapOf<String, OnlineTileSourceBase>(
@@ -94,6 +97,8 @@ class OsmMap(
    private val locationIcon = ContextCompat.getDrawable(ctx, R.drawable.twotone_navigation_black_48)
    private var locMarker: NkMarker
 
+   private val updateFailure = ctx.getString(R.string.exception_failure_in_osmdroid_update_routine)
+
 
    init {
       chart = sharedPreferences.getInt(chartKey, 0)
@@ -110,7 +115,7 @@ class OsmMap(
       overlays.add(LatLonGridlineOverlay2().apply {
          setBackgroundColor(Color.TRANSPARENT)
          setFontColor(Color.DKGRAY)
-         setTextStyle(android.graphics.Paint.Style.FILL)
+         setTextStyle(Paint.Style.FILL)
          setLineWidth(1.0f)
          setMultiplier(2.0f)
       })
@@ -142,7 +147,7 @@ class OsmMap(
 
       locMarker = NkMarker(
          this,
-         dragFunc = { lat, lon -> vm.setLocationManually(lat, lon) }
+         dragFunc = { lat, lon -> updateLocation(lat, lon) }
       ).apply {
          isEnabled = true
          icon = locationIcon
@@ -159,6 +164,38 @@ class OsmMap(
       addMapListener(this)
    }
 
+
+   fun update(gps: Boolean, location: ExtendedLocation, snackBar: (String) -> Unit) {
+      try {
+         setScaleBarDimension(ExtendedLocation.dimensions.index)
+         setOpenseaMapOverlay(openSeaMap)
+
+         if (chart != actualChart) {
+            setOsmChart(chart)
+            actualChart = chart
+         }
+
+         val locGP = location.locGp
+
+         if (gps) {
+            setCenter(locGP)
+         }
+
+         setLocationMarker(
+            loc = locGP,
+            heading = location.getHeading(),
+            description = location.description(),
+            gps = gps
+         )
+
+      }
+
+      catch (e: Exception) {
+         nkHandleException(logTag, updateFailure, e, snackBar)
+      }
+   }
+
+
    override fun onScroll(event: ScrollEvent?): Boolean {
       return true
    }
@@ -167,6 +204,7 @@ class OsmMap(
       zoomLevel = zoomLevelDouble
       return true
    }
+
 
    fun setChartType(c: Int) {
       chart = c
@@ -178,6 +216,7 @@ class OsmMap(
       storeSharedPreferences(sharedPreferences)
    }
 
+
    val cacheCapacity: Long
       get() = CacheManager(this).cacheCapacity()
 
@@ -187,6 +226,7 @@ class OsmMap(
    fun download() {
       CacheManager(this).downloadAreaAsync(context, boundingBox, 0, 14)
    }
+
 
    private fun storeSharedPreferences(pref: SharedPreferences) {
       val edit = pref.edit()

@@ -115,4 +115,12 @@
     <string name="wind_speed_1f_km_h_wind_dir_0f">Wind speed: %.0f wind direction: %.0f</string>
     <string name="latitude">Latitude</string>
     <string name="longitude">Longitude</string>
+    <string name="vmg" translatable="false">VMG</string>
+    <string name="exception_failure_in_osmdroid_update_routine">Error: Failure on OSMDROID update routine</string>
+    <string name="exception_setting_location_marker_in_map">Error: setting location marker in map view</string>
+    <string name="error_cannot_load_mbtiles_file">Error: cannot load mbtiles file</string>
+    <string name="map_type">Map type</string>
+    <string name="map_cache_management">Map cache management</string>
+    <string name="cache_capacity">Cache capacity</string>
+    <string name="cache_usage">Cache usage</string>
 </resources>

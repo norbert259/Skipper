@@ -19,7 +19,7 @@
  *
  */
 
-package com.nksoftware.skipper.coreui
+package com.nksoftware.library.location
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
@@ -49,11 +49,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.nksoftware.skipper.R
+import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkCardWithHeadline
 import com.nksoftware.library.composables.NkText
 import com.nksoftware.library.composables.NkValueField
-import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.route.Route
 import java.lang.Math.toRadians
 import kotlin.math.abs

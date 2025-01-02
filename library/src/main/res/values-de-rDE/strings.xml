@@ -108,4 +108,11 @@
     <string name="wind_speed_1f_km_h_wind_dir_0f">Windgeschwindigkeit: %.0f Windrichtung: %.0f</string>
     <string name="latitude">Breite</string>
     <string name="longitude">Länge</string>
+    <string name="exception_failure_in_osmdroid_update_routine">Fehler in der OSMDROID Update Routine</string>
+    <string name="exception_setting_location_marker_in_map">Fehler beim Setzen des Positionsmarkers in der Kartenansicht</string>
+    <string name="error_cannot_load_mbtiles_file">Fehler beim Laden der MBTILES DAtei</string>
+    <string name="map_type">Kartentyp</string>
+    <string name="map_cache_management">Cache Verwaltung für Karten</string>
+    <string name="cache_capacity">Cache Kapazität</string>
+    <string name="cache_usage">Cache Nutzungsgrad</string>
 </resources>

@@ -34,6 +34,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.nksoftware.library.composables.NkTabRowIcon
+import com.nksoftware.library.location.CompassDashboard
 import com.nksoftware.library.location.ExtendedLocationDashboard
 import com.nksoftware.library.route.RouteDashboard
 import com.nksoftware.library.route.WaypointDashboard
@@ -66,7 +67,9 @@ fun NavigationDashboard(
             if (vm.route.active) WaypointDashboard(vm.location, vm.route)
             ExtendedLocationDashboard(vm.location)
          }
-         1 -> { CompassDashboard(vm.location, vm.route) }
+         1 -> {
+            CompassDashboard(vm.location, vm.route)
+         }
          2 -> { TrackDashboard(track = vm.track) }
          3 -> { RouteDashboard(route = vm.route, location = vm.location) }
       }

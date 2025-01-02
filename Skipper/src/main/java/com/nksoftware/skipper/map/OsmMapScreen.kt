@@ -44,7 +44,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -60,14 +59,12 @@ import com.nksoftware.library.composables.NkIcon
 import com.nksoftware.library.composables.NkText
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.grib.GribCommands
-import com.nksoftware.library.location.ExtendedLocation
+import com.nksoftware.library.map.OsmMap
 import com.nksoftware.library.route.RouteCommands
 import com.nksoftware.library.track.TrackCommands
-import com.nksoftware.library.utilities.nkHandleException
 import com.nksoftware.library.weather.WeatherCommands
 import com.nksoftware.skipper.R
 import com.nksoftware.skipper.core.SkipperViewModel
-import com.nksoftware.skipper.core.logTag
 import com.nksoftware.skipper.coreui.ScreenMode
 
 
@@ -80,10 +77,7 @@ fun OsmMapScreen(
    snackBar: (str: String) -> Unit
 ) {
 
-   var actualChart by rememberSaveable { mutableIntStateOf(mapView.chart) }
    var mapRotation by rememberSaveable { mutableStateOf(false) }
-
-   val updateFailure = stringResource(R.string.exception_failure_in_osmdroid_update_routine)
 
    Column {
       Box(modifier = Modifier.weight(2f)) {
@@ -91,34 +85,8 @@ fun OsmMapScreen(
             modifier = Modifier.fillMaxSize(),
             factory = { context -> mapView },
             update = { view: OsmMap ->
-               try {
-                  view.setScaleBarDimension(ExtendedLocation.dimensions.index)
-                  view.setOpenseaMapOverlay(mapView.openSeaMap)
-
-                  if (mapView.chart != actualChart) {
-                     view.setOsmChart(mapView.chart)
-                     actualChart = mapView.chart
-                  }
-
-                  val locGP = vm.location.locGp
-
-                  if (vm.gps) {
-                     view.setCenter(locGP)
-                  }
-
-                  view.setLocationMarker(
-                     loc = locGP,
-                     heading = vm.location.getHeading(),
-                     description = vm.location.description(),
-                     gps = vm.gps
-                  )
-
-                 DataModel.updateMap(view, mode.ordinal, vm.location, snackBar)
-               }
-
-               catch (e: Exception) {
-                  nkHandleException(logTag, updateFailure, e, snackBar)
-               }
+               view.update(vm.gps, vm.location, snackBar)
+               DataModel.updateMap(view, mode.ordinal, vm.location, snackBar)
             }
          )
 

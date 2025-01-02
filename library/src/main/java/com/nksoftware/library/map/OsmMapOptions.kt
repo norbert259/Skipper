@@ -15,11 +15,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  * File: OsmMapOptions.kt
- * Last modified: 01/01/2025, 14:01
+ * Last modified: 01/01/2025, 14:03
  *
  */
 
-package com.nksoftware.skipper.map
+package com.nksoftware.library.map
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -37,13 +37,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkCardWithHeadline
 import com.nksoftware.library.composables.NkCheckBoxItem
 import com.nksoftware.library.composables.NkIconButton
 import com.nksoftware.library.composables.NkRowNValues
 import com.nksoftware.library.composables.NkSingleSelect
 import com.nksoftware.library.composables.NkValueField
-import com.nksoftware.skipper.R
 import kotlin.text.format
 
 

@@ -78,6 +78,8 @@ import com.nksoftware.library.composables.NkTabRowText
 import com.nksoftware.library.composables.NkText
 import com.nksoftware.library.grib.GribDashboard
 import com.nksoftware.library.location.ExtendedLocationOptions
+import com.nksoftware.library.map.OsmMap
+import com.nksoftware.library.map.OsmMapOptions
 import com.nksoftware.library.route.RouteOptions
 import com.nksoftware.library.saildocs.SaildocsOptions
 import com.nksoftware.library.theme.SkipperTheme
@@ -85,8 +87,6 @@ import com.nksoftware.library.weather.WeatherDashboard
 import com.nksoftware.library.weather.WeatherOption
 import com.nksoftware.skipper.R
 import com.nksoftware.skipper.core.SkipperViewModel
-import com.nksoftware.skipper.map.OsmMap
-import com.nksoftware.skipper.map.OsmMapOptions
 import com.nksoftware.skipper.map.OsmMapScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -111,7 +111,8 @@ fun MainScreen(
    var mode by rememberSaveable { mutableStateOf(ScreenMode.Navigation) }
    val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
-   val mapView by remember { mutableStateOf(OsmMap(ctx, sharedPreferences, vm, dir)) }
+   val mapView by remember { mutableStateOf(OsmMap(ctx, sharedPreferences, dir,
+      { lat, lon -> vm.setLocationManually(lat, lon) })) }
 
 
    fun mySnackBar(message: String) {
