@@ -1,4 +1,5 @@
-# Markdown
-![](C:\Users\norbe\AndroidStudioProjects\Skipper\Skipper\graphics\Skipper.jpg)
+![](Skipper\graphics\Skipper.jpg)
+
+# The Skipper development project
 
 Skipper is a development project.
