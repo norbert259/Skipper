@@ -85,8 +85,14 @@ fun OsmMapScreen(
             modifier = Modifier.fillMaxSize(),
             factory = { context -> mapView },
             update = { view: OsmMap ->
-               view.update(vm.gps, vm.location, snackBar)
-               DataModel.updateMap(view, mode.ordinal, vm.location, snackBar)
+               try {
+                  view.update(vm.gps, vm.location, snackBar)
+                  DataModel.updateMap(view, mode.ordinal, vm.location, snackBar)
+               }
+
+               catch (e: Exception) {
+                  snackBar("Error updating map")
+               }
             }
          )
 
@@ -111,7 +117,7 @@ fun OsmMapScreen(
          ) {
             NkFloatingActionButton(onClick = { vm.gps = !vm.gps }) {
                Icon(if (vm.gps) Outlined.GpsFixed else Outlined.GpsOff, contentDescription = "De-/Activate GPS")
-               CircularProgressIndicator(progress = { (vm.gpsUpdateCounter % 10) / 10f })
+               CircularProgressIndicator(progress = { (vm.gpsUpdateCounter % 10) / 10f }, gapSize = 5.dp)
             }
             NkFloatingActionButton(
                onClick = { mapView.controller?.zoomIn() },

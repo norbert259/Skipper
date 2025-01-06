@@ -23,11 +23,17 @@
 package com.nksoftware.skipper.core
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.BroadcastReceiver
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.SharedPreferences
 import android.content.res.Configuration
+import android.location.Location
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -37,6 +43,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
+import com.nksoftware.library.locationservice.ACTION_LOCATION_BROADCAST
 import com.nksoftware.library.locationservice.LocationService
 import com.nksoftware.library.utilities.nkCheckAndGetPermission
 import com.nksoftware.library.utilities.nkHandleException
@@ -50,19 +57,32 @@ class MainActivity : ComponentActivity() {
    private lateinit var viewModel: SkipperViewModel
    private lateinit var sharedPreferences: SharedPreferences
 
-   private var mBound: Boolean = false
-   private val connection = object : ServiceConnection {
 
-      override fun onServiceConnected(className: ComponentName, service: IBinder) {
-         mBound = true
-         viewModel.setService(service as LocationService.LocalBinder)
-      }
+   private val broadcastReceiver = object : BroadcastReceiver() {
 
-      override fun onServiceDisconnected(arg0: ComponentName) {
-         mBound = false
+      override fun onReceive(context: Context, intent: Intent) {
+         val loc: Location? = intent.getParcelableExtra("location")
+         val trackUpdate = intent.getBooleanExtra("track", false)
+
+         if (viewModel.gps) viewModel.setLocation(loc, trackUpdate)
       }
    }
 
+
+   private val connection = object : ServiceConnection {
+
+      override fun onServiceConnected(className: ComponentName, service: IBinder) {
+         Log.i(logTag, "$className connected")
+         viewModel.setService(service as LocationService.LocalBinder)
+      }
+
+      override fun onServiceDisconnected(className: ComponentName) {
+         Log.i(logTag, "$className disconnected")
+      }
+   }
+
+
+   @SuppressLint("MissingPermission")
    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
    override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
@@ -75,8 +95,8 @@ class MainActivity : ComponentActivity() {
       nkCheckAndGetPermission(this, Manifest.permission.POST_NOTIFICATIONS)
 
       try {
-         val intent = Intent(this, LocationService::class.java)
-         this.startForegroundService(intent)
+         val intent = Intent(applicationContext, LocationService::class.java)
+         startForegroundService(intent)
       }
 
       catch(e: Exception) {
@@ -85,11 +105,19 @@ class MainActivity : ComponentActivity() {
 
       sharedPreferences = getSharedPreferences(skipperPreferences, MODE_PRIVATE)
 
+      val mgr: LocationManager = getSystemService(LOCATION_SERVICE) as LocationManager
+      val location = mgr.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+
       viewModel = ViewModelProvider(
-         this, SkipperViewModelFactory(this, applicationInfo.dataDir, sharedPreferences)
+         this,
+         SkipperViewModelFactory(this, applicationInfo.dataDir, sharedPreferences, location)
       )[SkipperViewModel::class.java]
 
-      setContent { MainScreen(this, sharedPreferences, viewModel, applicationInfo.dataDir, ::finish) }
+      registerReceiver(broadcastReceiver, IntentFilter(ACTION_LOCATION_BROADCAST), RECEIVER_EXPORTED)
+
+      setContent {
+         MainScreen(applicationContext, sharedPreferences, viewModel, applicationInfo.dataDir, ::finish)
+      }
    }
 
 
@@ -97,7 +125,7 @@ class MainActivity : ComponentActivity() {
       super.onStart()
       Log.i(logTag, "Activity started")
 
-      Intent(this, LocationService::class.java).also { intent ->
+      Intent(applicationContext, LocationService::class.java).also { intent ->
          bindService(intent, connection, BIND_AUTO_CREATE)
       }
    }
@@ -119,13 +147,20 @@ class MainActivity : ComponentActivity() {
 
    override fun onStop() {
       super.onStop()
-      Log.i(logTag, "Activity stop")
 
+      Log.i(logTag, "Activity stop and unbind service")
       unbindService(connection)
-      mBound = false
+   }
+
+
+   override fun onDestroy() {
+      super.onDestroy()
+      Log.i(logTag, "Activity destroy")
 
       if (!viewModel.track.saveTrack)
          stopService(Intent(this, LocationService::class.java))
+
+      unregisterReceiver(broadcastReceiver)
    }
 
 
@@ -133,6 +168,7 @@ class MainActivity : ComponentActivity() {
       super.onConfigurationChanged(newConfig)
       Log.i(logTag, "Configuration changed")
    }
+
 
    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
       super.onRestoreInstanceState(savedInstanceState)

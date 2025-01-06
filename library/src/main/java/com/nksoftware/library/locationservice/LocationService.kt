@@ -51,19 +51,6 @@ class LocationService : Service(), LocationListener {
 
    inner class LocalBinder : Binder() {
 
-      fun updateNotification() {
-         if (!error) {
-            notification.setContentText(
-               "Tracking %s  Alarm %s".format(
-                  if (track.trackingEnabled) "on" else "off",
-                  if (alarm.anchorAlarmSet) "on" else "off"
-               )
-            )
-
-            notificationManager.notify(NOTIFICATION_ID, notification.build())
-         }
-      }
-
       fun setTracking(tr: Boolean) {
          Log.i(SkipperLocTag, "Set tracking: %s".format(if (tr) "on" else "off"))
 
@@ -90,26 +77,18 @@ class LocationService : Service(), LocationListener {
       }
    }
 
-
    private val ctx = this
    private val binder = LocalBinder()
 
    private val track: Track = Track()
    private val alarm: Alarm = Alarm(ctx)
+   private lateinit var mediaPlayer: MediaPlayer
 
-   private var error = false
    private lateinit var notification: NotificationCompat.Builder
    private lateinit var notificationManager: NotificationManager
 
-   private lateinit var mediaPlayer: MediaPlayer
-
-
-   fun errorNotification(msg: String) {
-      error = true
-      notification.setContentText("Error: $msg")
-      notificationManager.notify(NOTIFICATION_ID, notification.build())
-   }
-
+   private var provider = "None"
+   private lateinit var mgr: LocationManager
 
    override fun onCreate() {
       super.onCreate()
@@ -124,7 +103,7 @@ class LocationService : Service(), LocationListener {
       notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
       notificationManager.createNotificationChannel(notificationChannel)
 
-      val pendingIntent = PendingIntent.getActivity(
+      val startIntent = PendingIntent.getActivity(
          this,
          0,
          packageManager.getLaunchIntentForPackage(this.packageName),
@@ -139,9 +118,9 @@ class LocationService : Service(), LocationListener {
       )
 
       notification = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-         .setContentTitle("Skipper Location Update Service")
-         .setContentText("Tracking off  Alarm off")
-         .setContentIntent(pendingIntent)
+         .setContentTitle("Skipper Location Service")
+         .setContentText("Provider:None Tracking:off Alarm:off")
+         .setContentIntent(startIntent)
          .setSmallIcon(R.drawable.anchor_white)
          .addAction(R.drawable.step_icon, "Stop Service", stopIntent)
          .setOngoing(true)
@@ -160,19 +139,21 @@ class LocationService : Service(), LocationListener {
       if (intent.action == ACTION_STOP_UPDATES) {
          Log.i(SkipperLocTag, "Got stop request")
          stopSelf()
+
       } else {
          Log.i(SkipperLocTag, "Start location updates")
 
-         val mgr = getSystemService(LOCATION_SERVICE) as LocationManager
-
-         val provider = "gps"
+         mgr = getSystemService(LOCATION_SERVICE) as LocationManager
          val providers = mgr.getProviders(true)
 
-         if (provider in providers && mgr.isProviderEnabled(provider))
-            mgr.requestLocationUpdates(provider, 3000L, 0f, this)
-         else {
-            errorNotification("GPS unavailable")
+         if (LocationManager.GPS_PROVIDER in providers) {
+            activateProvider(LocationManager.GPS_PROVIDER)
+
+         } else {
             Log.e(SkipperLocTag, "No GPS provider available")
+
+            if (LocationManager.FUSED_PROVIDER in providers)
+               activateProvider(LocationManager.FUSED_PROVIDER)
          }
       }
 
@@ -192,6 +173,8 @@ class LocationService : Service(), LocationListener {
    override fun onDestroy() {
       Log.i(SkipperLocTag, "Shutting down LocationService")
       super.onDestroy()
+
+      mgr.removeUpdates(this)
    }
 
    private fun sendLocation(loc: Location?, trackUpdate: Boolean = false) {
@@ -203,10 +186,39 @@ class LocationService : Service(), LocationListener {
       sendBroadcast(intent)
    }
 
-   override fun onLocationChanged(p0: Location) {
-      alarm.checkForAnchorDrift(p0, mediaPlayer)
+   @SuppressLint("MissingPermission")
+   private fun activateProvider(p: String) {
+      mgr.removeUpdates(this)
+      provider = p
 
-      val update = track.addLocation(p0)
-      sendLocation(p0, update)
+      mgr.requestLocationUpdates(provider, 3000, 0f, this)
+      updateNotification()
+   }
+
+   override fun onLocationChanged(loc: Location) {
+      alarm.checkForAnchorDrift(loc, mediaPlayer)
+
+      val update = track.addLocation(loc)
+      sendLocation(loc, update)
+   }
+
+   override fun onProviderDisabled(provider: String) {
+      Log.i(SkipperLocTag, "Provider $provider disabled")
+
+      if (provider == LocationManager.GPS_PROVIDER)
+         activateProvider(LocationManager.FUSED_PROVIDER)
+   }
+
+   override fun onProviderEnabled(provider: String) {
+      Log.i(SkipperLocTag, "Provider $provider enabled")
+
+      if (provider == LocationManager.GPS_PROVIDER)
+         activateProvider(LocationManager.GPS_PROVIDER)
+   }
+
+   fun updateNotification() {
+      notification.setContentText("Provider:%s Tracking:%s Alarm:%s".format(provider, track.trackingStr, alarm
+         .achorAlarmStr))
+      notificationManager.notify(NOTIFICATION_ID, notification.build())
    }
 }

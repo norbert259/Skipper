@@ -62,14 +62,6 @@ class AnchorAlarm(val ctx: Context, val mapMode: Int) : DataModel(mapMode) {
    }
 
 
-   fun setAnchorPoint(lat: Double, lon: Double) {
-      anchorPoint = Location("").apply {
-         latitude = lat
-         longitude = lon
-      }
-   }
-
-
    fun toggleAlarm() {
       anchorAlarmSet = !anchorAlarmSet
       locService?.setAnchorAlarm(anchorAlarmSet, anchorPoint, anchorageDiameter)
@@ -81,7 +73,7 @@ class AnchorAlarm(val ctx: Context, val mapMode: Int) : DataModel(mapMode) {
          anchorMarker = NkMarker(
             mapView,
             dragFunc = { lat, lon ->
-               setAnchorPoint(lat, lon)
+               anchorPoint = ExtendedLocation(lat, lon)
                anchorCircle!!.setCircle(anchorGp, anchorageDiameter.toDouble())
             }
          )

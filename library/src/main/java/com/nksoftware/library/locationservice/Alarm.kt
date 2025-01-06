@@ -30,6 +30,9 @@ class Alarm(
    ctx: Context
 ) {
    var anchorAlarmSet = false
+   val achorAlarmStr: String
+      get() = if (anchorAlarmSet) "on" else "off"
+
    private var anchorageDiameter = 100.0f
    private var anchorPoint: Location? = null
 

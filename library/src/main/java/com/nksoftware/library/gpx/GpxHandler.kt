@@ -37,7 +37,9 @@ class GpxHandler(val pts: MutableList<ExtendedLocation>) : DefaultHandler() {
 
    private var loc: Location = Location("")
 
+
    // Start element function
+
    @Throws(SAXException::class)
    override fun startElement(
       uri: String,
@@ -53,18 +55,15 @@ class GpxHandler(val pts: MutableList<ExtendedLocation>) : DefaultHandler() {
          pts.clear()
       }
 
-      if (gpx && localName.equals("metadata", ignoreCase = true)) metadata = true
+      if (gpx && localName.equals("metadata", ignoreCase = true))
+         metadata = true
 
-      if (gpx && (localName.equals("wpt", ignoreCase = true) || localName.equals("trkpt", ignoreCase = true))) {
-         loc = Location("")
-
-         loc.latitude = attributes.getValue("lat").toDouble()
-         loc.longitude = attributes.getValue("lon").toDouble()
-      }
-
+      if (gpx && (localName.equals("wpt", ignoreCase = true) || localName.equals("trkpt", ignoreCase = true)))
+         loc = ExtendedLocation(attributes.getValue("lat").toDouble(), attributes.getValue("lon").toDouble())
    }
 
    // End element function
+
    @Throws(SAXException::class)
    override fun endElement(
       uri: String,
@@ -79,25 +78,22 @@ class GpxHandler(val pts: MutableList<ExtendedLocation>) : DefaultHandler() {
       if (localName.equals("metadata", ignoreCase = true))
          metadata = false
 
-      if (localName.equals("ele", ignoreCase = true)) {
+      if (localName.equals("ele", ignoreCase = true))
          loc.altitude = currentValue.toDouble()
-      }
 
-      if (gpx && (localName.equals("wpt", ignoreCase = true) || localName.equals("trkpt", ignoreCase = true))) {
+      if (gpx && (localName.equals("wpt", ignoreCase = true) || localName.equals("trkpt", ignoreCase = true)))
          pts.add(ExtendedLocation(loc))
-      }
    }
 
    // characters function
+
    @Throws(SAXException::class)
    override fun characters(
       ch: CharArray,
       start: Int,
       length: Int
    ) {
-      if (currentElement) {
+      if (currentElement)
          currentValue += String(ch, start, length)
-      }
    }
-
 }

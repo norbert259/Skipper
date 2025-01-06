@@ -77,6 +77,7 @@ import com.nksoftware.library.composables.NkRowNValues
 import com.nksoftware.library.composables.NkTabRowText
 import com.nksoftware.library.composables.NkText
 import com.nksoftware.library.grib.GribDashboard
+import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.location.ExtendedLocationOptions
 import com.nksoftware.library.map.OsmMap
 import com.nksoftware.library.map.OsmMapOptions
@@ -112,7 +113,7 @@ fun MainScreen(
    val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
    val mapView by remember { mutableStateOf(OsmMap(ctx, sharedPreferences, dir,
-      { lat, lon -> vm.setLocationManually(lat, lon) })) }
+      { lat, lon -> vm.setLocation(loc = ExtendedLocation(lat, lon), trackUpdate = false) })) }
 
 
    fun mySnackBar(message: String) {
@@ -254,6 +255,9 @@ fun MainScreen(
                snackbarHost = { SnackbarHost(snackbarHostState) },
 
                sheetContent = {
+
+                  vm.message = ::mySnackBar
+
                   Column(
                      modifier = Modifier.fillMaxWidth()
                   ) {

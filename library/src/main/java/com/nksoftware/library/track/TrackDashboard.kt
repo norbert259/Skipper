@@ -73,8 +73,8 @@ fun TrackDashboard(
    ) {
       NkCardWithHeadline(
          headline = stringResource(R.string.track),
-         headline2 = stringResource(R.string.start, track.startTrackTime) + "    " +
-                     stringResource(R.string.end, track.endTrackTime),
+         headline2 = stringResource(R.string.start) + ": " + track.startTrackTime + "    " +
+                     stringResource(R.string.end) + ": " + track.endTrackTime,
          icon = Icons.Outlined.Timeline
       ) {
          NkRowNValues(

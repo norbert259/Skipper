@@ -63,14 +63,8 @@ data class DwdMosmixStation(
    val lon: Double = 0.0,
    val elevation: Int = 0
 ) {
-
-   val loc: Location = Location("")
+   val loc: Location = ExtendedLocation(lat, lon)
    val gp: GeoPoint = GeoPoint(lat, lon)
-
-   init {
-      loc.latitude = lat
-      loc.longitude = lon
-   }
 }
 
 
@@ -267,17 +261,12 @@ class Weather(
                val marker = NkMarker(
                   mapview = mapView,
                   clickFunc = { lat: Double, lon: Double ->
-                     val loc = Location("")
-
-                     loc.latitude = lat
-                     loc.longitude = lon
-
-                     downloadNearestStation(loc, snackbar)
+                     downloadNearestStation(ExtendedLocation(lat, lon), snackbar)
                      outerBoundingBox = null
                   }
                ).apply {
                   icon = if (entry.key == stations.selectedStationIndex) selectedStationIcon else stationIcon
-                  position = GeoPoint(entry.value.lat.toDouble(), entry.value.lon.toDouble())
+                  position = entry.value.gp
                   title = ctx.getString(R.string.station_elevation, entry.value.name, entry.value.elevation)
                }
 

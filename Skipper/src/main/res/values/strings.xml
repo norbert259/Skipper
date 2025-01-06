@@ -45,5 +45,5 @@
     <string name="measure">Measure</string>
     <string name="exception_setting_location_marker_in_map">Error: setting location marker in map</string>
     <string name="exception_failure_in_osmdroid_update_routine">Error: Exception in OsmMap update routine</string>
-    <string name="zoom_level" translatable="false">Zoom Level</string>
+    <string name="zoom_level" translatable="false">Zoom Level: %.0f</string>
 </resources>

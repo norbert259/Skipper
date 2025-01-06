@@ -21,10 +21,7 @@
 
 package com.nksoftware.skipper.core
 
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.location.Location
 import android.util.Log
@@ -38,16 +35,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.room.Room
 import com.nksoftware.library.anchor.AnchorAlarm
 import com.nksoftware.library.astronavigation.AstroNavigation
-import com.nksoftware.library.moon.Moon
-import com.nksoftware.library.sun.Sun
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.grib.GribFile
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.location.TrackDatabase
-import com.nksoftware.library.locationservice.ACTION_LOCATION_BROADCAST
 import com.nksoftware.library.locationservice.LocationService
+import com.nksoftware.library.moon.Moon
 import com.nksoftware.library.route.Route
 import com.nksoftware.library.saildocs.SailDocs
+import com.nksoftware.library.sun.Sun
 import com.nksoftware.library.track.Track
 import com.nksoftware.library.weather.Weather
 import com.nksoftware.skipper.coreui.ScreenMode
@@ -61,11 +57,12 @@ const val activeRouteKey = "activeRoute"
 class SkipperViewModelFactory(
    private val appContext: Context,
    private val dir: String,
-   private val sharedPreferences: SharedPreferences
+   private val sharedPreferences: SharedPreferences,
+   private val location: Location?
 ) : ViewModelProvider.NewInstanceFactory() {
 
    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-      return SkipperViewModel(appContext, dir, sharedPreferences) as T
+      return SkipperViewModel(appContext, dir, sharedPreferences, location) as T
    }
 }
 
@@ -73,23 +70,13 @@ class SkipperViewModelFactory(
 class SkipperViewModel(
    private val appContext: Context,
    dir: String,
-   private val sharedPreferences: SharedPreferences
+   private val sharedPreferences: SharedPreferences,
+   loc: Location?
 ) : ViewModel() {
 
-   inner class MyBroadcastReceiver : BroadcastReceiver() {
-
-      override fun onReceive(context: Context, intent: Intent) {
-         val loc: Location? = intent.getParcelableExtra("location")
-         val trackUpdate = intent.getBooleanExtra("track", false)
-
-         if (gps) setLocation(loc, trackUpdate)
-      }
-   }
-
    private var locService: LocationService.LocalBinder? = null
-   private val broadcastReceiver = MyBroadcastReceiver()
-
    var location by mutableStateOf(ExtendedLocation(Location("")))
+
    var gps by mutableStateOf(true)
    var gpsUpdateCounter by mutableIntStateOf(0)
 
@@ -105,18 +92,18 @@ class SkipperViewModel(
    val sun = Sun()
    val astroNav = AstroNavigation(appContext, sun, ScreenMode.AstroNavigation.ordinal)
 
+   var message: (String) -> Unit = {  }
+
 
    init {
-      appContext.registerReceiver(
-         broadcastReceiver,
-         IntentFilter(ACTION_LOCATION_BROADCAST), Context.RECEIVER_EXPORTED
-      )
-
       Log.i(logTag, "ViewModel - loading shared preferences")
       loadSharedPreferences(preferences = sharedPreferences)
 
       Log.i(logTag, "ViewModel - loading database")
       loadDb()
+
+      if (loc != null)
+         location = ExtendedLocation(loc)
    }
 
 
@@ -188,7 +175,7 @@ class SkipperViewModel(
    }
 
 
-   private fun setLocation(loc: Location?, trackUpdate: Boolean = false) {
+   fun setLocation(loc: Location?, trackUpdate: Boolean = false) {
       if (loc != null) {
          val newLoc = ExtendedLocation(loc)
          newLoc.restoreValues(location)
@@ -199,14 +186,5 @@ class SkipperViewModel(
 
       if (trackUpdate)
          track.updateTrack()
-   }
-
-
-   fun setLocationManually(lat: Double, lon: Double) {
-      val loc = Location(null)
-      loc.latitude = lat
-      loc.longitude = lon
-
-      location = ExtendedLocation(loc)
    }
 }

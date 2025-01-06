@@ -28,6 +28,9 @@ import kotlin.math.abs
 class Track {
 
    var trackingEnabled = false
+   val trackingStr: String
+      get() = if (trackingEnabled) "on" else "off"
+
    private val track = mutableListOf<Location>()
 
    fun setTracking(tr: Boolean) { trackingEnabled = tr }

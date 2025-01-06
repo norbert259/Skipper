@@ -24,6 +24,7 @@ package com.nksoftware.library.location
 import android.content.SharedPreferences
 import android.hardware.GeomagneticField
 import android.location.Location
+import android.location.LocationManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -80,6 +81,7 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
          magneticHeading = preferences.getBoolean(magneticHeadingKey, false)
       }
 
+
       fun storeSharedPreferences(edit: SharedPreferences.Editor) {
          edit.putInt(selectedTimeZone, timezone.index)
          edit.putInt(selectedDimensionKey, dimensions.index)
@@ -99,6 +101,7 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
          return if (time != null) dateFormatter.format(time) else ""
       }
 
+
       fun getTimeStr(d: ZonedDateTime?, pattern: String = "HH:mm:ss z"): String {
          val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
 
@@ -107,6 +110,7 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
             else -> d?.withZoneSameInstant(ZoneId.systemDefault())?.format(formatter) ?: ""
          }
       }
+
 
       fun getIsoTimeStr(time: Long): String {
          val formatter = DateTimeFormatter.ISO_INSTANT
@@ -154,17 +158,21 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
          }
       }
 
+
       fun applyDistance(distance: Float?): Float? {
          return if (dimensions.index == 0) distance?.div(1000f) else distance?.div(1852f)
       }
+
 
       fun applySpeed(speed: Float): Float {
          return if (dimensions.index == 0) speed * 3.6f else speed * 3.6f / 1.852f
       }
 
+
       fun northBasedToDegree(course: Float): Float {
          return if (course < 0f) 360f + course else course
       }
+
 
       fun applyCourse(course: Float): Float {
          var c = if (magneticHeading) (course - declination) else course
@@ -174,6 +182,11 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
 
          return c
       }
+   }
+
+   constructor(lat: Double, lon: Double): this(Location(LocationManager.GPS_PROVIDER)) {
+      latitude = lat
+      longitude = lon
    }
 
    val timeStr: String
@@ -190,8 +203,13 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
    val appliedSpeed: Float
       get() = applySpeed(speed)
 
+   val description: String
+      get() = "Lat: %s\nLon: %s\nSpeed: %.2f %s\nHeading: %.0f °\nAccuracy: %.0f m\nProvider: %s"
+         .format(latStr, lonStr, appliedSpeed, speedDimension, getHeading(),
+            if (hasAccuracy()) accuracy else Float.NaN, provider)
 
-  fun restoreValues(prevLoc: Location) {
+
+   fun restoreValues(prevLoc: Location) {
       if (!hasSpeed() && prevLoc.hasSpeed()) speed = prevLoc.speed
       if (!hasBearing() && prevLoc.hasBearing()) bearing = prevLoc.bearing
       if (!hasAltitude() && prevLoc.hasAltitude()) altitude = prevLoc.altitude
@@ -221,14 +239,11 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
       return diff
    }
 
-   fun description(): String {
-      return "Lat: %s\nLon: %s\nSpeed: %.2f %s\nHeading: %.0f °"
-         .format(latStr, lonStr, appliedSpeed, speedDimension, getHeading())
-   }
 
    fun getAppliedDistance(location: Location): Float {
       return applyDistance(distanceTo(location))!!
    }
+
 
    fun getVelocityMadeGood(loc: Location): Float {
       return speed * cos(Math.toRadians(bearingTo(loc).toDouble() - bearing)).toFloat()
@@ -275,13 +290,4 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
 
       return eta
    }
-
-//   fun getTrackPoint(name: String): TrackPoint {
-//      return TrackPoint(
-//         name = name,
-//         time = time,
-//         locLat = latitude.toFloat(),
-//         locLon = longitude.toFloat()
-//      )
-//   }
 }
