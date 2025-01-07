@@ -148,10 +148,7 @@ fun OsmMapScreen(
                   mapRotation = !mapRotation
                },
             ) {
-               if (mapRotation)
-                  NkIcon(icon = Outlined.Refresh)
-               else
-                  NkIcon(icon = Outlined.North)
+               NkIcon(icon = if (mapRotation) Outlined.Refresh else Outlined.North)
             }
          }
 
