@@ -94,15 +94,6 @@ class MainActivity : ComponentActivity() {
       nkCheckAndGetPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
       nkCheckAndGetPermission(this, Manifest.permission.POST_NOTIFICATIONS)
 
-      try {
-         val intent = Intent(applicationContext, LocationService::class.java)
-         startForegroundService(intent)
-      }
-
-      catch(e: Exception) {
-         nkHandleException(logTag, "Exception: cannot start LocationService", e)
-      }
-
       sharedPreferences = getSharedPreferences(skipperPreferences, MODE_PRIVATE)
 
       val mgr: LocationManager = getSystemService(LOCATION_SERVICE) as LocationManager
@@ -112,6 +103,17 @@ class MainActivity : ComponentActivity() {
          this,
          SkipperViewModelFactory(this, applicationInfo.dataDir, sharedPreferences, location)
       )[SkipperViewModel::class.java]
+
+      try {
+         val intent = Intent(applicationContext, LocationService::class.java)
+         intent.putExtra("gpsProvider", viewModel.gpsProvider.value)
+
+         startForegroundService(intent)
+      }
+
+      catch(e: Exception) {
+         nkHandleException(logTag, "Exception: cannot start LocationService", e)
+      }
 
       registerReceiver(broadcastReceiver, IntentFilter(ACTION_LOCATION_BROADCAST), RECEIVER_EXPORTED)
 

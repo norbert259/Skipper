@@ -88,6 +88,7 @@ import com.nksoftware.library.weather.WeatherDashboard
 import com.nksoftware.library.weather.WeatherOption
 import com.nksoftware.skipper.R
 import com.nksoftware.skipper.core.SkipperViewModel
+import com.nksoftware.skipper.core.SkipperViewModelOptions
 import com.nksoftware.skipper.map.OsmMapScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -182,6 +183,7 @@ fun MainScreen(
                                  .verticalScroll(rememberScrollState())
                            ) {
                               ExtendedLocationOptions()
+                              SkipperViewModelOptions(vm)
                               RouteOptions(vm.route)
                               OsmMapOptions(mapView, ::mySnackBar)
                               WeatherOption()

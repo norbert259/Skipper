@@ -142,19 +142,16 @@ class LocationService : Service(), LocationListener {
 
       } else {
          Log.i(SkipperLocTag, "Start location updates")
+         val gpsProvider = intent.getStringExtra("gpsProvider") ?: LocationManager.FUSED_PROVIDER
 
          mgr = getSystemService(LOCATION_SERVICE) as LocationManager
          val providers = mgr.getProviders(true)
 
-         if (LocationManager.GPS_PROVIDER in providers) {
-            activateProvider(LocationManager.GPS_PROVIDER)
+         if (gpsProvider in providers)
+            activateProvider(gpsProvider)
 
-         } else {
+         if (LocationManager.GPS_PROVIDER !in providers)
             Log.e(SkipperLocTag, "No GPS provider available")
-
-            if (LocationManager.FUSED_PROVIDER in providers)
-               activateProvider(LocationManager.FUSED_PROVIDER)
-         }
       }
 
       return START_STICKY

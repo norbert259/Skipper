@@ -38,4 +38,5 @@
     <string name="measure">Messung</string>
     <string name="exception_setting_location_marker_in_map">Fehler: beim Setzen des Location Markers</string>
     <string name="exception_failure_in_osmdroid_update_routine">Fehler: in der OsmMap update funktion</string>
+    <string name="gpsprovider">GPS Quelle</string>
 </resources>

@@ -24,6 +24,7 @@ package com.nksoftware.skipper.core
 import android.content.Context
 import android.content.SharedPreferences
 import android.location.Location
+import android.location.LocationManager
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,6 +36,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.room.Room
 import com.nksoftware.library.anchor.AnchorAlarm
 import com.nksoftware.library.astronavigation.AstroNavigation
+import com.nksoftware.library.composables.SingleSelectList
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.grib.GribFile
 import com.nksoftware.library.location.ExtendedLocation
@@ -51,6 +53,7 @@ import com.nksoftware.skipper.coreui.ScreenMode
 
 const val skipperPreferences = "SkipperPref"
 const val activeRouteKey = "activeRoute"
+const val gpsProviderKey = "gpsProvider"
 
 
 @Suppress("UNCHECKED_CAST")
@@ -75,7 +78,9 @@ class SkipperViewModel(
 ) : ViewModel() {
 
    private var locService: LocationService.LocalBinder? = null
+
    var location by mutableStateOf(ExtendedLocation(Location("")))
+   val gpsProvider = SingleSelectList(listOf(LocationManager.FUSED_PROVIDER, LocationManager.GPS_PROVIDER), 0)
 
    var gps by mutableStateOf(true)
    var gpsUpdateCounter by mutableIntStateOf(0)
@@ -134,11 +139,15 @@ class SkipperViewModel(
 
    private fun loadSharedPreferences(preferences: SharedPreferences) {
       ExtendedLocation.loadSharedPreferences(preferences)
+      gpsProvider.index = preferences.getInt(gpsProviderKey, 0)
+
       DataModel.loadPreferences(preferences)
    }
 
    private fun storeSharedPreferences(edit: SharedPreferences.Editor) {
       ExtendedLocation.storeSharedPreferences(edit)
+      edit.putInt(gpsProviderKey, gpsProvider.index)
+
       DataModel.storePreferences(edit)
    }
 
