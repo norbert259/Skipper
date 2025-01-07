@@ -165,7 +165,7 @@ class OsmMap(
    }
 
 
-   fun update(gps: Boolean, location: ExtendedLocation, snackBar: (String) -> Unit) {
+   fun update(gps: Boolean, location: ExtendedLocation, centerMap: Boolean, snackBar: (String) -> Unit) {
       try {
          setScaleBarDimension(ExtendedLocation.dimensions.index)
          setOpenseaMapOverlay(openSeaMap)
@@ -177,8 +177,8 @@ class OsmMap(
 
          val locGP = location.locGp
 
-         if (gps) {
-            setCenter(locGP)
+         if (centerMap) {
+            controller.setCenter(locGP)
          }
 
          setLocationMarker(

@@ -34,8 +34,10 @@ import androidx.compose.material.icons.filled.GridOff
 import androidx.compose.material.icons.filled.GridOn
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.CenterFocusStrong
+import androidx.compose.material.icons.outlined.Fullscreen
 import androidx.compose.material.icons.outlined.GpsFixed
 import androidx.compose.material.icons.outlined.GpsOff
+import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.North
 import androidx.compose.material.icons.outlined.Refresh
 import androidx.compose.material.icons.outlined.ZoomIn
@@ -78,6 +80,7 @@ fun OsmMapScreen(
 ) {
 
    var mapRotation by rememberSaveable { mutableStateOf(false) }
+   var centerMap by rememberSaveable { mutableStateOf(true) }
 
    Column {
       Box(modifier = Modifier.weight(2f)) {
@@ -86,7 +89,7 @@ fun OsmMapScreen(
             factory = { context -> mapView },
             update = { view: OsmMap ->
                try {
-                  view.update(vm.gps, vm.location, snackBar)
+                  view.update(vm.gps, vm.location, centerMap, snackBar)
                   DataModel.updateMap(view, mode.ordinal, vm.location, snackBar)
                }
 
@@ -126,7 +129,12 @@ fun OsmMapScreen(
             )
             NkFloatingActionButton(
                onClick = { mapView.controller?.setCenter(vm.location.locGp) },
-               icon = Outlined.CenterFocusStrong,
+               icon = Outlined.LocationOn,
+               contentDescription = "Set Map Center"
+            )
+            NkFloatingActionButton(
+               onClick = { centerMap = !centerMap },
+               icon = if (centerMap) Outlined.CenterFocusStrong else Outlined.Fullscreen,
                contentDescription = "Set Map Center"
             )
             NkFloatingActionButton(
