@@ -35,7 +35,7 @@ fun SkipperViewModelOptions(vm: SkipperViewModel) {
       headline = stringResource(com.nksoftware.skipper.R.string.gpsprovider),
       icon = Outlined.Settings
    ) {
-      NkSingleSelect(item = vm.gpsProvider)
+      NkSingleSelect(item = vm.gpsLocation.gpsProvider)
    }
 }
 

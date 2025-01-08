@@ -33,7 +33,6 @@ import android.content.ServiceConnection
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.location.Location
-import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -49,7 +48,9 @@ import com.nksoftware.library.utilities.nkCheckAndGetPermission
 import com.nksoftware.library.utilities.nkHandleException
 import com.nksoftware.skipper.coreui.MainScreen
 
+
 const val logTag = "Skipper"
+const val skipperPreferences = "SkipperPref"
 
 
 class MainActivity : ComponentActivity() {
@@ -64,7 +65,7 @@ class MainActivity : ComponentActivity() {
          val loc: Location? = intent.getParcelableExtra("location")
          val trackUpdate = intent.getBooleanExtra("track", false)
 
-         if (viewModel.gps) viewModel.setLocation(loc, trackUpdate)
+         if (viewModel.gpsLocation.gps) viewModel.setLocation(loc, trackUpdate)
       }
    }
 
@@ -96,17 +97,14 @@ class MainActivity : ComponentActivity() {
 
       sharedPreferences = getSharedPreferences(skipperPreferences, MODE_PRIVATE)
 
-      val mgr: LocationManager = getSystemService(LOCATION_SERVICE) as LocationManager
-      val location = mgr.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-
       viewModel = ViewModelProvider(
          this,
-         SkipperViewModelFactory(this, applicationInfo.dataDir, sharedPreferences, location)
+         SkipperViewModelFactory(this, applicationInfo.dataDir, sharedPreferences)
       )[SkipperViewModel::class.java]
 
       try {
          val intent = Intent(applicationContext, LocationService::class.java)
-         intent.putExtra("gpsProvider", viewModel.gpsProvider.value)
+         intent.putExtra("gpsProvider", viewModel.gpsLocation.gpsProvider.value)
 
          startForegroundService(intent)
       }

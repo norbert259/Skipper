@@ -64,14 +64,14 @@ fun NavigationDashboard(
 
       when (state) {
          0 -> {
-            if (vm.route.active) WaypointDashboard(vm.location, vm.route)
-            ExtendedLocationDashboard(vm.location)
+            if (vm.route.active) WaypointDashboard(vm.gpsLocation.location, vm.route)
+            ExtendedLocationDashboard(vm.gpsLocation.location)
          }
          1 -> {
-            CompassDashboard(vm.location, vm.route)
+            CompassDashboard(vm.gpsLocation.location, vm.route)
          }
          2 -> { TrackDashboard(track = vm.track) }
-         3 -> { RouteDashboard(route = vm.route, location = vm.location) }
+         3 -> { RouteDashboard(route = vm.route, location = vm.gpsLocation.location) }
       }
    }
 }

@@ -89,8 +89,8 @@ fun OsmMapScreen(
             factory = { context -> mapView },
             update = { view: OsmMap ->
                try {
-                  view.update(vm.gps, vm.location, centerMap, snackBar)
-                  DataModel.updateMap(view, mode.ordinal, vm.location, snackBar)
+                  view.update(vm.gpsLocation.gps, vm.gpsLocation.location, centerMap, snackBar)
+                  DataModel.updateMap(view, mode.ordinal, vm.gpsLocation.location, snackBar)
                }
 
                catch (e: Exception) {
@@ -118,9 +118,15 @@ fun OsmMapScreen(
                .padding(start = 10.dp)
                .offset(y = 80.dp)
          ) {
-            NkFloatingActionButton(onClick = { vm.gps = !vm.gps }) {
-               Icon(if (vm.gps) Outlined.GpsFixed else Outlined.GpsOff, contentDescription = "De-/Activate GPS")
-               CircularProgressIndicator(progress = { (vm.gpsUpdateCounter % 10) / 10f }, gapSize = 5.dp)
+            NkFloatingActionButton(onClick = { vm.gpsLocation.gps = !vm.gpsLocation.gps }) {
+               Icon(
+                  imageVector = if (vm.gpsLocation.gps) Outlined.GpsFixed else Outlined.GpsOff,
+                  contentDescription = "De-/Activate GPS"
+               )
+               CircularProgressIndicator(
+                  progress = { (vm.gpsLocation.updateCounter % 10) / 10f },
+                  gapSize = 5.dp
+               )
             }
             NkFloatingActionButton(
                onClick = { mapView.controller?.zoomIn() },
@@ -128,7 +134,7 @@ fun OsmMapScreen(
                contentDescription = "Zoomin"
             )
             NkFloatingActionButton(
-               onClick = { mapView.controller?.setCenter(vm.location.locGp) },
+               onClick = { mapView.controller?.setCenter(vm.gpsLocation.location.locGp) },
                icon = Outlined.LocationOn,
                contentDescription = "Set Map Center"
             )
@@ -159,10 +165,10 @@ fun OsmMapScreen(
          ) {
             when (mode) {
                ScreenMode.Navigation      -> { TrackCommands(vm.track, snackBar) }
-               ScreenMode.Anchor          -> { AnchorAlarmCommands(vm.anchorAlarm, vm.location) }
-               ScreenMode.Weather         -> { WeatherCommands(vm.weather, vm.location, snackBar) }
-               ScreenMode.Grib            -> { GribCommands(vm.gribFile, vm.sailDocs, mapView, vm.location, snackBar) }
-               ScreenMode.AstroNavigation -> { AstroNavigationCommands(vm.astroNav, vm.location) }
+               ScreenMode.Anchor          -> { AnchorAlarmCommands(vm.anchorAlarm, vm.gpsLocation.location) }
+               ScreenMode.Weather         -> { WeatherCommands(vm.weather, vm.gpsLocation.location, snackBar) }
+               ScreenMode.Grib            -> { GribCommands(vm.gribFile, vm.sailDocs, mapView, vm.gpsLocation.location, snackBar) }
+               ScreenMode.AstroNavigation -> { AstroNavigationCommands(vm.astroNav, vm.gpsLocation.location) }
             }
          }
 

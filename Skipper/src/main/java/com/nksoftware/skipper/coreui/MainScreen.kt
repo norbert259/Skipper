@@ -266,10 +266,10 @@ fun MainScreen(
                      when (mode) {
                         ScreenMode.Navigation      -> NavigationDashboard(vm, ::mySnackBar)
                         ScreenMode.Anchor          -> AnchorDashboard(vm.anchorAlarm, ::mySnackBar)
-                        ScreenMode.Weather         -> WeatherDashboard(vm.weather, vm.location)
+                        ScreenMode.Weather         -> WeatherDashboard(vm.weather, vm.gpsLocation.location)
                         ScreenMode.Grib            -> GribDashboard(vm.gribFile, ::mySnackBar)
                         ScreenMode.AstroNavigation -> AstronavigationDashboard(vm.astroNav, vm.sun, vm.moon,
-                           vm.location, ::mySnackBar)
+                           vm.gpsLocation.location, ::mySnackBar)
                      }
                   }
                },

@@ -24,22 +24,17 @@ package com.nksoftware.skipper.core
 import android.content.Context
 import android.content.SharedPreferences
 import android.location.Location
-import android.location.LocationManager
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.room.Room
 import com.nksoftware.library.anchor.AnchorAlarm
 import com.nksoftware.library.astronavigation.AstroNavigation
-import com.nksoftware.library.composables.SingleSelectList
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.grib.GribFile
 import com.nksoftware.library.location.ExtendedLocation
+import com.nksoftware.library.location.GpsLocation
 import com.nksoftware.library.location.TrackDatabase
 import com.nksoftware.library.locationservice.LocationService
 import com.nksoftware.library.moon.Moon
@@ -51,21 +46,18 @@ import com.nksoftware.library.weather.Weather
 import com.nksoftware.skipper.coreui.ScreenMode
 
 
-const val skipperPreferences = "SkipperPref"
 const val activeRouteKey = "activeRoute"
-const val gpsProviderKey = "gpsProvider"
 
 
 @Suppress("UNCHECKED_CAST")
 class SkipperViewModelFactory(
    private val appContext: Context,
    private val dir: String,
-   private val sharedPreferences: SharedPreferences,
-   private val location: Location?
+   private val sharedPreferences: SharedPreferences
 ) : ViewModelProvider.NewInstanceFactory() {
 
    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-      return SkipperViewModel(appContext, dir, sharedPreferences, location) as T
+      return SkipperViewModel(appContext, dir, sharedPreferences) as T
    }
 }
 
@@ -73,17 +65,11 @@ class SkipperViewModelFactory(
 class SkipperViewModel(
    private val appContext: Context,
    dir: String,
-   private val sharedPreferences: SharedPreferences,
-   loc: Location?
+   private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
    private var locService: LocationService.LocalBinder? = null
-
-   var location by mutableStateOf(ExtendedLocation(Location("")))
-   val gpsProvider = SingleSelectList(listOf(LocationManager.FUSED_PROVIDER, LocationManager.GPS_PROVIDER), 0)
-
-   var gps by mutableStateOf(true)
-   var gpsUpdateCounter by mutableIntStateOf(0)
+   val gpsLocation = GpsLocation(appContext, 0)
 
    val track = Track(ScreenMode.Navigation.ordinal)
    val route = Route(appContext, ScreenMode.Navigation.ordinal)
@@ -106,9 +92,38 @@ class SkipperViewModel(
 
       Log.i(logTag, "ViewModel - loading database")
       loadDb()
+   }
 
-      if (loc != null)
-         location = ExtendedLocation(loc)
+
+   fun setService(binder: LocationService.LocalBinder) {
+      locService = binder
+
+      track.setService(binder)
+      anchorAlarm.setService(binder)
+   }
+
+
+   fun setLocation(loc: Location?, trackUpdate: Boolean = false) {
+      gpsLocation.update(loc)
+
+      if (trackUpdate)
+         track.updateTrack()
+   }
+
+
+   private fun loadSharedPreferences(preferences: SharedPreferences) {
+      ExtendedLocation.loadSharedPreferences(preferences)
+      gpsLocation.loadSharedPreferences(preferences)
+
+      DataModel.loadPreferences(preferences)
+   }
+
+
+   private fun storeSharedPreferences(edit: SharedPreferences.Editor) {
+      ExtendedLocation.storeSharedPreferences(edit)
+      gpsLocation.storeSharedPreferences(edit)
+
+      DataModel.storePreferences(edit)
    }
 
 
@@ -126,29 +141,6 @@ class SkipperViewModel(
 
       Log.i(logTag, "ViewModel - storing database")
       storeDb()
-   }
-
-
-   fun setService(binder: LocationService.LocalBinder) {
-      locService = binder
-
-      track.setService(binder)
-      anchorAlarm.setService(binder)
-   }
-
-
-   private fun loadSharedPreferences(preferences: SharedPreferences) {
-      ExtendedLocation.loadSharedPreferences(preferences)
-      gpsProvider.index = preferences.getInt(gpsProviderKey, 0)
-
-      DataModel.loadPreferences(preferences)
-   }
-
-   private fun storeSharedPreferences(edit: SharedPreferences.Editor) {
-      ExtendedLocation.storeSharedPreferences(edit)
-      edit.putInt(gpsProviderKey, gpsProvider.index)
-
-      DataModel.storePreferences(edit)
    }
 
 
@@ -181,19 +173,5 @@ class SkipperViewModel(
       Log.i(logTag, "Number of route points saved: ${rtPts.size}")
 
       trackDb.close()
-   }
-
-
-   fun setLocation(loc: Location?, trackUpdate: Boolean = false) {
-      if (loc != null) {
-         val newLoc = ExtendedLocation(loc)
-         newLoc.restoreValues(location)
-
-         location = newLoc
-         gpsUpdateCounter++
-      }
-
-      if (trackUpdate)
-         track.updateTrack()
    }
 }
