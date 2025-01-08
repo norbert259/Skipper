@@ -15,4 +15,7 @@ includes the following features:
 
 ## Screen shots
 
-![](./screenshots/main.png) ![](./screenshots/topo.png) ![](./screenshots/weather.png) 
+<img src="./screenshots/main.png" alt="drawing" width="200"/>
+<img src="./screenshots/topt.png" alt="drawing" width="200"/>
+<img src="./screenshots/weather.png" alt="drawing" width="200"/>
+
