@@ -15,4 +15,4 @@ includes the following features:
 
 ## Screen shots
 
-![](./screenshots/main.png) ![](./screenshots/topo.png) 
+![](./screenshots/main.png) ![](./screenshots/topo.png) ![](./screenshots/weather.png) 
