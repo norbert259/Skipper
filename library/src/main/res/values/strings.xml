@@ -96,7 +96,7 @@
     <string name="error_cannot_load_grib_file">Error: Grib file cannot be loaded</string>
     <string name="grib_file">Grib file</string>
     <string name="anchor_alarm">Anchor Alarm</string>
-    <string name="diameter_of_anchorage">Diameter of anchorage: % m</string>
+    <string name="diameter_of_anchorage">Diameter of anchorage: %.0f m</string>
     <string name="sun_positions">Sun positions</string>
     <string name="altitude_s">Altitude: %s</string>
     <string name="azimuth" translatable="false">Azimuth: %s°</string>
