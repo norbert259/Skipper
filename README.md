@@ -1,4 +1,4 @@
-![](Skipper.jpg =400x400)
+![](Skipper.jpg)
 
 # The Skipper development project
 
