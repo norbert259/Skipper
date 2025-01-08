@@ -15,5 +15,5 @@ includes the following features:
 
 ## Screen shots
 
-![](./screenshots/main.png | width = 300) 
-![](./screenshots/topo.png | width = 300) 
+![](./screenshots/main.png) 
+![](./screenshots/topo.png) 
