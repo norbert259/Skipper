@@ -17,6 +17,6 @@ includes the following features:
 
 <img src="./screenshots/main.png" alt="" width="300"/> <img src="./screenshots/topo.png" alt="" width="300"/> <img src="./screenshots/weather.png" alt="" width="300"/>
 
-## Screen shots (Anchor Alarm, GFS Grib File,)
+## Screen shots (Anchor Alarm, GFS Grib File)
 
 <img src="./screenshots/anchor.png" alt="" width="300"/> <img src="./screenshots/grib.jpg" alt="" width="300"/> 
