@@ -13,6 +13,7 @@ includes the following features:
 - It also can load GRIB files (V1/V2 version) from Saildocs service
 - It also has a celestial navigation support
 
-## Screen shots
+## Screen shots (OpenSea Map, Topo Map, Weather Info)
 
-![](./screenshots/main.png) ![](./screenshots/topo.png) 
+<img src="./screenshots/main.png" alt="drawing" width="300"/> <img src="./screenshots/topo.png" alt="drawing" width="300"/> <img src="./screenshots/weather.png" alt="drawing" width="300"/>
+
