@@ -92,7 +92,7 @@
     <string name="error_cannot_load_grib_file">Fehler: Grid Datei kann nichtg geladen werden</string>
     <string name="grib_file">Grib Datei</string>
     <string name="anchor_alarm">Ankeralarm</string>
-    <string name="diameter_of_anchorage">Durchmesser Ankerplatz</string>
+    <string name="diameter_of_anchorage">Durchmesser Ankerplatz: %.0f m</string>
     <string name="sun_positions">Sonnenstand</string>
     <string name="altitude_s">Höhe: %s</string>
     <string name="moon_positions">Stand des Mondes</string>
