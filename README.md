@@ -12,3 +12,7 @@ includes the following features:
 - SKipper retrieves world wide weather information from German DWD weather service with thousand of stations worldwide
 - It also can load GRIB files (V1/V2 version) from Saildocs service
 - It also has a celestial navigation support
+
+## Screen shots
+
+![](./screenshots/main.png)
