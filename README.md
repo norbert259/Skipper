@@ -19,4 +19,4 @@ includes the following features:
 
 ## Screen shots (Anchor Alarm, GFS Grib File,)
 
-<img src="./screenshots/grib.jpg" alt="" width="300"/> <img src="./screenshots/anchor.png" alt=""width="300"/>
+<img src="./screenshots/anchor.png" alt="" width="300"/> <img src="./screenshots/grib.jpg" alt="" width="300"/> 
