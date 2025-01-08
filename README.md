@@ -15,5 +15,5 @@ includes the following features:
 
 ## Screen shots
 
-<img src="./screenshots/main.png" alt="drawing" width="200"/> <img src="./screenshots/topt.png" alt="drawing" width="200"/> <img src="./screenshots/weather.png" alt="drawing" width="200"/>
+<img src="./screenshots/main.png" alt="drawing" width="300"/> <img src="./screenshots/topo.png" alt="drawing" width="300"/> <img src="./screenshots/weather.png" alt="drawing" width="300"/>
 
