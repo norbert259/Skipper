@@ -39,9 +39,9 @@ import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.map.NkMarker
 import com.nksoftware.library.map.NkPolyline
+import com.nksoftware.library.map.OsmMap
 import com.nksoftware.library.sun.Sun
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
 import java.util.Calendar
 import java.util.GregorianCalendar
 import java.util.TimeZone
@@ -252,7 +252,7 @@ class AstroNavigation(
 
 
    override fun updateMap(
-      mapView: MapView,
+      mapView: OsmMap,
       mapMode: Int,
       location: ExtendedLocation,
       snackbar: (String) -> Unit
@@ -325,12 +325,10 @@ class AstroNavigation(
       } else {
          sunPositionMarker!!.apply {
             isEnabled = false
-            closeInfoWindow()
          }
 
          computedPositionMarker!!.apply {
             isEnabled = false
-            closeInfoWindow()
          }
 
          astronavMarkers.forEach { it.apply { isEnabled = false } }
@@ -416,23 +414,26 @@ class AstroNavigation(
    }
 
 
-   fun addAutoFix(loc: Location) {
+   fun addAutoFix(loc: Location, snackBar: (String) -> Unit, ) {
       val referenceTime = GregorianCalendar.getInstance(TimeZone.getTimeZone("UTC"))
 
       val grtDelta = getAlmanac(referenceTime)
       val ms = sun.getSunAltitude(loc, referenceTime.time, eyeLevel.toDouble(), sunEdge).toFloat()
 
-      fixes.add(
-         Fix(
-            date = referenceTime,
-            measuredHeight = ms,
-            eyeLevel = eyeLevel,
-            indexError = indexError,
-            sunEdge = sunEdgeIndex.index,
-            grt = grtDelta.grt,
-            delta = grtDelta.delta
+      if (ms > 5.0f) {
+         fixes.add(
+            Fix(
+               date = referenceTime,
+               measuredHeight = ms,
+               eyeLevel = eyeLevel,
+               indexError = indexError,
+               sunEdge = sunEdgeIndex.index,
+               grt = grtDelta.grt,
+               delta = grtDelta.delta
+            )
          )
-      )
+      } else
+         snackBar("Error: Sun altitude < 5° - no fix added")
 
       if (fixType.index == FixType.TwoPtFix.ordinal && fixes.size == 2)
          compute2Fixes(fix1 = fixes[0], fix2 = fixes[1])

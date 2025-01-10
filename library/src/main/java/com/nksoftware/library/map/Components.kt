@@ -26,16 +26,13 @@ import com.nksoftware.library.R
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
-import org.osmdroid.views.overlay.Polygon
 import org.osmdroid.views.overlay.Polyline
-import kotlin.math.pow
-import kotlin.math.sqrt
 
 
 class NkMarker(
    mapview: MapView,
    private val dragFunc: ((Double, Double) -> Unit)? = null,
-   var clickFunc: ((Double, Double) -> Unit)? = null
+   private val clickFunc: ((Double, Double) -> Unit)? = null,
 ): Marker(mapview), Marker.OnMarkerDragListener, Marker.OnMarkerClickListener {
 
    init {
@@ -52,9 +49,7 @@ class NkMarker(
          setOnMarkerDragListener(this)
       }
 
-      if (clickFunc != null) {
-         setOnMarkerClickListener(this)
-      }
+      setOnMarkerClickListener(this)
    }
 
    override fun onMarkerDrag(marker: Marker?) {
@@ -81,8 +76,9 @@ class NkMarker(
    ): Boolean {
 
       clickFunc?.let {
-         if (marker != null)
+         if (marker != null) {
             it(marker.position.latitude, marker.position.longitude)
+         }
       }
 
       onMarkerClickDefault(marker, mapView)
@@ -91,11 +87,16 @@ class NkMarker(
 }
 
 
-class NkPolyline(mapview: MapView, width: Float, color: Int) : Polyline(mapview) {
+class NkPolyline(mapview: MapView, width: Float, color: Int, disableInfoWindow: Boolean = true) : Polyline(mapview) {
+
+   var infoWindowShown: Boolean = false
+
    init {
       outlinePaint.strokeWidth = width
       outlinePaint.color = color
-      infoWindow = null
+
+      if (disableInfoWindow)
+         infoWindow = null
 
       if (!mapview.overlays.contains(this))
          mapview.overlays.add(this)
@@ -116,43 +117,12 @@ class NkPolyline(mapview: MapView, width: Float, color: Int) : Polyline(mapview)
       }
    }
 
-   fun setCircle2(center: GeoPoint, angle: Double) {
-      val circle = mutableListOf<GeoPoint>()
+   fun setInfoWindow(s: String) {
+      infoWindowShown = isInfoWindowOpen
+      title = s
 
-      for (i in -100..100) {
-         val lon = i.toDouble() / 100.0
-         val lat = sqrt(1 - lon.pow(2))
-
-         circle.add(GeoPoint(lat, lon))
-      }
-
-      for (i in 99 downTo -100 ) {
-         val lon = i.toDouble() / 100.0
-         val lat = -sqrt(1 - lon.pow(2))
-
-         circle.add(GeoPoint(lat, lon))
-      }
-
-      val scaledCircle = circle.map {
-         pt -> GeoPoint(pt.latitude * angle + center.latitude, pt.longitude * angle + center.longitude)
-      }
-
-      apply {
-         isEnabled = true
-         setPoints(scaledCircle)
-      }
-   }
-
-}
-
-
-class NkPolygon(mapview: MapView, color: Int) : Polygon(mapview) {
-
-   init {
-      if (!mapview.overlays.contains(this))
-         mapview.overlays.add(this)
-
-      super.mOutlinePaint.color = color
+      if (infoWindowShown)
+         showInfoWindow()
    }
 }
 

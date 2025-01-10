@@ -23,6 +23,7 @@ package com.nksoftware.library.core
 
 import android.content.SharedPreferences
 import com.nksoftware.library.location.ExtendedLocation
+import com.nksoftware.library.map.OsmMap
 import org.osmdroid.views.MapView
 
 
@@ -41,7 +42,7 @@ open class DataModel(val mapModeToBeUpdated: Int = 0) {
             model.storePreferences(edit)
       }
 
-      fun updateMap(mapView: MapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+      fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
          for (model in dm)
             model.updateMap(mapView, mapMode, location, snackbar)
       }
@@ -55,5 +56,5 @@ open class DataModel(val mapModeToBeUpdated: Int = 0) {
 
    open fun storePreferences(edit: SharedPreferences.Editor) {}
 
-   open fun updateMap(mapView: MapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {}
+   open fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {}
 }

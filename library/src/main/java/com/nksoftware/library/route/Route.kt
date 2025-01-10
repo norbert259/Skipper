@@ -24,7 +24,6 @@ package com.nksoftware.library.route
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
-import android.location.Location
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -38,9 +37,9 @@ import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.location.TrackPoint
 import com.nksoftware.library.map.NkMarker
 import com.nksoftware.library.map.NkPolyline
+import com.nksoftware.library.map.OsmMap
 import com.nksoftware.library.utilities.nkHandleException
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
 import kotlin.math.abs
 
 
@@ -78,21 +77,13 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
    private val routeMarker: MutableList<NkMarker> = mutableListOf()
 
 
-   private fun makeLocation(lat: Double, lon: Double): Location {
-      val loc = Location("")
-      loc.latitude = lat
-      loc.longitude = lon
-
-      return loc
-   }
-
    fun addPoint(lat: Double, lon: Double, msg: ((String) -> Unit)? = null) {
       try {
-         val loc = makeLocation(lat, lon)
+         val loc = ExtendedLocation(lat, lon)
 
          if (routePoints.isEmpty()) {
             selectedRoutePoint = 0
-            routePoints.add(ExtendedLocation(loc))
+            routePoints.add(loc)
 
          } else {
             val distances = routePoints.map { loc.distanceTo(it) }
@@ -101,7 +92,7 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
             if (minimumDistances.index == routePoints.indices.last)
                routePoints.add(ExtendedLocation(loc))
             else
-               routePoints.add(minimumDistances.index + 1, ExtendedLocation(loc))
+               routePoints.add(minimumDistances.index + 1, loc)
          }
       }
       catch (e: Exception) {
@@ -111,17 +102,17 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
 
    fun insertPoint(lat: Double, lon: Double, msg: ((String) -> Unit)? = null) {
       try {
-         val loc = makeLocation(lat, lon)
+         val loc = ExtendedLocation(lat, lon)
 
-         if (routePoints.size == 0) {
+         if (routePoints.isEmpty()) {
             selectedRoutePoint = 0
-            routePoints.add(ExtendedLocation(loc))
+            routePoints.add(loc)
 
          } else {
             val distances = routePoints.map { loc.distanceTo(it) }
             val minimumDistances = distances.withIndex().minBy { it.value }
 
-            routePoints.add(minimumDistances.index, ExtendedLocation(loc))
+            routePoints.add(minimumDistances.index, loc)
          }
       }
       catch (e: Exception) {
@@ -135,7 +126,7 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
 
    fun deletePoint(lat: Double, lon: Double, msg: ((String) -> Unit)? = null) {
       try {
-         val loc = makeLocation(lat, lon)
+         val loc = ExtendedLocation(lat, lon)
 
          val distances = routePoints.map { loc.distanceTo(it) }
          val minimumDistances = distances.withIndex().minBy { it.value }
@@ -171,8 +162,7 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
    }
 
    fun change(i: Int, lat: Double, lon: Double) {
-      val loc = makeLocation(lat, lon)
-      routePoints[i] = ExtendedLocation(loc)
+      routePoints[i] = ExtendedLocation(lat, lon)
    }
 
    fun getNextWayPoint(loc: ExtendedLocation): ExtendedLocation? {
@@ -232,10 +222,10 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
       routePoints.clear()
 
       trPts.forEach { pt ->
-         val loc = makeLocation(pt.locLat.toDouble(), pt.locLon.toDouble())
+         val loc = ExtendedLocation(pt.locLat.toDouble(), pt.locLon.toDouble())
          loc.time = pt.time ?: 0
 
-         routePoints.add(ExtendedLocation(loc))
+         routePoints.add(loc)
       }
    }
 
@@ -263,13 +253,13 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
    }
 
 
-   override fun updateMap(mapView: MapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+   override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
 
       if (!initialized) {
          routeLine = NkPolyline(mapView, width = 5.0f, Color.RED)
          bearingLine = NkPolyline(mapView, width = 5.0f, color = Color.DKGRAY)
          tackLine = NkPolyline(mapView, width = 5.0f, Color.GRAY)
-         courseLine = NkPolyline(mapView, width = 5.0f, Color.CYAN)
+         courseLine = NkPolyline(mapView, width = 5.0f, Color.CYAN, disableInfoWindow = false)
 
          initialized = true
       }
@@ -282,8 +272,14 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
             if (location.hasBearing() && location.hasSpeed())
                courseLine.apply {
                   isEnabled = true
+
                   setPoints(
                      listOf(location.locGp, location.locGp.destinationPoint(18000.0, location.bearing.toDouble()))
+                  )
+
+                  setInfoWindow(
+                     "Course: %.0f °".format(location.bearing) +
+                     "\nSpeed: %.0f %s".format(location.appliedSpeed, ExtendedLocation.speedDimension)
                   )
                } else
                   courseLine.apply { isEnabled = false }
@@ -300,6 +296,11 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
                courseLine.apply {
                   isEnabled = true
                   setPoints(listOf(locGp, location.getHeadingPoint(wp)))
+
+                  setInfoWindow(
+                     "Bearing: %.0f °".format(location.bearingTo(wp)) +
+                     "\nSpeed: %.0f %s".format(location.appliedSpeed, ExtendedLocation.speedDimension)
+                  )
                }
 
                val wpGP = wp.locGp
@@ -356,8 +357,8 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
                      icon = if (index == selectedRoutePoint) routeIconYellow else routeIconRed
                      position = GeoPoint(routePt.latitude, routePt.longitude)
                      title = "${context.getString(R.string.no)}: ${index + 1}\n" +
-                             "${context.getString(R.string.lat)}: ${routePt.latStr}\n" +
-                             "${context.getString(R.string.lon)}: ${routePt.lonStr}"
+                             "${context.getString(R.string.latitude)}: ${routePt.latStr}\n" +
+                             "${context.getString(R.string.longitude)}: ${routePt.lonStr}"
                   }
 
                   routeMarker.add(rMarker)
@@ -366,6 +367,7 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
                routeLine.apply {
                   isEnabled = true
                   setPoints(List(routeMarker.size) { routeMarker[it].position })
+                  title = "Route"
                }
 
             } else {
@@ -375,8 +377,8 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
                      icon = if (index == selectedRoutePoint) routeIconYellow else routeIconRed
                      position = GeoPoint(routePoints[index].latitude, routePoints[index].longitude)
                      title = "${context.getString(R.string.no)}: ${index + 1}\n" +
-                             "${context.getString(R.string.lat)}: ${routePoints[index].latStr}\n +" +
-                             "${context.getString(R.string.lon)}: ${routePoints[index].lonStr}"
+                             "${context.getString(R.string.latitude)}: ${routePoints[index].latStr}\n" +
+                             "${context.getString(R.string.longitude)}: ${routePoints[index].lonStr}"
                   }
                }
                routeLine.apply { isEnabled = true }

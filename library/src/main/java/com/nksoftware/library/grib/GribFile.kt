@@ -34,13 +34,13 @@ import com.nksoftware.library.R
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.map.NkMarker
+import com.nksoftware.library.map.OsmMap
 import com.nksoftware.library.map.getWindSpeedIcon
 import com.nksoftware.library.map.windIcons
 import com.nksoftware.library.utilities.convertUnits
 import com.nksoftware.library.utilities.nkHandleException
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.util.Calendar
@@ -340,7 +340,7 @@ class GribFile(private val ctx: Context, val mapMode: Int) : DataModel(mapMode) 
    }
 
 
-   override fun updateMap(mapView: MapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+   override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
       if (mapMode == mapModeToBeUpdated && showGrib) {
          val gribValues = getGridValues()
 
@@ -359,7 +359,6 @@ class GribFile(private val ctx: Context, val mapMode: Int) : DataModel(mapMode) 
 
                   gribValues.forEachIndexed { i, value ->
                      gribMarker[i].apply {
-                        closeInfoWindow()
                         position = GeoPoint(value.lat.toDouble(), value.lon.toDouble())
                         title = ctx.getString(R.string.windspeed_s, value.value) + "\n" +
                                 ctx.getString(R.string.winddirection_s, value.value2)

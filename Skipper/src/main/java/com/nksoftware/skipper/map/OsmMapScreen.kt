@@ -94,7 +94,7 @@ fun OsmMapScreen(
                }
 
                catch (e: Exception) {
-                  snackBar("Error updating map")
+                  snackBar("Error updating map $e")
                }
             }
          )
@@ -165,10 +165,10 @@ fun OsmMapScreen(
          ) {
             when (mode) {
                ScreenMode.Navigation      -> { TrackCommands(vm.track, snackBar) }
-               ScreenMode.Anchor          -> { AnchorAlarmCommands(vm.anchorAlarm, vm.gpsLocation.location) }
+               ScreenMode.Anchor          -> { AnchorAlarmCommands(vm.anchorAlarm, vm.gpsLocation.location, snackBar) }
                ScreenMode.Weather         -> { WeatherCommands(vm.weather, vm.gpsLocation.location, snackBar) }
                ScreenMode.Grib            -> { GribCommands(vm.gribFile, vm.sailDocs, mapView, vm.gpsLocation.location, snackBar) }
-               ScreenMode.AstroNavigation -> { AstroNavigationCommands(vm.astroNav, vm.gpsLocation.location) }
+               ScreenMode.AstroNavigation -> { AstroNavigationCommands(vm.astroNav, vm.gpsLocation.location, snackBar) }
             }
          }
 

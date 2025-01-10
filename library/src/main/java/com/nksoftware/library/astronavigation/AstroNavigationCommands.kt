@@ -29,9 +29,9 @@ import com.nksoftware.library.composables.NkFloatingActionButton
 
 
 @Composable
-fun AstroNavigationCommands(astronav: AstroNavigation, loc: Location) {
+fun AstroNavigationCommands(astronav: AstroNavigation, loc: Location, snackBar: (String) -> Unit) {
    NkFloatingActionButton(
-      onClick = { astronav.addAutoFix(loc) },
+      onClick = { astronav.addAutoFix(loc, snackBar) },
       icon = Icons.Outlined.HdrAuto,
       contentDescription = "Previous fix"
    )

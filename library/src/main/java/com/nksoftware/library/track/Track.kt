@@ -32,8 +32,8 @@ import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.locationservice.LocationService
 import com.nksoftware.library.map.NkPolyline
+import com.nksoftware.library.map.OsmMap
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
 
 
 const val trackActiveKey = "TrackActive"
@@ -137,10 +137,13 @@ class Track(mapMode: Int) : DataModel(mapMode) {
    }
 
    fun getDescription(): String {
-      return """Start: $startTrackTime
-             #End: $endTrackTime
-             #Distance: ${"%.2f".format(distances.sum())} ${ExtendedLocation.distanceDimension}
-             """.trimMargin("#")
+      return "Start: $startTrackTime" + "\nEnd: $endTrackTime" +
+             "\nDistance: %.1f %s".format(
+                ExtendedLocation.applyDistance(distances.sum()),
+                ExtendedLocation.distanceDimension
+             ) +
+             "\nElevation difference: %.0f m".format(elevations.max() - elevations.min()) +
+             "\nAverage Speed: %.0f %s".format(appliedSpeeds.average(), ExtendedLocation.speedDimension)
    }
 
    fun getTotalSpeed(): Float? {
@@ -155,9 +158,9 @@ class Track(mapMode: Int) : DataModel(mapMode) {
       edit.putBoolean(trackActiveKey, saveTrack)
    }
 
-   override fun updateMap(mapView: MapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+   override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
       if (trackLine == null)
-         trackLine = NkPolyline(mapView, width = 5.0f, color = Color.BLUE)
+         trackLine = NkPolyline(mapView, width = 5.0f, color = Color.BLUE, disableInfoWindow = false)
 
       if ((mapMode == mapModeToBeUpdated)) {
          if (track.isNotEmpty()) {

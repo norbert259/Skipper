@@ -48,6 +48,7 @@ import org.osmdroid.tileprovider.modules.OfflineTileProvider
 import org.osmdroid.tileprovider.tilesource.OnlineTileSourceBase
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.tileprovider.util.SimpleRegisterReceiver
+import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.CustomZoomButtonsController
 import org.osmdroid.views.MapView
@@ -66,7 +67,6 @@ import java.nio.ByteBuffer
 const val chartKey = "Chart"
 const val openSeaMapKey = "OpenSeaMap"
 const val logTag = "Map"
-
 
 @SuppressLint("ViewConstructor")
 class OsmMap(
@@ -87,6 +87,7 @@ class OsmMap(
    )
 
    var zoomLevel by mutableDoubleStateOf(0.0)
+   var outerBoundingBox: BoundingBox? by mutableStateOf(null)
 
    private var scaleBarOverlay: ScaleBarOverlay
    private var rotationOverlay: RotationGestureOverlay
@@ -187,21 +188,35 @@ class OsmMap(
             description = location.description,
             gps = gps
          )
-
       }
-
       catch (e: Exception) {
          nkHandleException(logTag, updateFailure, e, snackBar)
       }
    }
 
 
+   fun checkOutsideOfOuterBoundary(): Boolean {
+      return (outerBoundingBox != null &&
+              (boundingBox.latSouth < outerBoundingBox!!.latSouth || boundingBox.lonWest < outerBoundingBox!!.lonWest ||
+              boundingBox.latNorth > outerBoundingBox!!.latNorth || boundingBox.lonEast > outerBoundingBox!!.lonEast)
+             )
+   }
+
+
    override fun onScroll(event: ScrollEvent?): Boolean {
+      if (checkOutsideOfOuterBoundary())
+         outerBoundingBox = null
+
       return true
    }
 
+
    override fun onZoom(event: ZoomEvent?): Boolean {
       zoomLevel = zoomLevelDouble
+
+      if (checkOutsideOfOuterBoundary())
+         outerBoundingBox = null
+
       return true
    }
 

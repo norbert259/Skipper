@@ -15,10 +15,10 @@
       </SelectionState>
       <SelectionState runConfigName="Skipper">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-01-08T13:35:11.726631100Z">
+        <DropdownSelection timestamp="2025-01-08T13:57:16.424576900Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\norbe\.android\avd\Pixel_6a_API_31.avd" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=67cdd00" />
             </handle>
           </Target>
         </DropdownSelection>

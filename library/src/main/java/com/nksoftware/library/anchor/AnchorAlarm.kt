@@ -35,8 +35,8 @@ import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.locationservice.LocationService
 import com.nksoftware.library.map.NkMarker
 import com.nksoftware.library.map.NkPolyline
+import com.nksoftware.library.map.OsmMap
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
 
 
 class AnchorAlarm(val ctx: Context, val mapMode: Int) : DataModel(mapMode) {
@@ -68,7 +68,7 @@ class AnchorAlarm(val ctx: Context, val mapMode: Int) : DataModel(mapMode) {
    }
 
 
-   override fun updateMap(mapView: MapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+   override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
       if (anchorMarker == null) {
          anchorMarker = NkMarker(
             mapView,

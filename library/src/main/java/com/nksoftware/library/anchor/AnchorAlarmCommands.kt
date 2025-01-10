@@ -33,7 +33,7 @@ import com.nksoftware.library.theme.primaryLight
 
 
 @Composable
-fun AnchorAlarmCommands(anchorAlarm: AnchorAlarm, location: ExtendedLocation) {
+fun AnchorAlarmCommands(anchorAlarm: AnchorAlarm, location: ExtendedLocation, snackBar: (String) -> Unit) {
 
    NkFloatingActionButton(
       onClick = { anchorAlarm.anchorPoint = location },

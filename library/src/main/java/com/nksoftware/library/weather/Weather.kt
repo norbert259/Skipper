@@ -34,6 +34,7 @@ import com.nksoftware.library.R
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.map.NkMarker
+import com.nksoftware.library.map.OsmMap
 import com.nksoftware.library.utilities.downloadFile
 import com.nksoftware.library.utilities.nkHandleException
 import kotlinx.coroutines.CoroutineScope
@@ -42,7 +43,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.osmdroid.util.BoundingBox
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.MapView
 import java.io.File
 import java.net.URL
 import java.util.Calendar
@@ -169,7 +169,6 @@ class Weather(
    private val selectedStationIcon = ContextCompat.getDrawable(ctx, R.drawable.outline_partly_cloudy_day_24_red)
 
    private val stationMarker: MutableMap<Int, NkMarker> = mutableMapOf()
-   private var outerBoundingBox: BoundingBox? by mutableStateOf(null)
 
 
    init {
@@ -240,29 +239,22 @@ class Weather(
    }
 
 
-   override fun updateMap(mapView: MapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+   override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
       if (mapMode == mapModeToBeUpdated && stations.size > 0) {
 
-         if (outerBoundingBox == null ||
-             mapView.boundingBox.latSouth < outerBoundingBox!!.latSouth ||
-             mapView.boundingBox.lonWest < outerBoundingBox!!.lonWest ||
-             mapView.boundingBox.latNorth > outerBoundingBox!!.latNorth ||
-             mapView.boundingBox.lonEast > outerBoundingBox!!.lonEast
-         ) {
-
-            outerBoundingBox = mapView.boundingBox.increaseByScale(2.0f)
+         if (mapView.outerBoundingBox == null || mapView.checkOutsideOfOuterBoundary()) {
+            mapView.outerBoundingBox = mapView.boundingBox.increaseByScale(2.0f)
 
             if (stationMarker.isNotEmpty()) {
                stationMarker.forEach { entry -> mapView.overlays.remove(entry.value) }
                stationMarker.clear()
             }
 
-            stations.getStationsInWindow(outerBoundingBox!!).forEach { entry ->
+            stations.getStationsInWindow(mapView.outerBoundingBox!!).forEach { entry ->
                val marker = NkMarker(
                   mapview = mapView,
                   clickFunc = { lat: Double, lon: Double ->
                      downloadNearestStation(ExtendedLocation(lat, lon), snackbar)
-                     outerBoundingBox = null
                   }
                ).apply {
                   icon = if (entry.key == stations.selectedStationIndex) selectedStationIcon else stationIcon
@@ -292,10 +284,8 @@ class Weather(
             entry.value.apply {
                isEnabled = false
                icon = stationIcon
-               closeInfoWindow()
             }
          }
       }
    }
-
 }
