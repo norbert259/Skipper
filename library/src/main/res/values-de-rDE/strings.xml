@@ -51,7 +51,7 @@
     <string name="precipitation">Niederschlag</string>
     <string name="visibility">Sichtweite</string>
     <string name="failure_getting_weather_dwd_data">Fehler beim Laden der DWD Daten</string>
-    <string name="station_elevation">Station: %s\nHöhe: %dm</string>
+    <string name="station_elevation">Station: %s\nHöhe: %d m\nDistance: %.1f km</string>
     <string name="dwd_weather_forecast">DWD Wettervorhersage</string>
     <string name="days">Tage voraus</string>
     <string name="hour_steps">Stundenabstand</string>

@@ -63,6 +63,7 @@ data class DwdMosmixStation(
    val lon: Double = 0.0,
    val elevation: Int = 0
 ) {
+
    val loc: Location = ExtendedLocation(lat, lon)
    val gp: GeoPoint = GeoPoint(lat, lon)
 }
@@ -155,7 +156,7 @@ class Weather(
    private val scope: CoroutineScope,
    private val dir: String,
    mapMode: Int
-): DataModel(mapMode) {
+) : DataModel(mapMode) {
 
    val stations = DwdMosmixStationList(ctx, scope, dir)
    var forecast by mutableStateOf<Forecast?>(null)
@@ -163,7 +164,6 @@ class Weather(
    private val forecastDownload =
       "https://opendata.dwd.de/weather/local_forecasts/mos/MOSMIX_L/single_stations/xxxxx/kml/MOSMIX_L_LATEST_xxxxx.kmz"
    private val tmpFileName = "$dir/weather.zip"
-
 
    private val stationIcon = ContextCompat.getDrawable(ctx, R.drawable.outline_partly_cloudy_day_24)
    private val selectedStationIcon = ContextCompat.getDrawable(ctx, R.drawable.outline_partly_cloudy_day_24_red)
@@ -239,6 +239,18 @@ class Weather(
    }
 
 
+   fun resetStationIcons(enabled: Boolean = false) {
+      if (stationMarker.isNotEmpty()) {
+         stationMarker.forEach { entry ->
+            entry.value.apply {
+               icon = stationIcon
+               isEnabled = enabled
+            }
+         }
+      }
+   }
+
+
    override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
       if (mapMode == mapModeToBeUpdated && stations.size > 0) {
 
@@ -259,33 +271,26 @@ class Weather(
                ).apply {
                   icon = if (entry.key == stations.selectedStationIndex) selectedStationIcon else stationIcon
                   position = entry.value.gp
-                  title = ctx.getString(R.string.station_elevation, entry.value.name, entry.value.elevation)
+                  title = ctx.getString(
+                     R.string.station_elevation,
+                     entry.value.name,
+                     entry.value.elevation,
+                     ExtendedLocation.applyDistance(entry.value.loc.distanceTo(location))
+                  )
                }
 
                stationMarker[entry.key] = marker
             }
 
          } else {
-            if (stationMarker.isNotEmpty()) {
-               stationMarker.forEach { entry ->
-                  entry.value.apply {
-                     icon = stationIcon
-                     isEnabled = true
-                  }
-               }
+            resetStationIcons(true)
 
-               if (stations.selectedStationIndex in stationMarker.keys)
-                  stationMarker[stations.selectedStationIndex]!!.icon = selectedStationIcon
-            }
+            if (stationMarker.isNotEmpty() && stations.selectedStationIndex in stationMarker.keys)
+               stationMarker[stations.selectedStationIndex]!!.icon = selectedStationIcon
          }
 
       } else {
-         stationMarker.forEach { entry ->
-            entry.value.apply {
-               isEnabled = false
-               icon = stationIcon
-            }
-         }
+         resetStationIcons(false)
       }
    }
 }

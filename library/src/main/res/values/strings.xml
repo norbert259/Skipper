@@ -51,7 +51,7 @@
     <string name="precipitation">Precipitation</string>
     <string name="visibility">Visibility</string>
     <string name="failure_getting_weather_dwd_data">Failure loading dwd weather data</string>
-    <string name="station_elevation">Station: %s\nElevation: %dm</string>
+    <string name="station_elevation">Station: %s\nElevation: %d m\nDistance: %.1f km</string>
     <string name="dwd_weather_forecast">DWD weather forecast</string>
     <string name="days">days ahead</string>
     <string name="hour_steps">Hour steps</string>
