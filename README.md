@@ -26,4 +26,4 @@ src="./screenshots/rain.png" alt="" width="250"/>
 ## Screen shots (Anchor Alarm, GFS Grib File, Routing/Tracking Mode)
 
 <img src="./screenshots/anchor.png" alt="" width="250"/> <img src="./screenshots/grib.jpg" alt="" width="250"/> <img 
-src="./screenshots/routing.jpg" alt="" width="250"/> 
+src="./screenshots/routing.png" alt="" width="250"/> 
