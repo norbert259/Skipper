@@ -55,11 +55,10 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 
 
-val logTag = "Grib Parser"
+const val logTag = "Grib Parser"
 
 
 class GpsGridPoint(val lat: Float, val lon: Float, val value: Float, val value2: Float = 0f) {
-
    fun inBoundingBox(box: BoundingBox): Boolean {
       return box.contains(lat.toDouble(), lon.toDouble())
    }
@@ -67,7 +66,6 @@ class GpsGridPoint(val lat: Float, val lon: Float, val value: Float, val value2:
 
 
 abstract class GribFileEntry {
-
    abstract fun getParameter(): String
    abstract fun getReferenceTime(): Calendar
    abstract fun getGridInfo(type: GribFile.GridInfo): Float
@@ -75,11 +73,7 @@ abstract class GribFileEntry {
 }
 
 
-
-
-
-
-class GribFile(private val ctx: Context, val mapMode: Int) : DataModel(mapMode) {
+class GribFile(private val ctx: Context, mapMode: Int) : DataModel(mapMode) {
 
    var showGrib by mutableStateOf(false)
    var gribFileName by mutableStateOf("")
@@ -148,16 +142,13 @@ class GribFile(private val ctx: Context, val mapMode: Int) : DataModel(mapMode) 
 
 
    fun getTimeslotStr(): String {
-      if (actualGribTimeslot == null)
-         return ""
-      else {
-         return ExtendedLocation.getTimeStr(actualGribTimeslot!!.time.time, "dd.MM. HH:mm")
-      }
+      return if (actualGribTimeslot == null) ""
+         else ExtendedLocation.getTimeStr(actualGribTimeslot!!.time.time, "dd.MM. HH:mm")
    }
 
 
    fun getFirstTime(): String {
-      return if (gribValues.keys.size > 0)
+      return if (gribValues.keys.isNotEmpty())
          ExtendedLocation.getTimeStr(gribValues.keys.min().time.time, "dd.MM.yyyy HH:mm")
       else ""
    }
@@ -349,14 +340,13 @@ class GribFile(private val ctx: Context, val mapMode: Int) : DataModel(mapMode) 
                                             (actualGribTimeSlot != actualGribTimeslot))
             ) {
                if (gribValues.size != gribMarker.size) {
-                  for (marker in gribMarker) marker.remove(mapView)
+                  gribMarker.forEach { it.remove(mapView) }
                   gribMarker.clear()
 
                   gribValues.forEach { _ -> gribMarker.add(NkMarker(mapView).apply { isEnabled = true }) }
                }
 
                if (actualGribParameter == "wind") {
-
                   gribValues.forEachIndexed { i, value ->
                      gribMarker[i].apply {
                         position = GeoPoint(value.lat.toDouble(), value.lon.toDouble())
@@ -369,7 +359,6 @@ class GribFile(private val ctx: Context, val mapMode: Int) : DataModel(mapMode) 
                   }
 
                } else {
-
                   gribValues.forEachIndexed { i, gp ->
                      gribMarker[i].apply {
                         isEnabled = true
@@ -380,12 +369,13 @@ class GribFile(private val ctx: Context, val mapMode: Int) : DataModel(mapMode) 
                   }
                }
 
-               actualGribParameter = actualGribParameter
                actualGribTimeSlot = actualGribTimeslot?.time
             }
          }
 
-      } else
-         gribMarker.forEach { it.apply { isEnabled = false } }
+      } else {
+         gribMarker.forEach { it.remove(mapView) }
+         gribMarker.clear()
+      }
    }
 }

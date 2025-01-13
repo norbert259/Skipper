@@ -13,10 +13,14 @@ includes the following features:
 - It also can load GRIB files (V1/V2 version) from Saildocs service
 - It also has a celestial navigation support
 
-## Screen shots (OpenSea Map, Topo Map, Weather Info)
+## Screen shots (OpenSea Map, Topo Map, C-Map)
 
-<img src="./screenshots/main.png" alt="" width="300"/> <img src="./screenshots/topo.png" alt="" width="300"/> <img src="./screenshots/weather.png" alt="" width="300"/>
+<img src="./screenshots/main.png" alt="" width="300"/> <img src="./screenshots/topo.png" alt="" width="300"/> <img src="./screenshots/cmap.png" alt="" width="300"/>
 
-## Screen shots (Anchor Alarm, GFS Grib File)
+## Screen shots (Weather Info, Wind Forecast, Rain Forecast)
 
-<img src="./screenshots/anchor.png" alt="" width="300"/> <img src="./screenshots/grib.jpg" alt="" width="300"/> 
+<img src="./screenshots/weather.png" alt="" width="300"/> <img src="./screenshots/wind.png" alt="" width="300"/> <img src="./screenshots/rain.png" alt="" width="300"/>
+
+## Screen shots (Anchor Alarm, GFS Grib File, Routing/Tracking Mode)
+
+<img src="./screenshots/anchor.png" alt="" width="300"/> <img src="./screenshots/grib.jpg" alt="" width="300"/> <img src="./screenshots/routing.jpg" alt="" width="300"/> 
