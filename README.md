@@ -1,4 +1,4 @@
-![](Skipper.jpg)
+<img src="./Skipper.jpg" alt="" width="250" height="250"/>
 
 # The Skipper development project
 
