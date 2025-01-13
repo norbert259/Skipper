@@ -239,22 +239,10 @@ class Weather(
    }
 
 
-   fun resetStationIcons(enabled: Boolean = false) {
-      if (stationMarker.isNotEmpty()) {
-         stationMarker.forEach { entry ->
-            entry.value.apply {
-               icon = stationIcon
-               isEnabled = enabled
-            }
-         }
-      }
-   }
-
-
    override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
       if (mapMode == mapModeToBeUpdated && stations.size > 0) {
 
-         if (mapView.outerBoundingBox == null || mapView.checkOutsideOfOuterBoundary()) {
+         if (stationMarker.isEmpty() || mapView.outerBoundingBox == null || mapView.checkOutsideOfOuterBoundary()) {
             mapView.outerBoundingBox = mapView.boundingBox.increaseByScale(2.0f)
 
             if (stationMarker.isNotEmpty()) {
@@ -283,14 +271,20 @@ class Weather(
             }
 
          } else {
-            resetStationIcons(true)
+            stationMarker.forEach { entry ->
+               entry.value.apply {
+                  icon = stationIcon
+                  isEnabled = true
+               }
+            }
 
             if (stationMarker.isNotEmpty() && stations.selectedStationIndex in stationMarker.keys)
                stationMarker[stations.selectedStationIndex]!!.icon = selectedStationIcon
          }
 
       } else {
-         resetStationIcons(false)
+         stationMarker.forEach { entry -> entry.value.remove(mapView) }
+         stationMarker.clear()
       }
    }
 }

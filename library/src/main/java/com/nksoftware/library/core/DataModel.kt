@@ -22,9 +22,10 @@
 package com.nksoftware.library.core
 
 import android.content.SharedPreferences
+import android.util.Log
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.map.OsmMap
-import org.osmdroid.views.MapView
+import com.nksoftware.library.map.logTag
 
 
 open class DataModel(val mapModeToBeUpdated: Int = 0) {
@@ -43,8 +44,15 @@ open class DataModel(val mapModeToBeUpdated: Int = 0) {
       }
 
       fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
-         for (model in dm)
-            model.updateMap(mapView, mapMode, location, snackbar)
+         for (model in dm) {
+            try {
+               model.updateMap(mapView, mapMode, location, snackbar)
+            }
+            catch (e: Exception) {
+               snackbar("Cannot update map for $model")
+               Log.e(logTag, "Exception: $e")
+            }
+         }
       }
    }
 

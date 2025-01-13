@@ -51,37 +51,37 @@ const val activeRouteKey = "activeRoute"
 
 @Suppress("UNCHECKED_CAST")
 class SkipperViewModelFactory(
-   private val appContext: Context,
+   private val ctx: Context,
    private val dir: String,
    private val sharedPreferences: SharedPreferences
 ) : ViewModelProvider.NewInstanceFactory() {
 
    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-      return SkipperViewModel(appContext, dir, sharedPreferences) as T
+      return SkipperViewModel(ctx, dir, sharedPreferences) as T
    }
 }
 
 
 class SkipperViewModel(
-   private val appContext: Context,
+   private val ctx: Context,
    dir: String,
    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
    private var locService: LocationService.LocalBinder? = null
-   val gpsLocation = GpsLocation(appContext, 0)
+   val gpsLocation = GpsLocation(ctx, 0)
 
-   val track = Track(ScreenMode.Navigation.ordinal)
-   val route = Route(appContext, ScreenMode.Navigation.ordinal)
-   val anchorAlarm = AnchorAlarm(appContext, ScreenMode.Anchor.ordinal)
+   val track = Track(ctx, ScreenMode.Navigation.ordinal)
+   val route = Route(ctx, ScreenMode.Navigation.ordinal)
+   val anchorAlarm = AnchorAlarm(ctx, ScreenMode.Anchor.ordinal)
 
-   val weather = Weather(appContext, viewModelScope, "$dir/files/weather", ScreenMode.Weather.ordinal)
-   val gribFile = GribFile(appContext, ScreenMode.Grib.ordinal)
-   val sailDocs = SailDocs(appContext)
+   val weather = Weather(ctx, viewModelScope, "$dir/files/weather", ScreenMode.Weather.ordinal)
+   val gribFile = GribFile(ctx, ScreenMode.Grib.ordinal)
+   val sailDocs = SailDocs(ctx)
 
    val moon = Moon()
    val sun = Sun()
-   val astroNav = AstroNavigation(appContext, sun, ScreenMode.AstroNavigation.ordinal)
+   val astroNav = AstroNavigation(ctx, sun, ScreenMode.AstroNavigation.ordinal)
 
    var message: (String) -> Unit = {  }
 
@@ -145,7 +145,7 @@ class SkipperViewModel(
 
 
    fun loadDb() {
-      val trackDb = Room.databaseBuilder(appContext, TrackDatabase::class.java, "SkipperTracks")
+      val trackDb = Room.databaseBuilder(ctx, TrackDatabase::class.java, "SkipperTracks")
           .allowMainThreadQueries()
           .build()
 
@@ -160,7 +160,7 @@ class SkipperViewModel(
 
 
    fun storeDb() {
-      val trackDb = Room.databaseBuilder(appContext, TrackDatabase::class.java, "SkipperTracks")
+      val trackDb = Room.databaseBuilder(ctx, TrackDatabase::class.java, "SkipperTracks")
           .allowMainThreadQueries()
           .build()
 

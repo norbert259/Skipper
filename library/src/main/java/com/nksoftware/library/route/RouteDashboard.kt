@@ -26,22 +26,26 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Route
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkCardWithHeadline
 import com.nksoftware.library.composables.NkInputField
-import com.nksoftware.library.composables.NkMatrixCell
 import com.nksoftware.library.composables.NkRowNValues
+import com.nksoftware.library.composables.NkTableCell
 import com.nksoftware.library.composables.NkValueField
 import com.nksoftware.library.location.ExtendedLocation
 
@@ -52,6 +56,9 @@ fun RouteDashboard(
    route: Route,
    location: ExtendedLocation
 ) {
+   val redDot = ImageVector.vectorResource(R.drawable.circle_red)
+   val yellowDot = ImageVector.vectorResource(R.drawable.circle_yellow)
+
    Column(
       modifier = modifier.padding(bottom = 8.dp),
    ) {
@@ -79,102 +86,105 @@ fun RouteDashboard(
                modifier = Modifier.width(80.dp),
                label = stringResource(R.string.total),
                dimension = ExtendedLocation.distanceDimension,
-               value = ExtendedLocation.applyDistance(route.getLength())
+               value = ExtendedLocation.applyDistance(route.getLength()),
             )
             NkValueField(
                modifier = Modifier.width(80.dp),
                label = stringResource(R.string.remaining),
                dimension = ExtendedLocation.distanceDimension,
-               value = ExtendedLocation.applyDistance(route.getRemainingLength(location)
+               value = ExtendedLocation.applyDistance(
+                  route.getRemainingLength(location)
                )
             )
          }
       }
 
-      if (route.size > 2) {
-
-         val distances = route.getDistances()
-         val courses = route.getCourses()
-         val elevations = route.getElevations()
-
-         NkCardWithHeadline(
-            headline = stringResource(R.string.routesegements),
-            icon = Icons.Filled.Route
+      NkCardWithHeadline(
+         headline = stringResource(R.string.waypoints),
+         icon = Icons.Filled.Route
+      ) {
+         Row(
+            modifier = Modifier.padding(top = 5.dp, bottom = 5.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
          ) {
-            Row(modifier = Modifier.padding(top = 5.dp)) {
-               Column(
-                  modifier = Modifier
-                     .padding(end = 5.dp)
-                     .background(color = Color.LightGray)
-               ) {
-                  NkMatrixCell(
-                     modifier = Modifier
-                        .width(100.dp)
-                        .padding(start = 5.dp, end = 5.dp),
-                     value = stringResource(R.string.no),
-                     alignment = Alignment.BottomCenter
-                  )
-                  NkMatrixCell(
-                     modifier = Modifier
-                        .width(100.dp)
-                        .padding(start = 5.dp, end = 5.dp),
-                     value = stringResource(R.string.dist),
-                     subHeader = ExtendedLocation.distanceDimension,
-                     alignment = Alignment.BottomCenter
-                  )
-                  NkMatrixCell(
-                     modifier = Modifier
-                        .width(100.dp)
-                        .padding(start = 5.dp, end = 5.dp),
-                     value = stringResource(R.string.course),
-                     subHeader = "°",
-                     alignment = Alignment.BottomCenter
-                  )
+            NkTableCell(
+               modifier = Modifier.width(40.dp),
+               value = stringResource(R.string.no),
+            )
+            NkTableCell(
+               modifier = Modifier.width(70.dp),
+               value = stringResource(R.string.latitude)
+            )
+            NkTableCell(
+               modifier = Modifier.width(70.dp),
+               value = stringResource(R.string.longitude)
+            )
+            NkTableCell(
+               modifier = Modifier.width(50.dp),
+               value = stringResource(R.string.dist),
+            )
+            NkTableCell(
+               modifier = Modifier.width(50.dp),
+               value = stringResource(R.string.course),
+            )
+            NkTableCell(
+               modifier = Modifier.width(60.dp),
+               value = stringResource(R.string.wpelevationdiff),
+            )
+         }
 
-                  if (elevations.any { it != null }) {
-                     NkMatrixCell(
-                        modifier = Modifier
-                           .width(100.dp)
-                           .padding(start = 5.dp, end = 5.dp),
-                        value = stringResource(R.string.wpelevationdiff),
-                        subHeader = "m",
-                        alignment = Alignment.BottomCenter
-                     )
-                  }
-               }
+         HorizontalDivider()
 
-               LazyRow(
-                  modifier = Modifier
-                     .background(Color.White)
-                     .fillMaxWidth()
-               ) {
-                  items(if (route.size > 1) route.size - 1 else 0)
-                  { index ->
-                     Column(
+         if (route.size > 0) {
+            val distances = route.getDistances()
+            val courses = route.getCourses()
+            val elevations = route.getElevations()
+
+            Column(
+               modifier = Modifier
+                  .background(Color.White)
+                  .height(90.dp)
+                  .fillMaxWidth()
+            ) {
+               LazyColumn {
+                  items(route.size) { index ->
+                     Row(
                         modifier = Modifier
                            .fillMaxWidth()
-                           .padding(end = 5.dp)
+                           .padding(top = 3.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
                      ) {
-                        NkMatrixCell(
-                           value = index + 1
+                        NkTableCell(
+                           modifier = Modifier.width(40.dp),
+                           value = index + 1,
+                           icon = if (index == route.selectedRoutePoint) yellowDot else redDot
                         )
-                        NkMatrixCell(
-                           value = distances[index],
-                           min = distances.min(),
-                           max = distances.max(),
+                        NkTableCell(
+                           modifier = Modifier.width(70.dp),
+                           value = route.routePoints[index].latStr
+                        )
+                        NkTableCell(
+                           modifier = Modifier.width(70.dp),
+                           value = route.routePoints[index].lonStr
+                        )
+                        NkTableCell(
+                           modifier = Modifier.width(50.dp),
+                           value = if (index > 0) "%.1f %s".format(
+                              distances[index - 1],
+                              ExtendedLocation.distanceDimension
+                           ) else "",
                            precision = 1
                         )
-                        NkMatrixCell(
-                           value = courses[index]
+                        NkTableCell(
+                           modifier = Modifier.width(50.dp),
+                           value = if (index > 0) "%.0f °".format(courses[index - 1]) else ""
                         )
-
-                        if (elevations.all { it != null }) {
-                           NkMatrixCell(
-                              value = elevations[index],
-                              min = elevations.filterNotNull().min(),
-                              max = elevations.filterNotNull().max()
-                           )
-                        }
+                        NkTableCell(
+                           modifier = Modifier.width(50.dp),
+                           value = if (index > 0) elevations[index - 1] else "",
+                        )
                      }
                   }
                }

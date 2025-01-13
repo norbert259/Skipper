@@ -185,7 +185,7 @@ class OsmMap(
          setLocationMarker(
             loc = locGP,
             heading = location.getHeading(),
-            description = location.description,
+            description = location.description(ctx),
             gps = gps
          )
       }

@@ -21,6 +21,7 @@
 
 package com.nksoftware.library.composables
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -245,6 +246,48 @@ fun NkMatrixCell(
       }
    }
 }
+
+
+@Composable
+fun NkTableCell(
+   modifier: Modifier = Modifier,
+   value: Any? = "",
+   icon: ImageVector? = null,
+   precision: Int = 0,
+   alignment: TextAlign = TextAlign.Center,
+) {
+   Row(
+      modifier = modifier,
+      verticalAlignment = Alignment.CenterVertically,
+      horizontalArrangement = Arrangement.SpaceBetween
+   ) {
+      icon?.let {
+         Image(
+            modifier = Modifier.height(12.dp),
+            imageVector = icon,
+            contentDescription = ""
+         )
+      }
+
+      NkText(
+         modifier = Modifier.fillMaxWidth(),
+         text = when (value) {
+            is String -> value
+            is Int    -> value.toString()
+            is Float  -> {
+               if (!value.isNaN()) "%.${precision}f".format(value) else ""
+            }
+            is Double -> {
+               if (!value.isNaN()) "%.${precision}f".format(value) else ""
+            }
+            else      -> ""
+         },
+         align = alignment,
+         size = 12
+      )
+   }
+}
+
 
 @Preview
 @Composable

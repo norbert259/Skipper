@@ -21,12 +21,14 @@
 
 package com.nksoftware.library.track
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.location.Location
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.nksoftware.library.R
 import com.nksoftware.library.composables.SingleSelectList
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
@@ -39,7 +41,7 @@ import org.osmdroid.util.GeoPoint
 const val trackActiveKey = "TrackActive"
 
 
-class Track(mapMode: Int) : DataModel(mapMode) {
+class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
 
    private var locService: LocationService.LocalBinder? = null
    var saveTrack by mutableStateOf(false)
@@ -137,17 +139,15 @@ class Track(mapMode: Int) : DataModel(mapMode) {
    }
 
    fun getDescription(): String {
-      return "Start: $startTrackTime" + "\nEnd: $endTrackTime" +
-             "\nDistance: %.1f %s".format(
-                ExtendedLocation.applyDistance(distances.sum()),
-                ExtendedLocation.distanceDimension
-             ) +
-             "\nElevation difference: %.0f m".format(elevations.max() - elevations.min()) +
-             "\nAverage Speed: %.0f %s".format(appliedSpeeds.average(), ExtendedLocation.speedDimension)
+      return ctx.getString(R.string.track_description, startTrackTime, endTrackTime,
+         ExtendedLocation.applyDistance(distances.sum()), ExtendedLocation.distanceDimension,
+         if (elevations.isNotEmpty()) elevations.max() - elevations.min() else 0f,
+         appliedSpeeds.average(), ExtendedLocation.speedDimension
+      )
    }
 
    fun getTotalSpeed(): Float? {
-      return if (appliedSpeeds.size > 0) appliedSpeeds.average().toFloat() else null
+      return if (appliedSpeeds.isNotEmpty()) appliedSpeeds.average().toFloat() else null
    }
 
    override fun loadPreferences(preferences: SharedPreferences) {
@@ -169,8 +169,8 @@ class Track(mapMode: Int) : DataModel(mapMode) {
 
             trackLine!!.apply {
                isEnabled = true
-               title = getDescription()
                setPoints(pts)
+               setInfoWindow(getDescription())
             }
          } else {
             trackLine!!.apply { isEnabled = false }

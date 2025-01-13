@@ -92,7 +92,6 @@
     <string name="grib_file_successfully_scanned">Grib data successfully scanned</string>
     <string name="exception_scanning_grib_v2_file">Exception: Scanning GRIB V2 file</string>
     <string name="doesn_t_look_like_a_valid_grib_file">Error: Doesn\'t look like a valid GRIV file</string>
-    <string name="grib_file_version_not_supported">Error: Grib file version unsupported</string>
     <string name="error_cannot_load_grib_file">Error: Grib file cannot be loaded</string>
     <string name="grib_file">Grib file</string>
     <string name="anchor_alarm">Anchor Alarm</string>
@@ -125,4 +124,11 @@
     <string name="cache_usage">Cache usage</string>
     <string name="windspeed_s">Wind speed: %.0f km/h</string>
     <string name="winddirection_s">Wind direction: %.0f °</string>
+    <string name="location_decription">Lat: %s\nLon: %s\nSpeed: %.2f %s\nHeading: %.0f °\nAccuracy: %.0f m\nProvider: %s</string>
+    <string name="track_description">Start: %s\nEnd: %s\nDistance: %.1f %s\nElevation: %.0f m\nAvg. Speed: %.1f %s</string>
+    <string name="bearingline_description">Bearing: %.0f °\nDistance: %.1f %s</string>
+    <string name="routing_point">Index: %d\nLatitude: %s\nLongitude: %s</string>
+    <string name="waypoints">Waypoints</string>
+    <string name="grib_file_version_not_supported">Grib file version not supported</string>
+    <string name="tackline_description">Tack course: %.0f °</string>
 </resources>

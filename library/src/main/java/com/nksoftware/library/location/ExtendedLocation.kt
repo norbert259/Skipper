@@ -21,6 +21,7 @@
 
 package com.nksoftware.library.location
 
+import android.content.Context
 import android.content.SharedPreferences
 import android.hardware.GeomagneticField
 import android.location.Location
@@ -28,8 +29,8 @@ import android.location.LocationManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.nksoftware.library.R
 import com.nksoftware.library.composables.SingleSelectList
-//import com.nksoftware.skipper.core.TrackPoint
 import org.osmdroid.util.GeoPoint
 import java.text.SimpleDateFormat
 import java.time.Instant
@@ -203,10 +204,13 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
    val appliedSpeed: Float
       get() = applySpeed(speed)
 
-   val description: String
-      get() = "Lat: %s\nLon: %s\nSpeed: %.2f %s\nHeading: %.0f °\nAccuracy: %.0f m\nProvider: %s"
-         .format(latStr, lonStr, appliedSpeed, speedDimension, getHeading(),
-            if (hasAccuracy()) accuracy else Float.NaN, provider)
+
+   fun description(ctx: Context): String {
+      return ctx.getString(R.string.location_decription).format(
+            latStr, lonStr, appliedSpeed, speedDimension, getHeading(),
+            if (hasAccuracy()) accuracy else Float.NaN, provider
+         )
+   }
 
 
    fun restoreValues(prevLoc: Location) {

@@ -87,7 +87,13 @@ class NkMarker(
 }
 
 
-class NkPolyline(mapview: MapView, width: Float, color: Int, disableInfoWindow: Boolean = true) : Polyline(mapview) {
+class NkPolyline(
+   mapview: MapView,
+   width: Float,
+   color: Int,
+   disableInfoWindow: Boolean = true)
+   : Polyline(mapview, false, false)
+{
 
    var infoWindowShown: Boolean = false
 

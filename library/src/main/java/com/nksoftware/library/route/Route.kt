@@ -49,7 +49,7 @@ const val tackAngleKey = "TackAngle"
 const val logTag = "Track"
 
 
-class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
+class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
 
    var active by mutableStateOf(false)
    var sailingMode: Boolean by mutableStateOf(false)
@@ -65,14 +65,13 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
    val selectedPoint: ExtendedLocation?
       get() = if (selectedRoutePoint in routePoints.indices) routePoints[selectedRoutePoint] else null
 
-   private val routeIconYellow = ContextCompat.getDrawable(context, R.drawable.circle_yellow)
-   private val routeIconRed = ContextCompat.getDrawable(context, R.drawable.circle_red)
+   private val routeIconYellow = ContextCompat.getDrawable(ctx, R.drawable.circle_yellow)
+   private val routeIconRed = ContextCompat.getDrawable(ctx, R.drawable.circle_red)
 
-   private var initialized = false
-   private lateinit var courseLine: NkPolyline
-   private lateinit var bearingLine: NkPolyline
-   private lateinit var tackLine: NkPolyline
-   private lateinit var routeLine: NkPolyline
+   private var courseLine: NkPolyline? = null
+   private var bearingLine: NkPolyline? = null
+   private var tackLine: NkPolyline? = null
+   private var routeLine: NkPolyline? = null
 
    private val routeMarker: MutableList<NkMarker> = mutableListOf()
 
@@ -96,7 +95,7 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
          }
       }
       catch (e: Exception) {
-         nkHandleException(logTag, context.getString(R.string.cannot_add_routing_point), e, msg)
+         nkHandleException(logTag, ctx.getString(R.string.cannot_add_routing_point), e, msg)
       }
    }
 
@@ -116,7 +115,7 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
          }
       }
       catch (e: Exception) {
-         nkHandleException(logTag, context.getString(R.string.cannot_insert_routing_point), e, msg)
+         nkHandleException(logTag, ctx.getString(R.string.cannot_insert_routing_point), e, msg)
       }
    }
 
@@ -137,7 +136,7 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
             selectedRoutePoint = -1
       }
       catch (e: Exception) {
-         nkHandleException(logTag, context.getString(R.string.cannot_delete_routing_point), e, msg)
+         nkHandleException(logTag, ctx.getString(R.string.cannot_delete_routing_point), e, msg)
       }
    }
 
@@ -253,61 +252,67 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
    }
 
 
+   fun deleteRouteMarkers(mapView: OsmMap) {
+      if (routeMarker.isNotEmpty()) {
+         for (marker in routeMarker) marker.remove(mapView)
+         routeMarker.clear()
+      }
+   }
+
+
    override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
 
-      if (!initialized) {
+      if (routeLine == null)
          routeLine = NkPolyline(mapView, width = 5.0f, Color.RED)
-         bearingLine = NkPolyline(mapView, width = 5.0f, color = Color.DKGRAY)
-         tackLine = NkPolyline(mapView, width = 5.0f, Color.GRAY)
-         courseLine = NkPolyline(mapView, width = 5.0f, Color.CYAN, disableInfoWindow = false)
 
-         initialized = true
-      }
+      if (bearingLine == null)
+         bearingLine = NkPolyline(mapView, width = 5.0f, color = Color.DKGRAY, disableInfoWindow = false)
+
+      if (tackLine == null)
+         tackLine = NkPolyline(mapView, width = 5.0f, Color.GRAY, disableInfoWindow = false)
+
+      if (courseLine == null)
+         courseLine = NkPolyline(mapView, width = 5.0f, Color.CYAN)
 
       if (mapMode == mapModeToBeUpdated) {
          val locGp = location.locGp
 
-         if (routePoints.isEmpty()) {
+         if (!active || routePoints.isEmpty()) {
 
             if (location.hasBearing() && location.hasSpeed())
-               courseLine.apply {
+               courseLine?.apply {
                   isEnabled = true
 
-                  setPoints(
-                     listOf(location.locGp, location.locGp.destinationPoint(18000.0, location.bearing.toDouble()))
-                  )
-
-                  setInfoWindow(
-                     "Course: %.0f °".format(location.bearing) +
-                     "\nSpeed: %.0f %s".format(location.appliedSpeed, ExtendedLocation.speedDimension)
-                  )
+                  val bearingPoint = location.locGp.destinationPoint(18000.0, location.bearing.toDouble())
+                  setPoints(listOf(location.locGp, bearingPoint))
                } else
-                  courseLine.apply { isEnabled = false }
+                  courseLine?.apply { isEnabled = false }
 
             routeMarker.forEach { it.apply { isEnabled = false } }
-            bearingLine.apply { isEnabled = false }
-            tackLine.apply { isEnabled = false }
-            routeLine.apply { isEnabled = false }
+
+            bearingLine?.apply { isEnabled = false }
+            tackLine?.apply { isEnabled = false }
+            routeLine?.apply { isEnabled = false }
 
          } else {
             val wp = getNextWayPoint(location)
 
             if (wp != null) {
-               courseLine.apply {
+               courseLine?.apply {
                   isEnabled = true
                   setPoints(listOf(locGp, location.getHeadingPoint(wp)))
-
-                  setInfoWindow(
-                     "Bearing: %.0f °".format(location.bearingTo(wp)) +
-                     "\nSpeed: %.0f %s".format(location.appliedSpeed, ExtendedLocation.speedDimension)
-                  )
                }
 
                val wpGP = wp.locGp
 
-               bearingLine.apply {
+               bearingLine?.apply {
                   isEnabled = true
                   setPoints(listOf(locGp, wpGP))
+                  setInfoWindow(ctx.getString(
+                     R.string.bearingline_description,
+                     location.bearingTo(wp),
+                     ExtendedLocation.applyDistance(location.distanceTo(wp)),
+                     ExtendedLocation.distanceDimension))
                }
 
                val courseDeviation = location.getHeadingDeviation(wp)
@@ -318,10 +323,10 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
 
                   if (courseDeviation > 0) {
                      tackCourse = headingCourse + tackAngle
-                     tackLine.apply { setLineColor(Color.GREEN) }
+                     tackLine?.apply { setLineColor(Color.GREEN) }
                   } else {
                      tackCourse = headingCourse - tackAngle
-                     tackLine.apply { setLineColor(Color.RED) }
+                     tackLine?.apply { setLineColor(Color.RED) }
                   }
 
                   if (headingCourse > 360) tackCourse -= 360
@@ -332,42 +337,48 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
                      ExtendedLocation.applyCourse(tackCourse).toDouble()
                   )
 
-                  tackLine.apply {
+                  tackLine?.apply {
                      isEnabled = true
                      setPoints(listOf(locGp, tlGP))
+                     setInfoWindow(
+                        ctx.getString(
+                           R.string.tackline_description,
+                           ExtendedLocation.applyCourse(tackCourse)
+                        )
+                     )
                   }
 
                } else
-                  tackLine.apply { isEnabled = false }
+                  tackLine?.apply { isEnabled = false }
             }
 
             if (routeMarker.size != routePoints.size) {
-               for (marker in routeMarker) marker.remove(mapView)
-               routeMarker.clear()
+               deleteRouteMarkers(mapView)
 
                for ((index, routePt) in routePoints.withIndex()) {
                   val rMarker = NkMarker(
                      mapView,
                      dragFunc = { lat, lon ->
                         change(index, lat, lon)
-                        routeLine.apply { setPoints(List(routeMarker.size) { routeMarker[it].position }) }
+                        routeLine?.apply { setPoints(List(routeMarker.size) { routeMarker[it].position }) }
                      }
                   ).apply {
                      isEnabled = true
                      icon = if (index == selectedRoutePoint) routeIconYellow else routeIconRed
                      position = GeoPoint(routePt.latitude, routePt.longitude)
-                     title = "${context.getString(R.string.no)}: ${index + 1}\n" +
-                             "${context.getString(R.string.latitude)}: ${routePt.latStr}\n" +
-                             "${context.getString(R.string.longitude)}: ${routePt.lonStr}"
+                     title = ctx.getString(R.string.routing_point).format(
+                        index + 1,
+                        routePoints[index].latStr,
+                        routePoints[index].lonStr
+                     )
                   }
 
                   routeMarker.add(rMarker)
                }
 
-               routeLine.apply {
+               routeLine?.apply {
                   isEnabled = true
                   setPoints(List(routeMarker.size) { routeMarker[it].position })
-                  title = "Route"
                }
 
             } else {
@@ -376,24 +387,22 @@ class Route(val context: Context, mapMode: Int) : DataModel(mapMode) {
                      isEnabled = true
                      icon = if (index == selectedRoutePoint) routeIconYellow else routeIconRed
                      position = GeoPoint(routePoints[index].latitude, routePoints[index].longitude)
-                     title = "${context.getString(R.string.no)}: ${index + 1}\n" +
-                             "${context.getString(R.string.latitude)}: ${routePoints[index].latStr}\n" +
-                             "${context.getString(R.string.longitude)}: ${routePoints[index].lonStr}"
+                     title = ctx.getString(R.string.routing_point).format(
+                        index + 1,
+                        routePoints[index].latStr,
+                        routePoints[index].lonStr
+                     )
                   }
                }
-               routeLine.apply { isEnabled = true }
+               routeLine?.apply { isEnabled = true }
             }
          }
       } else {
-         routeMarker.forEach {
-            it.apply {
-               isEnabled = false
-            }
-         }
+         deleteRouteMarkers(mapView)
 
-         bearingLine.apply { isEnabled = false }
-         tackLine.apply { isEnabled = false }
-         routeLine.apply { isEnabled = false }
+         bearingLine?.apply { isEnabled = false }
+         tackLine?.apply { isEnabled = false }
+         routeLine?.apply { isEnabled = false }
       }
    }
 }

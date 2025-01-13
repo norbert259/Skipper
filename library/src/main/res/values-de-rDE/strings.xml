@@ -88,7 +88,6 @@
     <string name="grib_file_successfully_scanned">Grib Datei erfolgreich gelesen</string>
     <string name="exception_scanning_grib_v2_file">Fehler: Beim Lesen einer GRIB V2 Datei</string>
     <string name="doesn_t_look_like_a_valid_grib_file">Fehler: Offensichtlich keine GRIB Datei</string>
-    <string name="grib_file_version_not_supported">Fehler: Grib Version wird nicht unterstützt</string>
     <string name="error_cannot_load_grib_file">Fehler: Grid Datei kann nichtg geladen werden</string>
     <string name="grib_file">Grib Datei</string>
     <string name="anchor_alarm">Ankeralarm</string>
@@ -117,4 +116,11 @@
     <string name="cache_usage">Cache Nutzungsgrad</string>
     <string name="windspeed_s">Windgeschwindigkeit: %.0f km/h</string>
     <string name="winddirection_s">Windichtung: %.0f °</string>
+    <string name="location_decription">Breite: %s\nLänge: %s\nGeschw.: %.2f %s\nKurs: %.0f °\nGenauigkeit: %.0f m\nProvider: %s</string>
+    <string name="track_description">Beginn: %s\nEnde: %s\nEntfernung: %.1f %s\nHöhenmeter: %.0f m\nDurchschnittsgeschw.: %.1f %s</string>
+    <string name="bearingline_description">Peilung: %.0f °\nAbstand: %.1f %s</string>
+    <string name="routing_point">Index: %d\nBreite: %s\nLänge: %s</string>
+    <string name="waypoints">Wegepunkte</string>
+    <string name="grib_file_version_not_supported">Grib Dateiversion nicht unterstützt</string>
+    <string name="tackline_description">Wendekurs: %.0f °</string>
 </resources>
