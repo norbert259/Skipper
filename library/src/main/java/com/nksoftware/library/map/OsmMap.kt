@@ -73,6 +73,7 @@ class OsmMap(
    private val ctx: Context,
    private val sharedPreferences: SharedPreferences,
    private val dir: String?,
+   private val location: ExtendedLocation,
    private val updateLocation: (Double, Double) -> Unit
 ) : MapView(ctx), MapListener {
 
@@ -145,6 +146,7 @@ class OsmMap(
       maxZoomLevel = 18.0
 
       controller.zoomTo(12.0)
+      controller.setCenter(location.locGp)
 
       locMarker = NkMarker(
          this,

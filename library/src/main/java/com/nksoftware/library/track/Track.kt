@@ -10,7 +10,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+1 *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
@@ -61,14 +61,10 @@ class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
    var endTrackTime: String by mutableStateOf("  ")
 
    var timeSlots: List<Long> by mutableStateOf(listOf())
+
    var courses: List<Float> by mutableStateOf(listOf())
-
    var distances: List<Float> by mutableStateOf(listOf())
-   var appliedDistances: List<Float> by mutableStateOf(listOf())
-
    var speeds: List<Float> by mutableStateOf(listOf())
-   var appliedSpeeds: List<Float> by mutableStateOf(listOf())
-
    var elevations: List<Float> by mutableStateOf(listOf())
 
    private var trackLine: NkPolyline? = null
@@ -95,16 +91,15 @@ class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
       if (locService != null) {
          track = locService!!.getTrack()
 
-         startTrackTime = if (track.isNotEmpty()) ExtendedLocation.getTimeStr(track.first().time, "dd. HH:mm") else "  "
+         startTrackTime = if (track.isNotEmpty()) ExtendedLocation.getTimeStr(track.first().time, "EEE HH:mm") else "  "
+         endTrackTime = if (track.isNotEmpty()) ExtendedLocation.getTimeStr(track.last().time, "EEE HH:mm") else "  "
+
+         timeSlots = track
+            .map { it.time }
+            .chunked(granularity.value)
+            .map { it.max() }
 
          if (track.size > 1) {
-            endTrackTime = ExtendedLocation.getTimeStr(track.last().time, "dd. HH:mm")
-
-            timeSlots = track.drop(1)
-               .map { it.time }
-               .chunked(granularity.value)
-               .map { it.max() }
-
             val timeDifferences = track.map { it.time / 1000.0 }
                .windowed(granularity.value + 1, step = granularity.value, partialWindows = true)
                .map { it.max() - it.min() }
@@ -117,19 +112,13 @@ class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
                .chunked(granularity.value)
                .map { it.sum() }
 
-            appliedDistances = distances.map { x -> ExtendedLocation.applyDistance(x) ?: 0f }
-
             speeds = distances.mapIndexed { i, x -> x / timeDifferences[i].toFloat() }
-            appliedSpeeds = speeds.map { x -> ExtendedLocation.applySpeed(x) }
 
             elevations = track.drop(1).map { x -> if (x.hasAltitude()) x.altitude.toFloat() else Float.NaN }
                .chunked(granularity.value)
                .map { it.last() }
 
          } else {
-            endTrackTime = "  "
-
-            timeSlots = listOf()
             courses = listOf()
             distances = listOf()
             speeds = listOf()
@@ -142,12 +131,12 @@ class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
       return ctx.getString(R.string.track_description, startTrackTime, endTrackTime,
          ExtendedLocation.applyDistance(distances.sum()), ExtendedLocation.distanceDimension,
          if (elevations.isNotEmpty()) elevations.max() - elevations.min() else 0f,
-         appliedSpeeds.average(), ExtendedLocation.speedDimension
+         ExtendedLocation.applySpeed(speeds.average().toFloat()), ExtendedLocation.speedDimension
       )
    }
 
    fun getTotalSpeed(): Float? {
-      return if (appliedSpeeds.isNotEmpty()) appliedSpeeds.average().toFloat() else null
+      return if (speeds.isNotEmpty()) ExtendedLocation.applySpeed(speeds.average().toFloat()) else null
    }
 
    override fun loadPreferences(preferences: SharedPreferences) {
@@ -165,7 +154,9 @@ class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
       if ((mapMode == mapModeToBeUpdated)) {
          if (track.isNotEmpty()) {
             val pts = mutableListOf<GeoPoint>()
+
             track.forEach { t -> pts.add(GeoPoint(t.latitude, t.longitude))}
+            pts.add(location.locGp)
 
             trackLine!!.apply {
                isEnabled = true

@@ -29,7 +29,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.TableView
 import androidx.compose.material.icons.outlined.Landscape
@@ -37,6 +37,7 @@ import androidx.compose.material.icons.outlined.LineAxis
 import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.material.icons.outlined.TableView
 import androidx.compose.material.icons.outlined.Timeline
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -45,7 +46,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkCardWithHeadline
@@ -53,10 +56,10 @@ import com.nksoftware.library.composables.NkCombinedChartComponent
 import com.nksoftware.library.composables.NkDateFormatterEpoch
 import com.nksoftware.library.composables.NkInputField
 import com.nksoftware.library.composables.NkLineChartComponent
-import com.nksoftware.library.composables.NkMatrixCell
 import com.nksoftware.library.composables.NkRowNValues
 import com.nksoftware.library.composables.NkSingleSelectMenu
 import com.nksoftware.library.composables.NkTabRowIcon
+import com.nksoftware.library.composables.NkTableCell
 import com.nksoftware.library.composables.NkValueField
 import com.nksoftware.library.location.ExtendedLocation
 
@@ -68,6 +71,9 @@ fun TrackDashboard(
    modifier: Modifier = Modifier,
    track: Track
 ) {
+
+   val blueDot = ImageVector.vectorResource(R.drawable.circle_blue)
+
    Column(
       modifier = Modifier.padding(bottom = 8.dp)
    ) {
@@ -88,19 +94,19 @@ fun TrackDashboard(
                value = track.name,
                onValueChange = { s -> track.name = s },
                regex = "^[\\w,\\s-]+\\.[A-Za-z]{3}\$",
-               label = stringResource(R.string.name),
+               label = stringResource(R.string.name)
             )
             NkValueField(
                modifier = Modifier.width(80.dp),
                label = stringResource(R.string.dist),
                dimension = ExtendedLocation.distanceDimension,
-               value = track.appliedDistances.sum(),
+               value = ExtendedLocation.applyDistance(track.distances.sum()),
             )
             NkValueField(
                modifier = Modifier.width(80.dp),
                label = stringResource(R.string.speed),
                dimension = ExtendedLocation.speedDimension,
-               value = track.getTotalSpeed(),
+               value = track.getTotalSpeed()
             )
             NkSingleSelectMenu(
                icon = Icons.Outlined.Summarize,
@@ -122,105 +128,97 @@ fun TrackDashboard(
 
             when (state) {
                0 -> {
-                   NkCardWithHeadline(
-                     headline = stringResource(R.string.tracksegments),
+                  NkCardWithHeadline(
+                     headline = stringResource(R.string.trackpoints, track.size),
                      icon = Icons.Filled.TableView
                   ) {
-                     Row(modifier = Modifier.padding(top = 5.dp)) {
-                        Column(
-                           modifier = Modifier
-                              .padding(end = 5.dp)
-                              .background(color = Color.LightGray)
-                        ) {
-                           NkMatrixCell(
-                              modifier = Modifier
-                                 .width(100.dp)
-                                 .padding(start = 5.dp, end = 5.dp),
-                              value = stringResource(R.string.time),
-                              alignment = Alignment.BottomCenter
-                           )
-                           NkMatrixCell(
-                              modifier = Modifier
-                                 .width(100.dp)
-                                 .padding(start = 5.dp, end = 5.dp),
-                              value = stringResource(R.string.no),
-                              alignment = Alignment.BottomCenter
-                           )
-                           NkMatrixCell(
-                              modifier = Modifier
-                                 .width(100.dp)
-                                 .padding(start = 5.dp, end = 5.dp),
-                              value = stringResource(R.string.dist),
-                              subHeader = ExtendedLocation.distanceDimension,
-                              alignment = Alignment.BottomCenter
-                           )
-                           NkMatrixCell(
-                              modifier = Modifier
-                                 .width(100.dp)
-                                 .padding(start = 5.dp, end = 5.dp),
-                              value = stringResource(R.string.speed),
-                              subHeader = ExtendedLocation.speedDimension,
-                              alignment = Alignment.BottomCenter
-                           )
-                           NkMatrixCell(
-                              modifier = Modifier
-                                 .width(100.dp)
-                                 .padding(start = 5.dp, end = 5.dp),
-                              value = stringResource(R.string.course),
-                              subHeader = "°",
-                              alignment = Alignment.BottomCenter
-                           )
-                           NkMatrixCell(
-                              modifier = Modifier
-                                 .width(100.dp)
-                                 .padding(start = 5.dp, end = 5.dp),
-                              value = stringResource(R.string.elev),
-                              subHeader = "m",
-                              alignment = Alignment.BottomCenter
-                           )
-                        }
+                     Row(
+                        modifier = Modifier.padding(top = 5.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(5.dp)
+                     ) {
+                        NkTableCell(
+                           modifier = Modifier.width(40.dp),
+                           value = stringResource(R.string.no),
+                        )
+                        NkTableCell(
+                           modifier = Modifier.width(80.dp),
+                           value = stringResource(R.string.time),
+                        )
+                        NkTableCell(
+                           modifier = Modifier.width(60.dp),
+                           value = stringResource(R.string.dist),
+                        )
+                        NkTableCell(
+                           modifier = Modifier.width(60.dp),
+                           value = stringResource(R.string.speed),
+                        )
+                        NkTableCell(
+                           modifier = Modifier.width(60.dp),
+                           value = stringResource(R.string.course),
+                        )
+                        NkTableCell(
+                           modifier = Modifier.width(60.dp),
+                           value = stringResource(R.string.elev),
+                        )
+                     }
 
-                        LazyRow(
+                     HorizontalDivider()
+
+                     Column(
+                        modifier = Modifier
+                           .background(Color.White)
+                           .height(90.dp)
+                           .fillMaxWidth()
+                     ) {
+                        LazyColumn(
                            modifier = Modifier
                               .background(Color.White)
                               .fillMaxWidth()
                         ) {
                            items(track.timeSlots.size) { index ->
-                              Column(
+                              Row(
                                  modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(end = 5.dp)
+                                    .padding(top = 3.dp),
+                                 verticalAlignment = Alignment.CenterVertically,
+                                 horizontalArrangement = Arrangement.spacedBy(5.dp)
                               ) {
-                                 NkMatrixCell(
-                                    alignment = Alignment.BottomCenter,
-                                    header = ExtendedLocation.getTimeStr(track.timeSlots[index], "dd"),
-                                    subHeader = ExtendedLocation.getTimeStr(track.timeSlots[index], "EEE"),
-                                    value = ExtendedLocation.getTimeStr(track.timeSlots[index], "HH:mm")
+                                 NkTableCell(
+                                    modifier = Modifier.width(40.dp),
+                                    value = index + 1,
+                                    icon = blueDot
                                  )
-                                 NkMatrixCell(
-                                    value = index + 1
+                                 NkTableCell(
+                                    modifier = Modifier.width(80.dp),
+                                    value = if (index > 0)
+                                       ExtendedLocation.getTimeStr(track.timeSlots[index], "EEE HH:mm")
+                                    else
+                                       ExtendedLocation.getTimeStr(track.track[index].time, "EEE HH:mm")
                                  )
-                                 NkMatrixCell(
-                                    value = track.appliedDistances[index],
-                                    min = track.appliedDistances.min(),
-                                    max = track.appliedDistances.max(),
-                                    precision = 2
+                                 NkTableCell(
+                                    modifier = Modifier.width(60.dp),
+                                    value = if (index > 0)
+                                       "%.1f %s".format(
+                                          ExtendedLocation.applyDistance(track.distances[index - 1]),
+                                          ExtendedLocation.distanceDimension
+                                       ) else "",
                                  )
-                                 NkMatrixCell(
-                                    value = track.appliedSpeeds[index],
-                                    min = track.appliedSpeeds.min(),
-                                    max = track.appliedSpeeds.max(),
-                                    precision = 1
+                                 NkTableCell(
+                                    modifier = Modifier.width(60.dp),
+                                    value = if (index > 0)
+                                       "%.1f %s".format(
+                                          ExtendedLocation.applySpeed(track.speeds[index - 1]),
+                                          ExtendedLocation.speedDimension
+                                       ) else "",
                                  )
-                                 NkMatrixCell(
-                                    value = track.courses[index],
-                                    precision = 0
+                                 NkTableCell(
+                                    modifier = Modifier.width(60.dp),
+                                    value = if (index > 0) "%.0f °".format(track.courses[index - 1]) else "",
                                  )
-                                 NkMatrixCell(
-                                    value = track.elevations[index],
-                                    min = track.elevations.min(),
-                                    max = track.elevations.max(),
-                                    precision = 0
+                                 NkTableCell(
+                                    modifier = Modifier.width(60.dp),
+                                    value = if (index > 0) "%.0f m".format(track.elevations[index - 1]) else "",
                                  )
                               }
                            }
@@ -240,9 +238,9 @@ fun TrackDashboard(
                            .padding(top = 5.dp),
                         xData = List(track.distances.size) { index -> index.toFloat() },
                         xFormatter = NkDateFormatterEpoch(timeSlots = track.timeSlots),
-                        yLineData = track.appliedDistances,
+                        yLineData = track.distances.map { ExtendedLocation.applyDistance(it)!! },
                         lineLabel = stringResource(R.string.dist),
-                        yBarData = track.appliedSpeeds,
+                        yBarData = track.speeds.map { ExtendedLocation.applySpeed(it) },
                         barLabel = stringResource(R.string.speed)
                      )
                   }

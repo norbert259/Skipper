@@ -113,7 +113,7 @@ fun MainScreen(
    var mode by rememberSaveable { mutableStateOf(ScreenMode.Navigation) }
    val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
-   val mapView by remember { mutableStateOf(OsmMap(ctx, sharedPreferences, dir,
+   val mapView by remember { mutableStateOf(OsmMap(ctx, sharedPreferences, dir, vm.gpsLocation.location,
       { lat, lon -> vm.setLocation(loc = ExtendedLocation(lat, lon), trackUpdate = false) })) }
 
 
