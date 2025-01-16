@@ -36,6 +36,8 @@ import com.nksoftware.library.locationservice.LocationService
 import com.nksoftware.library.map.NkPolyline
 import com.nksoftware.library.map.OsmMap
 import org.osmdroid.util.GeoPoint
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 
 const val trackActiveKey = "TrackActive"
@@ -137,6 +139,15 @@ class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
 
    fun getTotalSpeed(): Float? {
       return if (speeds.isNotEmpty()) ExtendedLocation.applySpeed(speeds.average().toFloat()) else null
+   }
+
+   fun getDuration(): String {
+      return if (track.isNotEmpty()) {
+         val timeDiff = (track.last().time - track.first().time)
+         return (timeDiff / 1000).toDuration(DurationUnit.SECONDS).toComponents { hours, minutes, seconds ->
+            "%02d:%02d:%02d".format(hours, minutes, seconds)
+         }
+      } else ""
    }
 
    override fun loadPreferences(preferences: SharedPreferences) {

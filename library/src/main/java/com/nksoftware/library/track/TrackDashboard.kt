@@ -87,23 +87,28 @@ fun TrackDashboard(
             modifier = Modifier
                .fillMaxWidth()
                .padding(top = 8.dp),
-            arrangement = Arrangement.SpaceBetween
+            arrangement = Arrangement.spacedBy(5.dp)
          ) {
             NkInputField(
-               modifier = Modifier.width(100.dp),
+               modifier = Modifier.weight(1.4f),
                value = track.name,
                onValueChange = { s -> track.name = s },
                regex = "^[\\w,\\s-]+\\.[A-Za-z]{3}\$",
                label = stringResource(R.string.name)
             )
             NkValueField(
-               modifier = Modifier.width(80.dp),
+               modifier = Modifier.weight(1.4f),
+               label = stringResource(R.string.duration),
+               value = track.getDuration(),
+            )
+            NkValueField(
+               modifier = Modifier.weight(1.0f),
                label = stringResource(R.string.dist),
                dimension = ExtendedLocation.distanceDimension,
                value = ExtendedLocation.applyDistance(track.distances.sum()),
             )
             NkValueField(
-               modifier = Modifier.width(80.dp),
+               modifier = Modifier.weight(1.0f),
                label = stringResource(R.string.speed),
                dimension = ExtendedLocation.speedDimension,
                value = track.getTotalSpeed()

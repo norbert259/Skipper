@@ -124,4 +124,5 @@
     <string name="grib_file_version_not_supported">Grib Dateiversion nicht unterstützt</string>
     <string name="tackline_description">Wendekurs: %.0f °</string>
     <string name="trackpoints">Track Punkte: %d</string>
+    <string name="duration">Dauer</string>
 </resources>
