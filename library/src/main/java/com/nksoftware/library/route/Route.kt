@@ -168,6 +168,8 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
       val distances = routePoints.map { loc.distanceTo(it) }
       val minimumDistances = distances.withIndex().minBy { it.value }
 
+      val distancesBetweenRoutingPts = routePoints.zipWithNext { x, y -> x.distanceTo(y) }
+
       when (routePoints.size) {
          0 -> {
             selectedRoutePoint = -1
@@ -179,22 +181,23 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
             return routePoints[0]
          }
 
-         else -> if ((minimumDistances.index + 1 in routePoints.indices) &&
-                     (abs(loc.getHeadingDifferenceFromBearing(routePoints[minimumDistances.index])) > 90f) &&
-                     (abs(loc.getHeadingDifferenceFromBearing(routePoints[minimumDistances.index + 1])) < 90f)
-         ) {
-            selectedRoutePoint = minimumDistances.index + 1
-            return routePoints[minimumDistances.index + 1]
-
-         } else {
-            if ((minimumDistances.index == routePoints.indices.last) &&
-                abs(loc.getHeadingDifferenceFromBearing(routePoints[minimumDistances.index])) > 90f
+         else -> {
+            if ((minimumDistances.index + 1 in routePoints.indices) &&
+                (distances[minimumDistances.index + 1] < distancesBetweenRoutingPts[minimumDistances.index])
             ) {
-               selectedRoutePoint = -1
-               return null
+               selectedRoutePoint = minimumDistances.index + 1
+               return routePoints[minimumDistances.index + 1]
+
             } else {
-               selectedRoutePoint = minimumDistances.index
-               return routePoints[minimumDistances.index]
+               if ((minimumDistances.index == routePoints.indices.last) &&
+                   abs(loc.getHeadingDifferenceFromBearing(routePoints[minimumDistances.index])) > 90f
+               ) {
+                  selectedRoutePoint = -1
+                  return null
+               } else {
+                  selectedRoutePoint = minimumDistances.index
+                  return routePoints[minimumDistances.index]
+               }
             }
          }
       }
