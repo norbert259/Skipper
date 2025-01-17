@@ -281,15 +281,15 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
          val locGp = location.locGp
 
          if (!active || routePoints.isEmpty()) {
-
-            if (location.hasBearing() && location.hasSpeed())
+            if (location.hasBearing() && location.hasSpeed()) {
                courseLine?.apply {
-                  isEnabled = true
-
                   val bearingPoint = location.locGp.destinationPoint(18000.0, location.bearing.toDouble())
                   setPoints(listOf(location.locGp, bearingPoint))
-               } else
-                  courseLine?.apply { isEnabled = false }
+
+                  isEnabled = true
+               }
+            } else
+               courseLine?.apply { isEnabled = false }
 
             routeMarker.forEach { it.apply { isEnabled = false } }
 
@@ -311,11 +311,14 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
                bearingLine?.apply {
                   isEnabled = true
                   setPoints(listOf(locGp, wpGP))
-                  setInfoWindow(ctx.getString(
-                     R.string.bearingline_description,
-                     location.bearingTo(wp),
-                     ExtendedLocation.applyDistance(location.distanceTo(wp)),
-                     ExtendedLocation.distanceDimension))
+                  setInfoWindow(
+                     ctx.getString(
+                        R.string.bearingline_description,
+                        location.bearingTo(wp),
+                        ExtendedLocation.applyDistance(location.distanceTo(wp)),
+                        ExtendedLocation.distanceDimension
+                     )
+                  )
                }
 
                val courseDeviation = location.getHeadingDeviation(wp)

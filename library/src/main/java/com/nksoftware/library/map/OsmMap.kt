@@ -146,7 +146,7 @@ class OsmMap(
       maxZoomLevel = 18.0
 
       controller.zoomTo(12.0)
-      controller.setCenter(location.locGp)
+      controller.animateTo(location.locGp)
 
       locMarker = NkMarker(
          this,
@@ -181,7 +181,7 @@ class OsmMap(
          val locGP = location.locGp
 
          if (centerMap) {
-            controller.setCenter(locGP)
+            controller.animateTo(locGP)
          }
 
          setLocationMarker(

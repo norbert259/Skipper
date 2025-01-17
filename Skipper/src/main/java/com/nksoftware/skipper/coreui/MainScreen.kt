@@ -23,6 +23,7 @@ package com.nksoftware.skipper.coreui
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -66,6 +67,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nksoftware.library.anchor.AnchorDashboard
@@ -89,6 +91,7 @@ import com.nksoftware.library.weather.WeatherOption
 import com.nksoftware.skipper.R
 import com.nksoftware.skipper.core.SkipperViewModel
 import com.nksoftware.skipper.core.SkipperViewModelOptions
+import com.nksoftware.skipper.core.logTag
 import com.nksoftware.skipper.map.OsmMapScreen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -125,6 +128,10 @@ fun MainScreen(
       }
    }
 
+   val configuration = LocalConfiguration.current
+   val screenHeight = configuration.screenHeightDp.dp
+   val screenWidth = configuration.screenWidthDp.dp
+   Log.i(logTag, "ScreenHeight: $screenHeight  ScreenWidth: $screenWidth")
 
    SkipperTheme(dynamicColor = false) {
       Surface(modifier = Modifier.fillMaxSize()) {

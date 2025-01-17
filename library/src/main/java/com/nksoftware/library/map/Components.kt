@@ -91,8 +91,8 @@ class NkPolyline(
    mapview: MapView,
    width: Float,
    color: Int,
-   disableInfoWindow: Boolean = true)
-   : Polyline(mapview, false, false)
+   disableInfoWindow: Boolean = true
+): Polyline(mapview)
 {
 
    var infoWindowShown: Boolean = false
@@ -115,7 +115,8 @@ class NkPolyline(
    fun setCircle(pt: GeoPoint, diameter: Double, noPts: Int = 20) {
       val circle = mutableListOf<GeoPoint>()
 
-      for (i in 0..360 step noPts) circle.add(pt.destinationPoint(diameter, i.toDouble()))
+      for (i in 0..360 step noPts)
+         circle.add(pt.destinationPoint(diameter, i.toDouble()))
 
       apply {
          isEnabled = true

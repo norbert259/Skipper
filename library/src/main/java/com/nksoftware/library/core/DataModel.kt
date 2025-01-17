@@ -48,9 +48,11 @@ open class DataModel(val mapModeToBeUpdated: Int = 0) {
             try {
                model.updateMap(mapView, mapMode, location, snackbar)
             }
+
             catch (e: Exception) {
                snackbar("Cannot update map for $model")
                Log.e(logTag, "Exception: $e")
+               e.printStackTrace()
             }
          }
       }
