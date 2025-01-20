@@ -58,7 +58,7 @@
     <string name="station_s" translatable="false">Station: %s</string>
     <string name="elev">Elevation</string>
     <string name="dist">Distance</string>
-    <string name="issued">Issued</string>
+    <string name="issued">Issued: %s</string>
     <string name="forecast_table">Forecast</string>
     <string name="windforecast">Wind forecast</string>
     <string name="temperaturetrend">Temperature trend</string>
@@ -124,7 +124,7 @@
     <string name="cache_usage">Cache usage</string>
     <string name="windspeed_s">Wind speed: %.0f km/h</string>
     <string name="winddirection_s">Wind direction: %.0f °</string>
-    <string name="location_decription">Lat: %s\nLon: %s\nSpeed: %.2f %s\nHeading: %.0f °\nAccuracy: %.0f m\nProvider: %s</string>
+    <string name="location_decription">Lat: %s\nLon: %s\nSpeed: %s\nHeading: %s\nAccuracy: %s\nProvider: %s</string>
     <string name="track_description">Start: %s\nEnd: %s\nDistance: %.1f %s\nElevation: %.0f m\nAvg. Speed: %.1f %s</string>
     <string name="bearingline_description">Bearing: %.0f °\nDistance: %.1f %s</string>
     <string name="routing_point">Index: %d\nLatitude: %s\nLongitude: %s</string>

@@ -185,40 +185,8 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
       }
    }
 
-   constructor(lat: Double, lon: Double): this(Location(LocationManager.GPS_PROVIDER)) {
-      latitude = lat
-      longitude = lon
-   }
 
-   val timeStr: String
-      get() = getTimeStr(time)
-   val latStr: String
-      get() = convertCoordinate(latitude)
-   val lonStr: String
-      get() = convertCoordinate(longitude, vertical = false)
-   val locGp: GeoPoint
-      get() = GeoPoint(latitude, longitude)
-
-   val speedKmh: Float
-      get() = speed * 3.6f
-   val appliedSpeed: Float
-      get() = applySpeed(speed)
-
-
-   fun description(ctx: Context): String {
-      return ctx.getString(R.string.location_decription).format(
-            latStr, lonStr, appliedSpeed, speedDimension, getHeading(),
-            if (hasAccuracy()) accuracy else Float.NaN, provider
-         )
-   }
-
-
-   fun restoreValues(prevLoc: Location) {
-      if (!hasSpeed() && prevLoc.hasSpeed()) speed = prevLoc.speed
-      if (!hasBearing() && prevLoc.hasBearing()) bearing = prevLoc.bearing
-      if (!hasAltitude() && prevLoc.hasAltitude()) altitude = prevLoc.altitude
-      if (!hasAccuracy() && prevLoc.hasAccuracy()) accuracy = prevLoc.accuracy
-
+   init {
       magneticDeviation = GeomagneticField(
          latitude.toFloat(),
          longitude.toFloat(),
@@ -227,9 +195,51 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
       )
    }
 
-   fun getHeading(): Float {
-      return applyCourse(bearing)
+   constructor(lat: Double, lon: Double) : this(Location(LocationManager.GPS_PROVIDER)) {
+      latitude = lat
+      longitude = lon
    }
+
+   val timeStr: String
+      get() = getTimeStr(time)
+
+   val latStr: String
+      get() = convertCoordinate(latitude)
+
+   val lonStr: String
+      get() = convertCoordinate(longitude, vertical = false)
+
+   val locGp: GeoPoint
+      get() = GeoPoint(latitude, longitude)
+
+   val speedKmh: Float
+      get() = speed * 3.6f
+
+   val appliedHeading: Float?
+      get() = if (hasBearing()) applyCourse(bearing) else null
+
+   val appliedHeadingStr: String
+      get() = if (hasBearing()) "%.0f".format(appliedHeading) else " °"
+
+   val appliedSpeed: Float?
+      get() = if (hasSpeed()) applySpeed(speed) else null
+
+   val appliedSpeedStr: String
+      get() = if (hasSpeed()) "%.1f %s".format(appliedSpeed, speedDimension) else " %s".format(speedDimension)
+
+   val appliedAccuracy: Float?
+      get() = if (hasAccuracy()) accuracy else null
+
+   val appliedAccuracyStr: String
+      get() = if (hasAccuracy()) "%.0f m".format(accuracy) else " m"
+
+
+   fun description(ctx: Context): String {
+      return ctx.getString(R.string.location_decription).format(
+         latStr, lonStr, appliedSpeedStr, appliedHeadingStr, appliedAccuracyStr, provider
+      )
+   }
+
 
    fun getHeadingDifferenceFromBearing(to: Location): Float {
       var diff = this.bearingTo(to) - this.bearing
@@ -258,19 +268,25 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
       return applySpeed(getVelocityMadeGood(loc))
    }
 
-   fun getHeadingPoint(loc: Location): GeoPoint {
-      val distance = distanceTo(loc) / (1852 * 60)
 
-      val directionLat = latitude + distance * cos(Math.toRadians(getHeading().toDouble()))
-      val directionLon = longitude + distance * sin(Math.toRadians(getHeading().toDouble())) /
-                         cos(Math.toRadians(latitude))
+   fun getHeadingPoint(loc: Location): GeoPoint? {
+      if (appliedHeading != null) {
+         val distance = distanceTo(loc) / (1852 * 60)
 
-      return GeoPoint(directionLat, directionLon)
+         val directionLat = latitude + distance * cos(Math.toRadians(applyCourse(bearing).toDouble()))
+         val directionLon = longitude + distance * sin(Math.toRadians(applyCourse(bearing).toDouble())) /
+                            cos(Math.toRadians(latitude))
+
+         return GeoPoint(directionLat, directionLon)
+      } else
+         return null
    }
+
 
    fun getAppliedBearing(location: Location): Float {
       return applyCourse(northBasedToDegree(bearingTo(location)))
    }
+
 
    fun getHeadingDeviation(wp: Location): Float {
       var diff = bearingTo(wp) - bearing
@@ -281,6 +297,7 @@ class ExtendedLocation(currLoc: Location) : Location(currLoc) {
       return diff
    }
 
+   
    fun getEta(loc: Location): String {
       var eta = ""
       val distance = distanceTo(loc)

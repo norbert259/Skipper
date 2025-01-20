@@ -90,7 +90,7 @@ fun NkValueField(
 
       Row(
          modifier = Modifier
-            .fillMaxWidth()
+            .align(Alignment.End)
             .padding(top = 2.dp),
          horizontalArrangement = Arrangement.spacedBy(3.dp),
          verticalAlignment = Alignment.CenterVertically
@@ -99,7 +99,6 @@ fun NkValueField(
             NkIcon(icon = icon, modifier = Modifier.size(14.dp))
 
          NkText(
-            modifier = Modifier.weight(2f),
             text = when (value) {
                null      -> ""
                is Float  -> "%.${precision}f".format(value)

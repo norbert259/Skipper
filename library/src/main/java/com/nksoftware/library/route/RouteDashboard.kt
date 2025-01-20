@@ -28,7 +28,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Route
@@ -44,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkCardWithHeadline
 import com.nksoftware.library.composables.NkInputField
-import com.nksoftware.library.composables.NkRowNValues
 import com.nksoftware.library.composables.NkTableCell
 import com.nksoftware.library.composables.NkValueField
 import com.nksoftware.library.location.ExtendedLocation
@@ -60,36 +58,36 @@ fun RouteDashboard(
    val yellowDot = ImageVector.vectorResource(R.drawable.circle_yellow)
 
    Column(
-      modifier = modifier.padding(bottom = 8.dp),
+      modifier = modifier.padding(bottom = 5.dp),
    ) {
       NkCardWithHeadline(
          headline = stringResource(R.string.route),
          icon = Icons.Filled.Route
       ) {
-         NkRowNValues(
+         Row(
             modifier = Modifier.padding(top = 5.dp),
-            arrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
          ) {
             NkInputField(
-               modifier = Modifier.width(100.dp),
+               modifier = Modifier.weight(1.5f),
                value = route.name,
                onValueChange = { n -> route.name = n },
                regex = "^[\\w,\\s-]+\\.[A-Za-z]{3}\$",
                label = stringResource(R.string.name),
             )
             NkValueField(
-               modifier = Modifier.width(60.dp),
+               modifier = Modifier.weight(1f),
                label = stringResource(R.string.points),
                value = route.size
             )
             NkValueField(
-               modifier = Modifier.width(80.dp),
+               modifier = Modifier.weight(1f),
                label = stringResource(R.string.total),
                dimension = ExtendedLocation.distanceDimension,
                value = ExtendedLocation.applyDistance(route.getLength()),
             )
             NkValueField(
-               modifier = Modifier.width(80.dp),
+               modifier = Modifier.weight(1f),
                label = stringResource(R.string.remaining),
                dimension = ExtendedLocation.distanceDimension,
                value = ExtendedLocation.applyDistance(
@@ -109,27 +107,27 @@ fun RouteDashboard(
             horizontalArrangement = Arrangement.spacedBy(5.dp)
          ) {
             NkTableCell(
-               modifier = Modifier.width(40.dp),
+               modifier = Modifier.weight(0.6f),
                value = stringResource(R.string.no),
             )
             NkTableCell(
-               modifier = Modifier.width(70.dp),
+               modifier = Modifier.weight(1f),
                value = stringResource(R.string.latitude)
             )
             NkTableCell(
-               modifier = Modifier.width(70.dp),
+               modifier = Modifier.weight(1f),
                value = stringResource(R.string.longitude)
             )
             NkTableCell(
-               modifier = Modifier.width(50.dp),
+               modifier = Modifier.weight(1f),
                value = stringResource(R.string.dist),
             )
             NkTableCell(
-               modifier = Modifier.width(50.dp),
+               modifier = Modifier.weight(0.8f),
                value = stringResource(R.string.course),
             )
             NkTableCell(
-               modifier = Modifier.width(60.dp),
+               modifier = Modifier.weight(0.8f),
                value = stringResource(R.string.wpelevationdiff),
             )
          }
@@ -150,27 +148,25 @@ fun RouteDashboard(
                LazyColumn {
                   items(route.size) { index ->
                      Row(
-                        modifier = Modifier
-                           .fillMaxWidth()
-                           .padding(top = 3.dp),
+                        modifier = Modifier.padding(top = 3.dp),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                      ) {
                         NkTableCell(
-                           modifier = Modifier.width(40.dp),
+                           modifier = Modifier.weight(0.6f),
                            value = index + 1,
                            icon = if (index == route.selectedRoutePoint) yellowDot else redDot
                         )
                         NkTableCell(
-                           modifier = Modifier.width(70.dp),
+                           modifier = Modifier.weight(1f),
                            value = route.routePoints[index].latStr
                         )
                         NkTableCell(
-                           modifier = Modifier.width(70.dp),
+                           modifier = Modifier.weight(1f),
                            value = route.routePoints[index].lonStr
                         )
                         NkTableCell(
-                           modifier = Modifier.width(50.dp),
+                           modifier = Modifier.weight(1f),
                            value = if (index > 0) "%.1f %s".format(
                               distances[index - 1],
                               ExtendedLocation.distanceDimension
@@ -178,11 +174,11 @@ fun RouteDashboard(
                            precision = 1
                         )
                         NkTableCell(
-                           modifier = Modifier.width(50.dp),
+                           modifier = Modifier.weight(0.8f),
                            value = if (index > 0) "%.0f °".format(courses[index - 1]) else ""
                         )
                         NkTableCell(
-                           modifier = Modifier.width(50.dp),
+                           modifier = Modifier.weight(0.8f),
                            value = if (index > 0) elevations[index - 1] else "",
                         )
                      }

@@ -22,8 +22,8 @@
 package com.nksoftware.library.route
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Directions
 import androidx.compose.runtime.Composable
@@ -32,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkCardWithHeadline
-import com.nksoftware.library.composables.NkRowNValues
 import com.nksoftware.library.composables.NkValueField
 import com.nksoftware.library.location.ExtendedLocation
 
@@ -45,36 +44,34 @@ fun WaypointDashboard(location: ExtendedLocation, route: Route) {
    if (wp != null) {
       NkCardWithHeadline(
          headline = stringResource(R.string.waypoint),
-         headline2 = "${wp.latStr}    ${wp.lonStr}",
+         headline2 = stringResource(R.string.lat,wp.latStr) + "   " +
+                     stringResource(R.string.lon, wp.lonStr),
          icon = Icons.Outlined.Directions
       ) {
-         NkRowNValues(
+         Row(
             modifier = Modifier.padding(top = 5.dp),
-            arrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
          ) {
             NkValueField(
-               modifier = Modifier.width(70.dp),
+               modifier = Modifier.weight(1f),
                label = "VMG",
                dimension = ExtendedLocation.speedDimension,
                value = location.getAppliedVelocityMadeGood(wp)
             )
-
             NkValueField(
-               modifier = Modifier.width(60.dp),
+               modifier = Modifier.weight(1f),
                label = stringResource(R.string.bearing),
                dimension = "°",
                value = location.getAppliedBearing(wp),
             )
-
             NkValueField(
-               modifier = Modifier.width(60.dp),
+               modifier = Modifier.weight(1f),
                label = stringResource(R.string.dist),
                value = location.getAppliedDistance(wp),
                dimension = ExtendedLocation.distanceDimension
             )
-
             NkValueField(
-               modifier = Modifier.width(140.dp),
+               modifier = Modifier.weight(1.5f),
                label = "ETA",
                value = location.getEta(wp)
             )

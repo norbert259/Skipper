@@ -24,15 +24,18 @@ package com.nksoftware.library.track
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.Icons.Outlined
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.LinkOff
 import androidx.compose.material.icons.outlined.Route
+import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.material.icons.outlined.Upload
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkFloatingActionButton
+import com.nksoftware.library.composables.NkSingleSelectMenu
 import com.nksoftware.library.gpx.Gpx
 
 
@@ -57,18 +60,21 @@ fun TrackCommands(
       icon = if (track.saveTrack) Outlined.Route else Outlined.LinkOff,
       contentDescription = "De-/Activate tracking"
    )
-
    if (track.size > 0) {
       NkFloatingActionButton(
          onClick = { track.clearTrack() },
          icon = Outlined.Delete,
          contentDescription = "Clear list of track points"
       )
-
       NkFloatingActionButton(
          onClick = { exportLauncher.launch(track.name) },
          icon = Outlined.Upload,
          contentDescription = "Export GPX"
+      )
+      NkSingleSelectMenu(
+         icon = Icons.Outlined.Summarize,
+         item = track.granularity,
+         action = { track.updateTrack() }
       )
    }
 }

@@ -82,10 +82,7 @@ class GpsLocation(ctx: Context, provider: Int = 0): LocationListener {
 
    fun update(loc: Location?) {
       if (loc != null) {
-         val newLoc = ExtendedLocation(loc)
-         newLoc.restoreValues(location)
-
-         location = newLoc
+         location = ExtendedLocation(loc)
          updateCounter++
       }
    }

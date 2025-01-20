@@ -30,10 +30,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkCardWithHeadline
 import com.nksoftware.library.composables.NkRowNValues
 import com.nksoftware.library.composables.NkSlider
-import com.nksoftware.library.R
 
 
 @Composable
@@ -49,7 +49,7 @@ fun AnchorDashboard(
          icon = Icons.Outlined.Anchor
       ) {
          NkRowNValues(
-            modifier = Modifier.padding(top = 5.dp)
+            modifier = Modifier.padding(top = 8.dp)
          ) {
             Column {
                NkSlider(

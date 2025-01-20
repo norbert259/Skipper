@@ -144,9 +144,10 @@ class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
    fun getDuration(): String {
       return if (track.isNotEmpty()) {
          val timeDiff = (track.last().time - track.first().time)
-         return (timeDiff / 1000).toDuration(DurationUnit.SECONDS).toComponents { hours, minutes, seconds ->
-            "%02d:%02d:%02d".format(hours, minutes, seconds)
-         }
+
+         return (timeDiff / 1000)
+            .toDuration(DurationUnit.SECONDS)
+            .toComponents { hours, minutes, seconds, _ -> "%02d:%02d:%02d".format(hours, minutes, seconds) }
       } else ""
    }
 

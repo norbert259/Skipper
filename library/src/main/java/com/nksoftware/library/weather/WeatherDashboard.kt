@@ -58,7 +58,6 @@ import com.nksoftware.library.composables.NkCombinedChartComponent
 import com.nksoftware.library.composables.NkDateFormatterZd
 import com.nksoftware.library.composables.NkLineChartComponent
 import com.nksoftware.library.composables.NkMatrixCell
-import com.nksoftware.library.composables.NkRowNValues
 import com.nksoftware.library.composables.NkTabRowIcon
 import com.nksoftware.library.composables.NkValueField
 import com.nksoftware.library.location.ExtendedLocation
@@ -101,30 +100,36 @@ fun WeatherDashboard(
    ) {
       NkCardWithHeadline(
          headline = stringResource(R.string.station_s, weather.stations.selectedStation?.name ?: ""),
+         headline2 = stringResource(R.string.issued, weather.forecast?.getIssueTimeStr() ?: ""),
          icon = Icons.Filled.Cloud
       ) {
-         NkRowNValues(
+         Row(
             modifier = Modifier.padding(top = 5.dp),
-            arrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
          ) {
             NkValueField(
-               modifier = Modifier.width(80.dp),
+               modifier = Modifier.weight(1.2f),
+               label = stringResource(R.string.latitude),
+               value = ExtendedLocation.convertCoordinate(weather.stations.selectedStation?.lat),
+            )
+            NkValueField(
+               modifier = Modifier.weight(1.2f),
+               label = stringResource(R.string.longitude),
+               value = ExtendedLocation.convertCoordinate(weather.stations.selectedStation?.lon, vertical = true),
+            )
+            NkValueField(
+               modifier = Modifier.weight(1f),
                label = stringResource(R.string.elev),
                value = weather.stations.selectedStation?.elevation,
                dimension = "m"
             )
             NkValueField(
-               modifier = Modifier.width(80.dp),
+               modifier = Modifier.weight(1f),
                label = stringResource(R.string.dist),
                value = ExtendedLocation.applyDistance(
                   weather.stations.selectedStation?.loc?.distanceTo(location)
                ),
                dimension = ExtendedLocation.distanceDimension
-            )
-            NkValueField(
-               modifier = Modifier.width(180.dp),
-               label = stringResource(R.string.issued),
-               value = weather.forecast?.getIssueTimeStr()
             )
          }
       }

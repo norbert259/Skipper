@@ -22,8 +22,8 @@
 package com.nksoftware.library.location
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.GpsFixed
 import androidx.compose.runtime.Composable
@@ -32,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkCardWithHeadline
-import com.nksoftware.library.composables.NkRowNValues
 import com.nksoftware.library.composables.NkValueField
 
 
@@ -42,37 +41,37 @@ fun ExtendedLocationDashboard(location: ExtendedLocation) {
    NkCardWithHeadline(
       modifier = Modifier.padding(bottom = 5.dp),
       headline = stringResource(R.string.location),
-      headline2 = "${location.latStr}    ${location.lonStr}",
+      headline2 = stringResource(R.string.lat,location.latStr) + "   " +
+                  stringResource(R.string.lon, location.lonStr),
       icon = Icons.Outlined.GpsFixed
    ) {
-      NkRowNValues(
+      Row(
          modifier = Modifier.padding(top = 5.dp),
-         arrangement = Arrangement.SpaceBetween
+         horizontalArrangement = Arrangement.spacedBy(5.dp)
       ) {
          NkValueField(
-            modifier = Modifier.width(70.dp),
+            modifier = Modifier.weight(1f),
             label = stringResource(R.string.speed),
             dimension = ExtendedLocation.speedDimension,
             value = location.appliedSpeed
          )
          NkValueField(
-            modifier = Modifier.width(60.dp),
+            modifier = Modifier.weight(1f),
             label = stringResource(R.string.heading),
             dimension = "°",
-            value = location.getHeading(),
+            value = location.appliedHeading,
          )
          NkValueField(
-            modifier = Modifier.width(60.dp),
+            modifier = Modifier.weight(1f),
             label = stringResource(R.string.altitude),
             dimension = "m",
             value = location.altitude,
          )
          NkValueField(
-            modifier = Modifier.width(140.dp),
+            modifier = Modifier.weight(1.5f),
             label = stringResource(R.string.time),
             value = location.timeStr
          )
       }
    }
-
 }

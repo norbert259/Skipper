@@ -281,15 +281,16 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
          val locGp = location.locGp
 
          if (!active || routePoints.isEmpty()) {
-            if (location.hasBearing() && location.hasSpeed()) {
+            if (location.hasBearing() && location.hasSpeed() && location.speed > 0.1) {
                courseLine?.apply {
-                  val bearingPoint = location.locGp.destinationPoint(18000.0, location.bearing.toDouble())
+                  val bearingPoint = location.locGp.destinationPoint(5000.0, location.bearing.toDouble())
                   setPoints(listOf(location.locGp, bearingPoint))
 
                   isEnabled = true
                }
-            } else
+            } else {
                courseLine?.apply { isEnabled = false }
+            }
 
             routeMarker.forEach { it.apply { isEnabled = false } }
 
@@ -324,7 +325,7 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
                val courseDeviation = location.getHeadingDeviation(wp)
                if (sailingMode && (abs(courseDeviation) < tackAngle)) {
 
-                  val headingCourse = location.getHeading()
+                  val headingCourse = location.appliedHeading ?: 0f
                   var tackCourse: Float
 
                   if (courseDeviation > 0) {

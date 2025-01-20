@@ -24,6 +24,7 @@ package com.nksoftware.library.astronavigation
 import android.location.Location
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
@@ -34,16 +35,17 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material.icons.outlined.Timer
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkCardWithHeadline
 import com.nksoftware.library.composables.NkIconButton
 import com.nksoftware.library.composables.NkInputField
 import com.nksoftware.library.composables.NkRowNValues
 import com.nksoftware.library.composables.NkValueField
 import com.nksoftware.library.location.ExtendedLocation
-import com.nksoftware.library.R
 import com.nksoftware.library.sun.Sun
 
 
@@ -57,8 +59,10 @@ fun AstroDashboard(astroNavigation: AstroNavigation, sun: Sun, loc: Location, sn
       ),
       icon = Icons.Outlined.Architecture
    ) {
-      NkRowNValues(
-         arrangement = Arrangement.SpaceBetween
+      Row(
+         modifier = Modifier.fillMaxWidth(),
+         horizontalArrangement = Arrangement.SpaceBetween,
+         verticalAlignment = Alignment.CenterVertically
       ) {
          Row(
             horizontalArrangement = Arrangement.spacedBy(0.dp)
@@ -89,7 +93,7 @@ fun AstroDashboard(astroNavigation: AstroNavigation, sun: Sun, loc: Location, sn
          }
 
          Row(
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
          ) {
             NkInputField(
                modifier = Modifier.width(45.dp),
@@ -128,27 +132,27 @@ fun AstroDashboard(astroNavigation: AstroNavigation, sun: Sun, loc: Location, sn
          headline2 = "${stringResource(R.string.time)}: ${fix.timeStr}",
          icon = Icons.Outlined.Timer
       ) {
-         NkRowNValues(
+         Row(
             modifier = Modifier.padding(top = 8.dp),
-            arrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
          ) {
             NkValueField(
-               modifier = Modifier.width(80.dp),
+               modifier = Modifier.weight(1f),
                label = stringResource(R.string.measure),
                value = fix.heightStr
             )
             NkValueField(
-               modifier = Modifier.width(80.dp),
+               modifier = Modifier.weight(1f),
                label = stringResource(R.string.corr_meas),
                value = fix.finalHeightStr
             )
             NkValueField(
-               modifier = Modifier.width(100.dp),
+               modifier = Modifier.weight(1f),
                label = stringResource(R.string.grt),
                value = fix.grtStr
             )
             NkValueField(
-               modifier = Modifier.width(80.dp),
+               modifier = Modifier.weight(1f),
                label = stringResource(R.string.declination),
                value = fix.dStr
             )

@@ -50,7 +50,6 @@ open class DataModel(val mapModeToBeUpdated: Int = 0) {
             }
 
             catch (e: Exception) {
-               snackbar("Cannot update map for $model")
                Log.e(logTag, "Exception: $e")
                e.printStackTrace()
             }
@@ -66,5 +65,10 @@ open class DataModel(val mapModeToBeUpdated: Int = 0) {
 
    open fun storePreferences(edit: SharedPreferences.Editor) {}
 
-   open fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {}
+   open fun updateMap(
+      mapView: OsmMap,
+      mapMode: Int,
+      location: ExtendedLocation,
+      snackbar: (String) -> Unit
+   ) {}
 }

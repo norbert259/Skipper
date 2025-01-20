@@ -210,9 +210,8 @@ fun <T> NkSingleSelectMenu(
    Column(
       modifier = modifier
    ) {
-      NkIconTextButton(
+      NkFloatingActionButton(
          icon = icon,
-         text = item.value.toString(),
          onClick = { expanded = true }
       )
 

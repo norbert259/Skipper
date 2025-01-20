@@ -28,13 +28,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.TableView
 import androidx.compose.material.icons.outlined.Landscape
 import androidx.compose.material.icons.outlined.LineAxis
-import androidx.compose.material.icons.outlined.Summarize
 import androidx.compose.material.icons.outlined.TableView
 import androidx.compose.material.icons.outlined.Timeline
 import androidx.compose.material3.HorizontalDivider
@@ -56,8 +54,6 @@ import com.nksoftware.library.composables.NkCombinedChartComponent
 import com.nksoftware.library.composables.NkDateFormatterEpoch
 import com.nksoftware.library.composables.NkInputField
 import com.nksoftware.library.composables.NkLineChartComponent
-import com.nksoftware.library.composables.NkRowNValues
-import com.nksoftware.library.composables.NkSingleSelectMenu
 import com.nksoftware.library.composables.NkTabRowIcon
 import com.nksoftware.library.composables.NkTableCell
 import com.nksoftware.library.composables.NkValueField
@@ -75,7 +71,7 @@ fun TrackDashboard(
    val blueDot = ImageVector.vectorResource(R.drawable.circle_blue)
 
    Column(
-      modifier = Modifier.padding(bottom = 8.dp)
+      modifier = Modifier.padding(bottom = 5.dp)
    ) {
       NkCardWithHeadline(
          headline = stringResource(R.string.track),
@@ -83,21 +79,19 @@ fun TrackDashboard(
                      stringResource(R.string.end) + ": " + track.endTrackTime,
          icon = Icons.Outlined.Timeline
       ) {
-         NkRowNValues(
-            modifier = Modifier
-               .fillMaxWidth()
-               .padding(top = 8.dp),
-            arrangement = Arrangement.spacedBy(5.dp)
+         Row(
+            modifier = Modifier.padding(top = 5.dp),
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
          ) {
             NkInputField(
-               modifier = Modifier.weight(1.4f),
+               modifier = Modifier.weight(1.5f),
                value = track.name,
                onValueChange = { s -> track.name = s },
                regex = "^[\\w,\\s-]+\\.[A-Za-z]{3}\$",
                label = stringResource(R.string.name)
             )
             NkValueField(
-               modifier = Modifier.weight(1.4f),
+               modifier = Modifier.weight(1.0f),
                label = stringResource(R.string.duration),
                value = track.getDuration(),
             )
@@ -112,11 +106,6 @@ fun TrackDashboard(
                label = stringResource(R.string.speed),
                dimension = ExtendedLocation.speedDimension,
                value = track.getTotalSpeed()
-            )
-            NkSingleSelectMenu(
-               icon = Icons.Outlined.Summarize,
-               item = track.granularity,
-               action = { track.updateTrack() }
             )
          }
       }
@@ -143,27 +132,27 @@ fun TrackDashboard(
                         horizontalArrangement = Arrangement.spacedBy(5.dp)
                      ) {
                         NkTableCell(
-                           modifier = Modifier.width(40.dp),
+                           modifier = Modifier.weight(0.8f),
                            value = stringResource(R.string.no),
                         )
                         NkTableCell(
-                           modifier = Modifier.width(80.dp),
+                           modifier = Modifier.weight(1.0f),
                            value = stringResource(R.string.time),
                         )
                         NkTableCell(
-                           modifier = Modifier.width(60.dp),
+                           modifier = Modifier.weight(1.0f),
                            value = stringResource(R.string.dist),
                         )
                         NkTableCell(
-                           modifier = Modifier.width(60.dp),
+                           modifier = Modifier.weight(1.0f),
                            value = stringResource(R.string.speed),
                         )
                         NkTableCell(
-                           modifier = Modifier.width(60.dp),
+                           modifier = Modifier.weight(1.0f),
                            value = stringResource(R.string.course),
                         )
                         NkTableCell(
-                           modifier = Modifier.width(60.dp),
+                           modifier = Modifier.weight(1.0f),
                            value = stringResource(R.string.elev),
                         )
                      }
@@ -190,19 +179,19 @@ fun TrackDashboard(
                                  horizontalArrangement = Arrangement.spacedBy(5.dp)
                               ) {
                                  NkTableCell(
-                                    modifier = Modifier.width(40.dp),
+                                    modifier = Modifier.weight(0.8f),
                                     value = index + 1,
                                     icon = blueDot
                                  )
                                  NkTableCell(
-                                    modifier = Modifier.width(80.dp),
+                                    modifier = Modifier.weight(1.0f),
                                     value = if (index > 0)
                                        ExtendedLocation.getTimeStr(track.timeSlots[index], "EEE HH:mm")
                                     else
                                        ExtendedLocation.getTimeStr(track.track[index].time, "EEE HH:mm")
                                  )
                                  NkTableCell(
-                                    modifier = Modifier.width(60.dp),
+                                    modifier = Modifier.weight(1.0f),
                                     value = if (index > 0)
                                        "%.1f %s".format(
                                           ExtendedLocation.applyDistance(track.distances[index - 1]),
@@ -210,7 +199,7 @@ fun TrackDashboard(
                                        ) else "",
                                  )
                                  NkTableCell(
-                                    modifier = Modifier.width(60.dp),
+                                    modifier = Modifier.weight(1.0f),
                                     value = if (index > 0)
                                        "%.1f %s".format(
                                           ExtendedLocation.applySpeed(track.speeds[index - 1]),
@@ -218,11 +207,11 @@ fun TrackDashboard(
                                        ) else "",
                                  )
                                  NkTableCell(
-                                    modifier = Modifier.width(60.dp),
+                                    modifier = Modifier.weight(1.0f),
                                     value = if (index > 0) "%.0f °".format(track.courses[index - 1]) else "",
                                  )
                                  NkTableCell(
-                                    modifier = Modifier.width(60.dp),
+                                    modifier = Modifier.weight(1.0f),
                                     value = if (index > 0) "%.0f m".format(track.elevations[index - 1]) else "",
                                  )
                               }

@@ -88,7 +88,7 @@ fun CompassDashboard(location: ExtendedLocation, route: Route) {
                   columnHeightPx = coordinates.size.height.toFloat()
                   columnHeightDp = with(localDensity) { coordinates.size.height.toDp() }
                }
-               .graphicsLayer { rotationZ = -location.getHeading() }
+               .graphicsLayer { rotationZ = location.appliedHeading?.unaryMinus() ?: 0f }
          )
 
          Column(
@@ -98,7 +98,7 @@ fun CompassDashboard(location: ExtendedLocation, route: Route) {
                modifier = Modifier.width(80.dp),
                label = stringResource(R.string.heading),
                dimension = "°",
-               value = location.getHeading(),
+               value = location.appliedHeading,
             )
          }
          NkValueField(

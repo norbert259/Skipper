@@ -57,7 +57,7 @@
     <string name="hour_steps">Stundenabstand</string>
     <string name="elev">Höhe</string>
     <string name="dist">Entfernung</string>
-    <string name="issued">Ausgabe</string>
+    <string name="issued">Ausgabe: %s</string>
     <string name="forecast_table">Vorhersage</string>
     <string name="windforecast">Windvorhersage</string>
     <string name="temperaturetrend">Temperaturtrend</string>
@@ -116,7 +116,7 @@
     <string name="cache_usage">Cache Nutzungsgrad</string>
     <string name="windspeed_s">Windgeschwindigkeit: %.0f km/h</string>
     <string name="winddirection_s">Windichtung: %.0f °</string>
-    <string name="location_decription">Breite: %s\nLänge: %s\nGeschw.: %.2f %s\nKurs: %.0f °\nGenauigkeit: %.0f m\nProvider: %s</string>
+    <string name="location_decription">Breite: %s\nLänge: %s\nGeschw.: %s\nKurs: %s\nGenauigkeit: %s\nProvider: %s</string>
     <string name="track_description">Beginn: %s\nEnde: %s\nEntfernung: %.1f %s\nHöhenmeter: %.0f m\nDurchschnittsgeschw.: %.1f %s</string>
     <string name="bearingline_description">Peilung: %.0f °\nAbstand: %.1f %s</string>
     <string name="routing_point">Index: %d\nBreite: %s\nLänge: %s</string>
