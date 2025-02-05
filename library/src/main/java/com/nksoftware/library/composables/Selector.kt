@@ -51,187 +51,236 @@ import androidx.compose.ui.unit.dp
 // Selector
 
 class SingleSelectList<E>(
-   val list: List<E> = listOf<E>(),
-   selected: Int = 0
+    val list: List<E>,
+    selected: Int = 0
 ) {
-   var index: Int by mutableIntStateOf(selected)
+    var index: Int by mutableIntStateOf(selected)
 
-   val value: E
-      get() = list[index]
+    init {
+        if (index !in list.indices)
+            throw Exception("Illegal index for SingleSelectList class")
+    }
+
+    val value: E
+        get() = list[index]
+
+    val size: Int
+        get() = list.size
+
+    fun select(i: Int): Int {
+        index = if (i in list.indices) i
+        else
+            throw Exception("Illegal index for SingleSelectList class")
+
+        return index
+    }
+
+    fun select(e: E) {
+        val index = list.indexOf(e)
+        select(index)
+    }
 }
 
+class SingleSelectMutableList<E>(
+    val list: MutableList<E> = mutableListOf<E>(),
+    selected: Int = 0
+) {
+    var index: Int by mutableIntStateOf(if (list.isEmpty()) -1 else selected)
+
+    val value: E?
+        get() = if (isSelected) list[index] else null
+
+    val size: Int
+        get() = list.size
+
+    val isSelected: Boolean
+        get() = index in list.indices
+
+    fun select(i: Int): Int {
+        index = if (i in list.indices) i else -1
+        return index
+    }
+
+    fun select(e: E) {
+        val index = list.indexOf(e)
+        select(index)
+    }
+
+    fun add(e: E) = list.add(e)
+
+    fun reset() {
+        index = -1
+    }
+
+    fun clear() {
+        list.clear()
+        index = -1
+    }
+}
 
 class MultipleSelectList<E>(
-   val list: List<E> = listOf(),
-   selected: List<Int> = listOf()
+    val list: List<E> = listOf(),
+    selected: List<Int> = listOf()
 ) {
-   var indices: List<Int> by mutableStateOf(selected)
+    var indices: List<Int> by mutableStateOf(selected)
 
-   val values: List<E>
-      get() = list.filterIndexed { index, _ -> index in indices }
+    val values: List<E>
+        get() = list.filterIndexed { index, _ -> index in indices }
 
-   fun toggle(i: Int) {
-      val tmp: MutableList<Int> = indices.toMutableList()
+    fun toggle(i: Int) {
+        val tmp: MutableList<Int> = indices.toMutableList()
 
-      if (i in tmp)
-         tmp.remove(i)
-      else
-         tmp.add(i)
+        if (i in tmp)
+            tmp.remove(i)
+        else
+            tmp.add(i)
 
-      indices = tmp.toList()
-   }
+        indices = tmp.toList()
+    }
 }
-
 
 @Composable
 fun NkCheckBoxItems(
-   modifier: Modifier = Modifier,
-   item: Any,
-   index: Int,
-   selectedItem: List<Int>,
-   set: (Int) -> Unit
+    modifier: Modifier = Modifier,
+    item: Any,
+    index: Int,
+    selectedItem: List<Int>,
+    set: (Int) -> Unit
 ) {
-   FilterChip(
-      modifier = modifier,
-      selected = index in selectedItem,
-      onClick = { set(index) },
-      label = { Text(if (item is String) item else item.toString()) },
-//      leadingIcon = {
-//         Icon(
-//            imageVector = if (index in selectedItem) Icons.Filled.CheckBox else Icons.Filled.CheckBoxOutlineBlank,
-//            contentDescription = "Localized Description",
-//            modifier = Modifier.size(FilterChipDefaults.IconSize)
-//         )
-//      }
-   )
+    FilterChip(
+        modifier = modifier,
+        selected = index in selectedItem,
+        onClick = { set(index) },
+        label = { Text(if (item is String) item else item.toString()) },
+    )
 }
 
 @Composable
 fun NkCheckBoxItem(
-   modifier: Modifier = Modifier,
-   item: Any,
-   selected: Boolean,
-   set: () -> Unit
+    modifier: Modifier = Modifier,
+    item: Any,
+    selected: Boolean,
+    set: () -> Unit
 ) {
-   FilterChip(
-      modifier = modifier,
-      selected = selected,
-      onClick = { set() },
-      label = { Text(if (item is String) item else item.toString()) },
-      leadingIcon = {
-         Icon(
-            imageVector = if (selected) Icons.Filled.CheckBox else Icons.Filled.CheckBoxOutlineBlank,
-            contentDescription = "Localized Description",
-            modifier = Modifier.size(
-               FilterChipDefaults.IconSize
+    FilterChip(
+        modifier = modifier,
+        selected = selected,
+        onClick = { set() },
+        label = { Text(if (item is String) item else item.toString()) },
+        leadingIcon = {
+            Icon(
+                imageVector = if (selected) Icons.Filled.CheckBox else Icons.Filled.CheckBoxOutlineBlank,
+                contentDescription = "Localized Description",
+                modifier = Modifier.size(
+                    FilterChipDefaults.IconSize
+                )
             )
-         )
-      }
-   )
+        }
+    )
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun <T> NkSingleSelect(
-   modifier: Modifier = Modifier,
-   itemList: List<T>,
-   selectedItem: Int,
-   set: (Int) -> Unit
+    modifier: Modifier = Modifier,
+    itemList: List<T>,
+    selectedItem: Int,
+    set: (Int) -> Unit
 ) {
-   FlowRow(
-      modifier = modifier,
-      horizontalArrangement = Arrangement.spacedBy(8.dp),
-      maxItemsInEachRow = 5
-   ) {
-      for (i in itemList.indices) {
-         NkCheckBoxItems(
-            item = itemList[i] as Any,
-            index = i,
-            selectedItem = listOf(selectedItem),
-            set = set
-         )
-      }
-   }
+    FlowRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        maxItemsInEachRow = 5
+    ) {
+        for (i in itemList.indices) {
+            NkCheckBoxItems(
+                item = itemList[i] as Any,
+                index = i,
+                selectedItem = listOf(selectedItem),
+                set = set
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun <T> NkSingleSelect(
-   modifier: Modifier = Modifier,
-   item: SingleSelectList<T>
+    modifier: Modifier = Modifier,
+    item: SingleSelectList<T>
 ) {
-   FlowRow(
-      modifier = modifier,
-      horizontalArrangement = Arrangement.spacedBy(8.dp),
-      maxItemsInEachRow = 5
-   ) {
-      for (i in item.list.indices) {
-         NkCheckBoxItems(
-            item = item.list[i] as Any,
-            index = i,
-            selectedItem = listOf(item.index),
-            set = { item.index = i }
-         )
-      }
-   }
+    FlowRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        maxItemsInEachRow = 5
+    ) {
+        for (i in item.list.indices) {
+            NkCheckBoxItems(
+                item = item.list[i] as Any,
+                index = i,
+                selectedItem = listOf(item.index),
+                set = { item.index = i }
+            )
+        }
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun <T> NkMultipleSelect(
-   modifier: Modifier = Modifier,
-   itemList: MultipleSelectList<T>,
+    modifier: Modifier = Modifier,
+    itemList: MultipleSelectList<T>,
 ) {
-   FlowRow(
-      modifier = modifier,
-      horizontalArrangement = Arrangement.spacedBy(8.dp),
-      maxItemsInEachRow = 5
-   ) {
-      for (i in itemList.list.indices) {
-         NkCheckBoxItems(
-            item = itemList.list[i] as Any,
-            index = i,
-            selectedItem = itemList.indices,
-            set = { itemList.toggle(i) }
-         )
-      }
-   }
+    FlowRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        maxItemsInEachRow = 5
+    ) {
+        for (i in itemList.list.indices) {
+            NkCheckBoxItems(
+                item = itemList.list[i] as Any,
+                index = i,
+                selectedItem = itemList.indices,
+                set = { itemList.toggle(i) }
+            )
+        }
+    }
 }
 
 @Composable
 fun <T> NkSingleSelectMenu(
-   modifier: Modifier = Modifier,
-   item: SingleSelectList<T>,
-   icon: ImageVector,
-   action: () -> Unit = {}
+    modifier: Modifier = Modifier,
+    item: SingleSelectList<T>,
+    icon: ImageVector,
+    action: () -> Unit = {}
 ) {
-   var expanded by rememberSaveable { mutableStateOf(false) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
 
-   Column(
-      modifier = modifier
-   ) {
-      NkFloatingActionButton(
-         icon = icon,
-         onClick = { expanded = true }
-      )
+    Column(
+        modifier = modifier
+    ) {
+        NkFloatingActionButton(
+            icon = icon,
+            onClick = { expanded = true }
+        )
 
-      DropdownMenu(
-         expanded = expanded,
-         onDismissRequest = { expanded = false },
-         modifier = Modifier.padding(5.dp)
-      ) {
-         item.list.forEachIndexed { i, entry ->
-            DropdownMenuItem(
-               modifier = if (i == item.index) Modifier.background(Color.LightGray)
-               else Modifier.background(Color.Transparent),
-               text = { Text(text = entry.toString()) },
-               onClick = {
-                  item.index = i
-                  expanded = false
-                  action()
-               }
-            )
-         }
-      }
-   }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier.padding(5.dp)
+        ) {
+            item.list.forEachIndexed { i, entry ->
+                DropdownMenuItem(
+                    modifier = if (i == item.index) Modifier.background(Color.LightGray)
+                    else Modifier.background(Color.Transparent),
+                    text = { Text(text = entry.toString()) },
+                    onClick = {
+                        item.index = i
+                        expanded = false
+                        action()
+                    }
+                )
+            }
+        }
+    }
 }

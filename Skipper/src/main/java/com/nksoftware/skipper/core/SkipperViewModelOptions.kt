@@ -38,4 +38,3 @@ fun SkipperViewModelOptions(vm: SkipperViewModel) {
       NkSingleSelect(item = vm.gpsLocation.gpsProvider)
    }
 }
-

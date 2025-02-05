@@ -36,148 +36,222 @@ import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
-import android.os.StrictMode
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
+import com.nksoftware.library.anchor.AnchorDashboard
+import com.nksoftware.library.astronavigation.AstroNavigationOptions
+import com.nksoftware.library.astronavigation.AstronavigationDashboard
+import com.nksoftware.library.composables.NkScaffold
+import com.nksoftware.library.grib.GribDashboard
+import com.nksoftware.library.location.ExtendedLocationOptions
 import com.nksoftware.library.locationservice.ACTION_LOCATION_BROADCAST
 import com.nksoftware.library.locationservice.LocationService
+import com.nksoftware.library.map.OsmMapOptions
+import com.nksoftware.library.route.RouteOptions
+import com.nksoftware.library.saildocs.SaildocsOptions
 import com.nksoftware.library.utilities.nkCheckAndGetPermission
 import com.nksoftware.library.utilities.nkHandleException
-import com.nksoftware.skipper.coreui.MainScreen
-
+import com.nksoftware.library.weather.WeatherDashboard
+import com.nksoftware.library.weather.WeatherOption
+import com.nksoftware.skipper.coreui.NavigationDashboard
+import com.nksoftware.skipper.coreui.TopAppBar
+import com.nksoftware.skipper.map.OsmMapScreen
 
 const val logTag = "Skipper"
 const val skipperPreferences = "SkipperPref"
 
-
 class MainActivity : ComponentActivity() {
 
-   private lateinit var viewModel: SkipperViewModel
-   private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var viewModel: SkipperViewModel
+    private lateinit var sharedPreferences: SharedPreferences
 
+    private val broadcastReceiver = object : BroadcastReceiver() {
 
-   private val broadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val loc: Location? = intent.getParcelableExtra("location")
+            val trackUpdate = intent.getBooleanExtra("track", false)
 
-      override fun onReceive(context: Context, intent: Intent) {
-         val loc: Location? = intent.getParcelableExtra("location")
-         val trackUpdate = intent.getBooleanExtra("track", false)
+            if (viewModel.gpsLocation.gps) viewModel.setLocation(loc, trackUpdate)
+        }
+    }
 
-         if (viewModel.gpsLocation.gps) viewModel.setLocation(loc, trackUpdate)
-      }
-   }
+    private val connection = object : ServiceConnection {
 
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            Log.i(logTag, "$className connected")
+            viewModel.setService(service as LocationService.LocalBinder)
+        }
 
-   private val connection = object : ServiceConnection {
+        override fun onServiceDisconnected(className: ComponentName) {
+            Log.i(logTag, "$className disconnected")
+        }
+    }
 
-      override fun onServiceConnected(className: ComponentName, service: IBinder) {
-         Log.i(logTag, "$className connected")
-         viewModel.setService(service as LocationService.LocalBinder)
-      }
+    @SuppressLint("MissingPermission")
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.i(logTag, "Activity created")
 
-      override fun onServiceDisconnected(className: ComponentName) {
-         Log.i(logTag, "$className disconnected")
-      }
-   }
+        nkCheckAndGetPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+        nkCheckAndGetPermission(this, Manifest.permission.POST_NOTIFICATIONS)
 
+        sharedPreferences = getSharedPreferences(skipperPreferences, MODE_PRIVATE)
 
-   @SuppressLint("MissingPermission")
-   @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-   override fun onCreate(savedInstanceState: Bundle?) {
-      super.onCreate(savedInstanceState)
-      Log.i(logTag, "Activity created")
+        viewModel = ViewModelProvider(
+            this,
+            SkipperViewModelFactory(this, applicationInfo.dataDir, sharedPreferences)
+        )[SkipperViewModel::class.java]
 
-      val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
-      StrictMode.setThreadPolicy(policy)
+        try {
+            val intent = Intent(applicationContext, LocationService::class.java)
+            intent.putExtra("gpsProvider", viewModel.gpsLocation.gpsProvider.value)
 
-      nkCheckAndGetPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-      nkCheckAndGetPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+            startForegroundService(intent)
+        } catch (e: Exception) {
+            nkHandleException(logTag, "Exception: cannot start LocationService", e)
+        }
 
-      sharedPreferences = getSharedPreferences(skipperPreferences, MODE_PRIVATE)
+        registerReceiver(
+            broadcastReceiver,
+            IntentFilter(ACTION_LOCATION_BROADCAST),
+            RECEIVER_EXPORTED
+        )
 
-      viewModel = ViewModelProvider(
-         this,
-         SkipperViewModelFactory(this, applicationInfo.dataDir, sharedPreferences)
-      )[SkipperViewModel::class.java]
+        setContent {
+            NkScaffold(
+                this,
+                "Skipper",
 
-      try {
-         val intent = Intent(applicationContext, LocationService::class.java)
-         intent.putExtra("gpsProvider", viewModel.gpsLocation.gpsProvider.value)
+                topButtons = {
+                    TopAppBar(
+                        viewModel,
+                        listOf(
+                            ScreenMode.Navigation, ScreenMode.Anchor, ScreenMode.Weather,
+                            ScreenMode.Grib, ScreenMode.AstroNavigation
+                        )
+                    )
+                },
 
-         startForegroundService(intent)
-      }
+                optionContent = { snackBar ->
+                    when (viewModel.mode) {
+                        ScreenMode.Navigation -> {
+                            ExtendedLocationOptions()
+                            SkipperViewModelOptions(viewModel)
+                            RouteOptions(viewModel.route)
+                            OsmMapOptions(viewModel.mapView, snackBar)
+                        }
 
-      catch(e: Exception) {
-         nkHandleException(logTag, "Exception: cannot start LocationService", e)
-      }
+                        ScreenMode.Anchor -> {
+                            AnchorDashboard(viewModel.anchorAlarm, snackBar)
+                        }
 
-      registerReceiver(broadcastReceiver, IntentFilter(ACTION_LOCATION_BROADCAST), RECEIVER_EXPORTED)
+                        ScreenMode.Weather -> {
+                            WeatherOption()
+                        }
 
-      setContent {
-         MainScreen(applicationContext, sharedPreferences, viewModel, applicationInfo.dataDir, ::finish)
-      }
-   }
+                        ScreenMode.Grib -> {
+                            SaildocsOptions(viewModel.sailDocs)
+                        }
 
+                        ScreenMode.AstroNavigation -> {
+                            AstroNavigationOptions(viewModel.astroNav)
+                        }
 
-   override fun onStart() {
-      super.onStart()
-      Log.i(logTag, "Activity started")
+                        else -> {}
+                    }
+                },
 
-      Intent(applicationContext, LocationService::class.java).also { intent ->
-         bindService(intent, connection, BIND_AUTO_CREATE)
-      }
-   }
+                content = { snackBar ->
+                    OsmMapScreen(
+                        vm = viewModel,
+                        mode = viewModel.mode,
+                        mapView = viewModel.mapView,
+                        snackBar
+                    )
+                },
 
+                bottomSheeetContent = { snackBar ->
+                    when (viewModel.mode) {
+                        ScreenMode.Navigation -> {
+                            NavigationDashboard(viewModel, snackBar)
+                        }
 
-   override fun onResume() {
-      super.onResume()
-      Log.i(logTag, "Activity resumed")
-   }
+                        ScreenMode.Anchor -> {}
 
+                        ScreenMode.Weather -> {
+                            WeatherDashboard(viewModel.weather, viewModel.gpsLocation.location)
+                        }
 
-   override fun onPause() {
-      super.onPause()
+                        ScreenMode.Grib -> {
+                            GribDashboard(viewModel.gribFile, snackBar)
+                        }
 
-      Log.i(logTag, "Activity paused")
-      viewModel.saveData()
-   }
+                        ScreenMode.AstroNavigation -> {
+                            AstronavigationDashboard(
+                                viewModel.astroNav, viewModel.sun,
+                                viewModel.moon, viewModel.gpsLocation.location, snackBar
+                            )
+                        }
+                    }
+                }
+            )
+        }
+    }
 
+    override fun onStart() {
+        super.onStart()
+        Log.i(logTag, "Activity started")
 
-   override fun onStop() {
-      super.onStop()
+        Intent(applicationContext, LocationService::class.java).also { intent ->
+            bindService(intent, connection, BIND_AUTO_CREATE)
+        }
+    }
 
-      Log.i(logTag, "Activity stop and unbind service")
-      unbindService(connection)
-   }
+    override fun onResume() {
+        super.onResume()
+        Log.i(logTag, "Activity resumed")
+    }
 
+    override fun onPause() {
+        super.onPause()
 
-   override fun onDestroy() {
-      super.onDestroy()
-      Log.i(logTag, "Activity destroy")
+        Log.i(logTag, "Activity paused")
+        viewModel.saveData()
+    }
 
-      if (!viewModel.track.saveTrack)
-         stopService(Intent(this, LocationService::class.java))
+    override fun onStop() {
+        super.onStop()
 
-      unregisterReceiver(broadcastReceiver)
-   }
+        Log.i(logTag, "Activity stop and unbind service")
+        unbindService(connection)
+    }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.i(logTag, "Activity destroy")
 
-   override fun onConfigurationChanged(newConfig: Configuration) {
-      super.onConfigurationChanged(newConfig)
-      Log.i(logTag, "Configuration changed")
-   }
+        if (!viewModel.track.saveTrack)
+            stopService(Intent(this, LocationService::class.java))
 
+        unregisterReceiver(broadcastReceiver)
+    }
 
-   override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-      super.onRestoreInstanceState(savedInstanceState)
-      Log.i(logTag, "Restore instance")
-   }
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
+        Log.i(logTag, "Configuration changed")
+    }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        Log.i(logTag, "Restore instance")
+    }
 
-   override fun onSaveInstanceState(outState: Bundle) {
-      super.onSaveInstanceState(outState)
-      Log.i(logTag, "Save instance")
-   }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.i(logTag, "Save instance")
+    }
 }

@@ -125,4 +125,5 @@
     <string name="tackline_description">Wendekurs: %.0f °</string>
     <string name="trackpoints">Track Punkte: %d</string>
     <string name="duration">Dauer</string>
+    <string name="options">Optionen</string>
 </resources>

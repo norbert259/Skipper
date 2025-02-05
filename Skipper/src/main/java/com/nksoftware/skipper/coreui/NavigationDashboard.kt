@@ -27,7 +27,6 @@ import androidx.compose.material.icons.automirrored.outlined.MultilineChart
 import androidx.compose.material.icons.outlined.CompassCalibration
 import androidx.compose.material.icons.outlined.Directions
 import androidx.compose.material.icons.outlined.Timeline
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -42,36 +41,44 @@ import com.nksoftware.library.track.TrackDashboard
 import com.nksoftware.skipper.core.SkipperViewModel
 
 
-val navigationTabIcons = listOf(Icons.Outlined.Directions, Icons.Outlined.CompassCalibration,
-   Icons.AutoMirrored.Outlined.MultilineChart, Icons.Outlined.Timeline)
+val navigationTabIcons = listOf(
+    Icons.Outlined.Directions, Icons.Outlined.CompassCalibration,
+    Icons.AutoMirrored.Outlined.MultilineChart, Icons.Outlined.Timeline
+)
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationDashboard(
-   vm: SkipperViewModel,
-   snackBar: (str: String) -> Unit
+    vm: SkipperViewModel,
+    snackBar: (str: String) -> Unit
 ) {
 
-   var state by remember { mutableIntStateOf(0) }
+    var state by remember { mutableIntStateOf(0) }
 
-   Column {
-      NkTabRowIcon(
-         tabIndex = state,
-         icons = navigationTabIcons,
-         set = { s -> state = s }
-      )
+    Column {
+        NkTabRowIcon(
+            tabIndex = state,
+            icons = navigationTabIcons,
+            set = { s -> state = s }
+        )
 
-      when (state) {
-         0 -> {
-            if (vm.route.active) WaypointDashboard(vm.gpsLocation.location, vm.route)
-            ExtendedLocationDashboard(vm.gpsLocation.location)
-         }
-         1 -> {
-            CompassDashboard(vm.gpsLocation.location, vm.route)
-         }
-         2 -> { TrackDashboard(track = vm.track) }
-         3 -> { RouteDashboard(route = vm.route, location = vm.gpsLocation.location) }
-      }
-   }
+        when (state) {
+            0 -> {
+                if (vm.route.active) WaypointDashboard(vm.gpsLocation.location, vm.route)
+                ExtendedLocationDashboard(vm.gpsLocation.location)
+            }
+
+            1 -> {
+                CompassDashboard(vm.gpsLocation.location, vm.route)
+            }
+
+            2 -> {
+                TrackDashboard(track = vm.track)
+            }
+
+            3 -> {
+                RouteDashboard(route = vm.route, location = vm.gpsLocation.location)
+            }
+        }
+    }
 }

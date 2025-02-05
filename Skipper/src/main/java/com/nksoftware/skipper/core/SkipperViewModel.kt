@@ -25,6 +25,9 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.location.Location
 import android.util.Log
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -37,16 +40,18 @@ import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.location.GpsLocation
 import com.nksoftware.library.location.TrackDatabase
 import com.nksoftware.library.locationservice.LocationService
+import com.nksoftware.library.map.OsmMap
 import com.nksoftware.library.moon.Moon
 import com.nksoftware.library.route.Route
 import com.nksoftware.library.saildocs.SailDocs
 import com.nksoftware.library.sun.Sun
 import com.nksoftware.library.track.Track
 import com.nksoftware.library.weather.Weather
-import com.nksoftware.skipper.coreui.ScreenMode
 
 
 const val activeRouteKey = "activeRoute"
+
+enum class ScreenMode { Navigation, Anchor, Weather, Grib, AstroNavigation }
 
 
 @Suppress("UNCHECKED_CAST")
@@ -68,8 +73,15 @@ class SkipperViewModel(
    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
+   var mode by mutableStateOf(ScreenMode.Navigation)
+
    private var locService: LocationService.LocalBinder? = null
    val gpsLocation = GpsLocation(ctx, 0)
+
+   val mapView by mutableStateOf(
+      OsmMap(ctx, sharedPreferences, dir, gpsLocation.location,
+      { lat, lon -> setLocation(loc = ExtendedLocation(lat, lon), trackUpdate = false) })
+   )
 
    val track = Track(ctx, ScreenMode.Navigation.ordinal)
    val route = Route(ctx, ScreenMode.Navigation.ordinal)

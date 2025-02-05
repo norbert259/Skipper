@@ -66,8 +66,8 @@ import com.nksoftware.library.route.RouteCommands
 import com.nksoftware.library.track.TrackCommands
 import com.nksoftware.library.weather.WeatherCommands
 import com.nksoftware.skipper.R
+import com.nksoftware.skipper.core.ScreenMode
 import com.nksoftware.skipper.core.SkipperViewModel
-import com.nksoftware.skipper.coreui.ScreenMode
 
 
 @SuppressLint("MutableCollectionMutableState")
