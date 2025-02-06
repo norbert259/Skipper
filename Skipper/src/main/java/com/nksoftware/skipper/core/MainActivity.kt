@@ -41,27 +41,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
-import com.nksoftware.library.anchor.AnchorDashboard
-import com.nksoftware.library.astronavigation.AstroNavigationOptions
-import com.nksoftware.library.astronavigation.AstronavigationDashboard
-import com.nksoftware.library.composables.NkScaffold
-import com.nksoftware.library.grib.GribDashboard
-import com.nksoftware.library.location.ExtendedLocationOptions
 import com.nksoftware.library.locationservice.ACTION_LOCATION_BROADCAST
 import com.nksoftware.library.locationservice.LocationService
-import com.nksoftware.library.map.OsmMapOptions
-import com.nksoftware.library.route.RouteOptions
-import com.nksoftware.library.saildocs.SaildocsOptions
 import com.nksoftware.library.utilities.nkCheckAndGetPermission
 import com.nksoftware.library.utilities.nkHandleException
-import com.nksoftware.library.weather.WeatherDashboard
-import com.nksoftware.library.weather.WeatherOption
-import com.nksoftware.skipper.coreui.NavigationDashboard
-import com.nksoftware.skipper.coreui.TopAppBar
-import com.nksoftware.skipper.map.OsmMapScreen
+import com.nksoftware.skipper.coreui.MainScreen
 
 const val logTag = "Skipper"
 const val skipperPreferences = "SkipperPref"
+
 
 class MainActivity : ComponentActivity() {
 
@@ -121,85 +109,7 @@ class MainActivity : ComponentActivity() {
             RECEIVER_EXPORTED
         )
 
-        setContent {
-            NkScaffold(
-                this,
-                "Skipper",
-
-                topButtons = {
-                    TopAppBar(
-                        viewModel,
-                        listOf(
-                            ScreenMode.Navigation, ScreenMode.Anchor, ScreenMode.Weather,
-                            ScreenMode.Grib, ScreenMode.AstroNavigation
-                        )
-                    )
-                },
-
-                optionContent = { snackBar ->
-                    when (viewModel.mode) {
-                        ScreenMode.Navigation -> {
-                            ExtendedLocationOptions()
-                            SkipperViewModelOptions(viewModel)
-                            RouteOptions(viewModel.route)
-                            OsmMapOptions(viewModel.mapView, snackBar)
-                        }
-
-                        ScreenMode.Anchor -> {
-                            AnchorDashboard(viewModel.anchorAlarm, snackBar)
-                        }
-
-                        ScreenMode.Weather -> {
-                            WeatherOption()
-                        }
-
-                        ScreenMode.Grib -> {
-                            SaildocsOptions(viewModel.sailDocs)
-                        }
-
-                        ScreenMode.AstroNavigation -> {
-                            AstroNavigationOptions(viewModel.astroNav)
-                        }
-
-                        else -> {}
-                    }
-                },
-
-                content = { snackBar ->
-                    OsmMapScreen(
-                        vm = viewModel,
-                        mode = viewModel.mode,
-                        mapView = viewModel.mapView,
-                        snackBar
-                    )
-                },
-
-                bottomSheeetContent = { snackBar ->
-                    when (viewModel.mode) {
-                        ScreenMode.Navigation -> {
-                            NavigationDashboard(viewModel, snackBar)
-                        }
-
-                        ScreenMode.Anchor -> {}
-
-                        ScreenMode.Weather -> {
-                            WeatherDashboard(viewModel.weather, viewModel.gpsLocation.location)
-                        }
-
-                        ScreenMode.Grib -> {
-                            GribDashboard(viewModel.gribFile, snackBar)
-                        }
-
-                        ScreenMode.AstroNavigation -> {
-                            AstronavigationDashboard(
-                                viewModel.astroNav, viewModel.sun,
-                                viewModel.moon, viewModel.gpsLocation.location, snackBar
-                            )
-                        }
-                    }
-                }
-            )
-        }
+        setContent { MainScreen(this, viewModel) }
     }
 
     override fun onStart() {
