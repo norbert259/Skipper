@@ -34,7 +34,7 @@ import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.locationservice.LocationService
 import com.nksoftware.library.map.NkPolyline
-import com.nksoftware.library.map.OsmMap
+import com.nksoftware.library.map.OsmMapView
 import org.osmdroid.util.GeoPoint
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
@@ -43,7 +43,7 @@ import kotlin.time.toDuration
 const val trackActiveKey = "TrackActive"
 
 
-class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
+class Track(mapMode: Int) : DataModel(mapMode) {
 
    private var locService: LocationService.LocalBinder? = null
    var saveTrack by mutableStateOf(false)
@@ -129,7 +129,7 @@ class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
       }
    }
 
-   fun getDescription(): String {
+   fun getDescription(ctx: Context): String {
       return ctx.getString(R.string.track_description, startTrackTime, endTrackTime,
          ExtendedLocation.applyDistance(distances.sum()), ExtendedLocation.distanceDimension,
          if (elevations.isNotEmpty()) elevations.max() - elevations.min() else 0f,
@@ -159,7 +159,7 @@ class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
       edit.putBoolean(trackActiveKey, saveTrack)
    }
 
-   override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+   override fun updateMap(mapView: OsmMapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
       if (trackLine == null)
          trackLine = NkPolyline(mapView, width = 5.0f, color = Color.BLUE, disableInfoWindow = false)
 
@@ -173,7 +173,7 @@ class Track(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
             trackLine!!.apply {
                isEnabled = true
                setPoints(pts)
-               setInfoWindow(getDescription())
+               setInfoWindow(getDescription(mapView.ctx))
             }
          } else {
             trackLine!!.apply { isEnabled = false }

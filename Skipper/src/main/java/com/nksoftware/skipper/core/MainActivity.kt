@@ -33,6 +33,7 @@ import android.content.ServiceConnection
 import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.location.Location
+import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -41,6 +42,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModelProvider
+import androidx.room.Room
+import com.nksoftware.library.location.TrackDatabase
 import com.nksoftware.library.locationservice.ACTION_LOCATION_BROADCAST
 import com.nksoftware.library.locationservice.LocationService
 import com.nksoftware.library.utilities.nkCheckAndGetPermission
@@ -54,7 +57,11 @@ const val skipperPreferences = "SkipperPref"
 class MainActivity : ComponentActivity() {
 
     private lateinit var viewModel: SkipperViewModel
+
     private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var mgr: LocationManager
+    private lateinit var trackDb: TrackDatabase
+
 
     private val broadcastReceiver = object : BroadcastReceiver() {
 
@@ -87,12 +94,18 @@ class MainActivity : ComponentActivity() {
         nkCheckAndGetPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
         nkCheckAndGetPermission(this, Manifest.permission.POST_NOTIFICATIONS)
 
+        mgr = getSystemService(LOCATION_SERVICE) as LocationManager
         sharedPreferences = getSharedPreferences(skipperPreferences, MODE_PRIVATE)
 
+        trackDb = Room.databaseBuilder(this, TrackDatabase::class.java, "SkipperTracks")
+            .allowMainThreadQueries()
+            .build()
+
         viewModel = ViewModelProvider(
-            this,
-            SkipperViewModelFactory(this, applicationInfo.dataDir, sharedPreferences)
+            this, SkipperViewModelFactory(mgr, applicationInfo.dataDir)
         )[SkipperViewModel::class.java]
+
+        viewModel.load(sharedPreferences, trackDb)
 
         try {
             val intent = Intent(applicationContext, LocationService::class.java)
@@ -109,7 +122,7 @@ class MainActivity : ComponentActivity() {
             RECEIVER_EXPORTED
         )
 
-        setContent { MainScreen(this, viewModel) }
+        setContent { MainScreen(viewModel, { this.finish() }) }
     }
 
     override fun onStart() {
@@ -130,7 +143,7 @@ class MainActivity : ComponentActivity() {
         super.onPause()
 
         Log.i(logTag, "Activity paused")
-        viewModel.saveData()
+        viewModel.store(sharedPreferences, trackDb)
     }
 
     override fun onStop() {

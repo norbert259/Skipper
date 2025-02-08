@@ -21,16 +21,13 @@
 
 package com.nksoftware.skipper.core
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.location.Location
+import android.location.LocationManager
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.room.Room
 import com.nksoftware.library.anchor.AnchorAlarm
 import com.nksoftware.library.astronavigation.AstroNavigation
 import com.nksoftware.library.core.DataModel
@@ -51,53 +48,40 @@ import com.nksoftware.skipper.coreui.ScreenMode
 
 const val activeRouteKey = "activeRoute"
 
-
 @Suppress("UNCHECKED_CAST")
 class SkipperViewModelFactory(
-    private val ctx: Context,
+    private val mgr: LocationManager,
     private val dir: String,
-    private val sharedPreferences: SharedPreferences
 ) : ViewModelProvider.NewInstanceFactory() {
 
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        return SkipperViewModel(ctx, dir, sharedPreferences) as T
+        return SkipperViewModel(mgr, dir) as T
     }
 }
 
-
 class SkipperViewModel(
-    private val ctx: Context,
+    mgr: LocationManager,
     dir: String,
-    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
     private var locService: LocationService.LocalBinder? = null
-    val gpsLocation = GpsLocation(ctx, 0)
+    val gpsLocation = GpsLocation(mgr, 0)
 
-    val mapView by mutableStateOf(
-        OsmMap(ctx, sharedPreferences, dir, gpsLocation.location,
-            { lat, lon -> setLocation(loc = ExtendedLocation(lat, lon), trackUpdate = false) })
-    )
+    val map = OsmMap()
 
-    val track = Track(ctx, ScreenMode.Navigation.ordinal)
-    val route = Route(ctx, ScreenMode.Navigation.ordinal)
-    val anchorAlarm = AnchorAlarm(ctx, ScreenMode.Anchor.ordinal)
+    val track = Track(ScreenMode.Navigation.ordinal)
+    val route = Route(ScreenMode.Navigation.ordinal)
 
-    val weather = Weather(ctx, viewModelScope, "$dir/files/weather", ScreenMode.Weather.ordinal)
-    val gribFile = GribFile(ctx, ScreenMode.Grib.ordinal)
-    val sailDocs = SailDocs(ctx)
+    val anchorAlarm = AnchorAlarm(ScreenMode.Anchor.ordinal)
+
+    val weather = Weather(viewModelScope, "$dir/files/weather", ScreenMode.Weather.ordinal)
+    val gribFile = GribFile(ScreenMode.Grib.ordinal)
+    val sailDocs = SailDocs()
 
     val moon = Moon()
     val sun = Sun()
-    val astroNav = AstroNavigation(ctx, sun, ScreenMode.AstroNavigation.ordinal)
+    val astroNav = AstroNavigation(sun, ScreenMode.AstroNavigation.ordinal)
 
-    init {
-        Log.i(logTag, "ViewModel - loading shared preferences")
-        loadSharedPreferences(preferences = sharedPreferences)
-
-        Log.i(logTag, "ViewModel - loading database")
-        loadDb()
-    }
 
     fun setService(binder: LocationService.LocalBinder) {
         locService = binder
@@ -113,39 +97,9 @@ class SkipperViewModel(
             track.updateTrack()
     }
 
-    private fun loadSharedPreferences(preferences: SharedPreferences) {
+    fun load(preferences: SharedPreferences, trackDb: TrackDatabase) {
         ExtendedLocation.loadSharedPreferences(preferences)
-        gpsLocation.loadSharedPreferences(preferences)
-
         DataModel.loadPreferences(preferences)
-    }
-
-    private fun storeSharedPreferences(edit: SharedPreferences.Editor) {
-        ExtendedLocation.storeSharedPreferences(edit)
-        gpsLocation.storeSharedPreferences(edit)
-
-        DataModel.storePreferences(edit)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        saveData()
-    }
-
-    fun saveData() {
-        Log.i(logTag, "ViewModel - storing shared preferences")
-        val edit = sharedPreferences.edit()
-        storeSharedPreferences(edit)
-        edit.apply()
-
-        Log.i(logTag, "ViewModel - storing database")
-        storeDb()
-    }
-
-    fun loadDb() {
-        val trackDb = Room.databaseBuilder(ctx, TrackDatabase::class.java, "SkipperTracks")
-            .allowMainThreadQueries()
-            .build()
 
         val dao = trackDb.userDao()
         val rt = dao.findByName(activeRouteKey)
@@ -156,16 +110,16 @@ class SkipperViewModel(
         trackDb.close()
     }
 
-    fun storeDb() {
-        val trackDb = Room.databaseBuilder(ctx, TrackDatabase::class.java, "SkipperTracks")
-            .allowMainThreadQueries()
-            .build()
+    fun store(preferences: SharedPreferences, trackDb: TrackDatabase) {
+        val edit = preferences.edit()
+        ExtendedLocation.storeSharedPreferences(edit)
+        DataModel.storePreferences(edit)
+        edit.apply()
 
         val dao = trackDb.userDao()
-
         dao.delete(activeRouteKey)
-        val rtPts = route.getRoutePoints(activeRouteKey)
 
+        val rtPts = route.getRoutePoints(activeRouteKey)
         if (rtPts.isNotEmpty()) dao.insertAll(rtPts)
         Log.i(logTag, "Number of route points saved: ${rtPts.size}")
 

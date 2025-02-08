@@ -21,7 +21,7 @@
 
 package com.nksoftware.library.anchor
 
-import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.location.Location
 import androidx.compose.runtime.getValue
@@ -35,11 +35,16 @@ import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.locationservice.LocationService
 import com.nksoftware.library.map.NkMarker
 import com.nksoftware.library.map.NkPolyline
-import com.nksoftware.library.map.OsmMap
+import com.nksoftware.library.map.OsmMapView
 import org.osmdroid.util.GeoPoint
 
+const val anchorSetKey = "AnchorSet"
+const val anchorDiameterKey = "AnchorDiameter"
+const val anchorPointLatKey = "AnchorPointLat"
+const val anchorPointLonKey = "AchorPointLon"
 
-class AnchorAlarm(val ctx: Context, val mapMode: Int) : DataModel(mapMode) {
+
+class AnchorAlarm(val mapMode: Int) : DataModel(mapMode) {
 
    private var locService: LocationService.LocalBinder? = null
    var anchorAlarmSet by mutableStateOf(false)
@@ -47,29 +52,49 @@ class AnchorAlarm(val ctx: Context, val mapMode: Int) : DataModel(mapMode) {
    var anchorageDiameter by mutableFloatStateOf(100.0f)
    var anchorPoint: Location by mutableStateOf(Location(""))
 
-   private val anchorIconRed = ContextCompat.getDrawable(ctx, R.drawable.anchor_red)
-   private val anchorIconBlack = ContextCompat.getDrawable(ctx, R.drawable.anchor_black)
-
    private var anchorMarker: NkMarker? by mutableStateOf(null)
    private var anchorCircle: NkPolyline? = null
 
    val anchorGp: GeoPoint
       get() = anchorPoint.let { GeoPoint(it.latitude, it.longitude) }
 
-
    fun setService(binder: LocationService.LocalBinder) {
       locService = binder
    }
-
 
    fun toggleAlarm() {
       anchorAlarmSet = !anchorAlarmSet
       locService?.setAnchorAlarm(anchorAlarmSet, anchorPoint, anchorageDiameter)
    }
 
+   override fun loadPreferences(preferences: SharedPreferences) {
+      anchorAlarmSet = preferences.getBoolean(anchorSetKey, false)
+      anchorageDiameter = preferences.getFloat(anchorDiameterKey, 100f)
 
-   override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+      val lat = preferences.getFloat(anchorPointLatKey, 0f).toDouble()
+      val lon = preferences.getFloat(anchorPointLonKey, 0f).toDouble()
+      anchorPoint = ExtendedLocation(lat, lon)
+   }
+
+   override fun storePreferences(edit: SharedPreferences.Editor) {
+      edit.putBoolean(anchorSetKey, anchorAlarmSet)
+      edit.putFloat(anchorDiameterKey, anchorageDiameter)
+      edit.putFloat(anchorPointLatKey, anchorPoint.latitude.toFloat())
+      edit.putFloat(anchorPointLonKey, anchorPoint.longitude.toFloat())
+   }
+
+   override fun updateMap(
+      mapView: OsmMapView,
+      mapMode: Int,
+      location: ExtendedLocation,
+      snackbar: (String) -> Unit
+   ) {
+
+      val anchorIconRed = ContextCompat.getDrawable(mapView.ctx, R.drawable.anchor_red)
+      val anchorIconBlack = ContextCompat.getDrawable(mapView.ctx, R.drawable.anchor_black)
+
       if (anchorMarker == null) {
+
          anchorMarker = NkMarker(
             mapView,
             dragFunc = { lat, lon ->

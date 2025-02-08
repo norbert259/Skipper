@@ -29,12 +29,13 @@ import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.FileCopy
 import androidx.compose.material.icons.outlined.Mail
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.nksoftware.library.R
 import com.nksoftware.library.composables.NkFloatingActionButton
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.saildocs.SailDocs
 import org.osmdroid.views.MapView
-import com.nksoftware.library.R
 
 
 @Composable
@@ -47,16 +48,17 @@ fun GribCommands(
 ) {
 
    val errStr = stringResource(R.string.error_cannot_load_grib_file)
+   val ctx = LocalContext.current
 
    val gribLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
       if (uri != null)
-         gribFile.scan(uri, location, snackBar)
+         gribFile.scan(ctx, uri, location, snackBar)
       else
          snackBar(errStr)
    }
 
    NkFloatingActionButton(
-      onClick = { saildocs.sendSailDocsRequest(mapView.getBoundingBox(), snackBar) },
+      onClick = { saildocs.sendSailDocsRequest(ctx, mapView.getBoundingBox(), snackBar) },
       icon = Outlined.Mail,
       contentDescription = "Saildocs"
    )

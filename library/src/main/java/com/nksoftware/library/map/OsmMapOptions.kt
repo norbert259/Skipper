@@ -44,17 +44,18 @@ import com.nksoftware.library.composables.NkIconButton
 import com.nksoftware.library.composables.NkRowNValues
 import com.nksoftware.library.composables.NkSingleSelect
 import com.nksoftware.library.composables.NkValueField
-import kotlin.text.format
 
 
 @Composable
-fun OsmMapOptions(mapView: OsmMap, msg: (String) -> Unit) {
+fun OsmMapOptions(mapView: OsmMapView?, map: OsmMap, msg: (String) -> Unit) {
 
    val loadError = stringResource(R.string.error_cannot_load_mbtiles_file)
 
    val mapLauncher = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
       if (uri != null)
-         mapView.importMap(uri)
+         if (mapView != null) {
+            mapView.importMap(uri)
+         }
       else
          msg(loadError)
    }
@@ -65,17 +66,17 @@ fun OsmMapOptions(mapView: OsmMap, msg: (String) -> Unit) {
    ) {
       Column {
          NkSingleSelect(
-            itemList = mapView.chartTypes.keys.toList(),
-            selectedItem = mapView.chart,
-            set = { i -> mapView.setChartType(i) }
+            itemList = map.chartTypes.keys.toList(),
+            selectedItem = map.chart,
+            set = { i -> map.chart = i }
          )
          NkRowNValues(
             arrangement = Arrangement.SpaceBetween
          ) {
             NkCheckBoxItem(
                item = "OpenSeaMap",
-               selected = mapView.openSeaMap,
-               set = { mapView.toggleOpenseaMap() }
+               selected = map.openSeaMap,
+               set = { map.openSeaMap = !map.openSeaMap }
             )
             NkIconButton(
                icon = Icons.Filled.Download,
@@ -93,27 +94,35 @@ fun OsmMapOptions(mapView: OsmMap, msg: (String) -> Unit) {
          arrangement = Arrangement.SpaceBetween
       ) {
          Row {
-            NkValueField(
-               modifier = Modifier
-                  .width(120.dp)
-                  .padding(end = 5.dp),
-               label = stringResource(R.string.cache_capacity),
-               value = "%,d".format(mapView.cacheCapacity)
-            )
+            if (mapView != null) {
+               NkValueField(
+                  modifier = Modifier
+                     .width(120.dp)
+                     .padding(end = 5.dp),
+                  label = stringResource(R.string.cache_capacity),
+                  value = "%,d".format(mapView.cacheCapacity)
+               )
+            }
 
-            NkValueField(
-               modifier = Modifier
-                  .width(120.dp)
-                  .padding(end = 5.dp),
-               label = stringResource(R.string.cache_usage),
-               value = "%,d".format(mapView.cacheUsage)
-            )
+            if (mapView != null) {
+               NkValueField(
+                  modifier = Modifier
+                     .width(120.dp)
+                     .padding(end = 5.dp),
+                  label = stringResource(R.string.cache_usage),
+                  value = "%,d".format(mapView.cacheUsage)
+               )
+            }
          }
 
-         if (mapView.chart == 1) {
+         if (map.chart == 1) {
             NkIconButton(
                icon = Icons.Filled.Download,
-               onClick = { mapView.download() }
+               onClick = {
+                  if (mapView != null) {
+                     mapView.download()
+                  }
+               }
             )
          }
       }

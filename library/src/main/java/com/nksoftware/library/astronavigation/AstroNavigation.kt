@@ -39,7 +39,7 @@ import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.map.NkMarker
 import com.nksoftware.library.map.NkPolyline
-import com.nksoftware.library.map.OsmMap
+import com.nksoftware.library.map.OsmMapView
 import com.nksoftware.library.sun.Sun
 import org.osmdroid.util.GeoPoint
 import java.util.Calendar
@@ -165,7 +165,6 @@ class Fix(
 
 
 class AstroNavigation(
-   val ctx: Context,
    val sun: Sun,
    mapMode: Int
 ) : DataModel(mapMode) {
@@ -211,10 +210,6 @@ class AstroNavigation(
    val positionGp: GeoPoint?
       get() = if (latitude != null && longitude != null) GeoPoint(latitude!!, longitude!!) else null
 
-   private val sunFixIcon = ContextCompat.getDrawable(ctx, R.drawable.baseline_sunny_24)
-   private val sunIcon = ContextCompat.getDrawable(ctx, R.drawable.sun_black)
-   private val redSunIcon = ContextCompat.getDrawable(ctx, R.drawable.sun_red)
-
    private var sunPositionMarker: NkMarker? = null
    private var computedPositionMarker: NkMarker? = null
 
@@ -252,11 +247,15 @@ class AstroNavigation(
 
 
    override fun updateMap(
-      mapView: OsmMap,
+      mapView: OsmMapView,
       mapMode: Int,
       location: ExtendedLocation,
       snackbar: (String) -> Unit
    ) {
+      val sunFixIcon = ContextCompat.getDrawable(mapView.ctx, R.drawable.baseline_sunny_24)
+      val sunIcon = ContextCompat.getDrawable(mapView.ctx, R.drawable.sun_black)
+      val redSunIcon = ContextCompat.getDrawable(mapView.ctx, R.drawable.sun_red)
+
       if (sunPositionMarker == null) {
          sunPositionMarker = NkMarker(mapView).apply {
             isEnabled = false
@@ -275,8 +274,8 @@ class AstroNavigation(
          sunPositionMarker!!.apply {
             isEnabled = true
             position = pt
-            title = "${ctx.getString(R.string.lat, ExtendedLocation.convertCoordinate(pt.latitude))}\n" +
-                    ctx.getString(R.string.lon, ExtendedLocation.convertCoordinate(pt.longitude, vertical = false))
+            title = "${mapView.ctx.getString(R.string.lat, ExtendedLocation.convertCoordinate(pt.latitude))}\n" +
+                    mapView.ctx.getString(R.string.lon, ExtendedLocation.convertCoordinate(pt.longitude, vertical = false))
          }
 
          if (fixes.size != astronavMarkers.size) {
@@ -303,8 +302,8 @@ class AstroNavigation(
                isEnabled = true
                position = gp
                title =
-                  "${ctx.getString(R.string.lat, ExtendedLocation.convertCoordinate(gp.latitude))}\n" +
-                  ctx.getString(R.string.lon, ExtendedLocation.convertCoordinate(gp.longitude, vertical = false))
+                  "${mapView.ctx.getString(R.string.lat, ExtendedLocation.convertCoordinate(gp.latitude))}\n" +
+                          mapView.ctx.getString(R.string.lon, ExtendedLocation.convertCoordinate(gp.longitude, vertical = false))
             }
 
             if (fix.measuredHeight > 0.0)
@@ -388,7 +387,7 @@ class AstroNavigation(
    }
 
 
-   fun addFix(msg: (String) -> Unit) {
+   fun addFix(ctx: Context, msg: (String) -> Unit) {
       if (measurement < 5.0) {
          msg(ctx.getString(R.string.please_enter_angle_5))
 

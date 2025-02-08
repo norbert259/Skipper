@@ -36,6 +36,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import com.nksoftware.library.anchor.AnchorAlarmCommands
 import com.nksoftware.library.anchor.AnchorDashboard
 import com.nksoftware.library.astronavigation.AstroNavigationCommands
@@ -47,9 +48,11 @@ import com.nksoftware.library.composables.NkTabRowIcon
 import com.nksoftware.library.grib.GribCommands
 import com.nksoftware.library.grib.GribDashboard
 import com.nksoftware.library.location.CompassDashboard
+import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.location.ExtendedLocationDashboard
 import com.nksoftware.library.location.ExtendedLocationOptions
 import com.nksoftware.library.map.OsmMapOptions
+import com.nksoftware.library.map.OsmMapView
 import com.nksoftware.library.route.RouteCommands
 import com.nksoftware.library.route.RouteDashboard
 import com.nksoftware.library.route.RouteOptions
@@ -60,20 +63,27 @@ import com.nksoftware.library.track.TrackDashboard
 import com.nksoftware.library.weather.WeatherCommands
 import com.nksoftware.library.weather.WeatherDashboard
 import com.nksoftware.library.weather.WeatherOption
-import com.nksoftware.skipper.core.MainActivity
 import com.nksoftware.skipper.core.SkipperViewModel
 import com.nksoftware.skipper.core.SkipperViewModelOptions
 
+
 enum class ScreenMode { Navigation, Anchor, Weather, Grib, AstroNavigation }
 
-
 @Composable
-fun MainScreen(mainActivity: MainActivity, viewModel: SkipperViewModel) {
+fun MainScreen(viewModel: SkipperViewModel, finish: () -> Unit) {
 
     var mode by rememberSaveable { mutableStateOf(ScreenMode.Navigation) }
 
+    val ctx = LocalContext.current
+    val mapView by remember { mutableStateOf(
+        OsmMapView(ctx, viewModel.map, ctx.applicationInfo.dataDir,
+            viewModel.gpsLocation.location,
+            { lat, lon -> viewModel.setLocation(loc = ExtendedLocation(lat, lon), trackUpdate = false) }
+        )
+    ) }
+
+
     NkScaffold(
-        mainActivity,
         "Skipper",
 
         topButtons = {
@@ -93,7 +103,7 @@ fun MainScreen(mainActivity: MainActivity, viewModel: SkipperViewModel) {
                     ExtendedLocationOptions()
                     SkipperViewModelOptions(viewModel)
                     RouteOptions(viewModel.route)
-                    OsmMapOptions(viewModel.mapView, snackBar)
+                    OsmMapOptions(mapView, viewModel.map, snackBar)
                 }
 
                 ScreenMode.Anchor -> {
@@ -111,16 +121,14 @@ fun MainScreen(mainActivity: MainActivity, viewModel: SkipperViewModel) {
                 ScreenMode.AstroNavigation -> {
                     AstroNavigationOptions(viewModel.astroNav)
                 }
-
-                else -> {}
             }
         },
 
         content = { snackBar ->
             OsmMapScreen(
                 vm = viewModel,
+                mapView = mapView,
                 mode = mode,
-                mapView = viewModel.mapView,
                 topCommands = {
                     when (mode) {
                         ScreenMode.Navigation -> {
@@ -144,13 +152,13 @@ fun MainScreen(mainActivity: MainActivity, viewModel: SkipperViewModel) {
                         }
 
                         ScreenMode.Grib -> {
-                            GribCommands(
-                                viewModel.gribFile,
-                                viewModel.sailDocs,
-                                viewModel.mapView,
-                                viewModel.gpsLocation.location,
-                                snackBar
-                            )
+                                GribCommands(
+                                    viewModel.gribFile,
+                                    viewModel.sailDocs,
+                                    mapView,
+                                    viewModel.gpsLocation.location,
+                                    snackBar
+                                )
                         }
 
                         ScreenMode.AstroNavigation -> {
@@ -164,7 +172,7 @@ fun MainScreen(mainActivity: MainActivity, viewModel: SkipperViewModel) {
                 },
                 rightCommands = {
                     if (mode == ScreenMode.Navigation) {
-                        RouteCommands(viewModel.route, viewModel.mapView, snackBar)
+                        RouteCommands(viewModel.route, mapView, snackBar)
                     }
 
                     if (mode in listOf(
@@ -249,6 +257,8 @@ fun MainScreen(mainActivity: MainActivity, viewModel: SkipperViewModel) {
                     )
                 }
             }
-        }
+        },
+
+        finish = finish
     )
 }

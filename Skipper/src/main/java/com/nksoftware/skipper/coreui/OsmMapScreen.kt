@@ -55,7 +55,7 @@ import com.nksoftware.library.composables.NkFloatingActionButton
 import com.nksoftware.library.composables.NkIcon
 import com.nksoftware.library.composables.NkText
 import com.nksoftware.library.core.DataModel
-import com.nksoftware.library.map.OsmMap
+import com.nksoftware.library.map.OsmMapView
 import com.nksoftware.skipper.R
 import com.nksoftware.skipper.core.SkipperViewModel
 
@@ -64,8 +64,8 @@ import com.nksoftware.skipper.core.SkipperViewModel
 @Composable
 fun OsmMapScreen(
     vm: SkipperViewModel,
+    mapView: OsmMapView,
     mode: ScreenMode,
-    mapView: OsmMap,
     topCommands: @Composable () -> Unit,
     rightCommands: @Composable () -> Unit,
     snackBar: (str: String) -> Unit
@@ -74,12 +74,16 @@ fun OsmMapScreen(
     var mapRotation by rememberSaveable { mutableStateOf(false) }
     var centerMap by rememberSaveable { mutableStateOf(true) }
 
+
+
     Column {
         Box(modifier = Modifier.weight(2f)) {
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
+
                 factory = { context -> mapView },
-                update = { view: OsmMap ->
+
+                update = { view: OsmMapView ->
                     try {
                         view.update(
                             vm.gpsLocation.gps,

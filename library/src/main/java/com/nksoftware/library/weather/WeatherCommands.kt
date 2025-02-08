@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons.Outlined
 import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Download
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import com.nksoftware.library.composables.NkFloatingActionButton
 import com.nksoftware.library.location.ExtendedLocation
 
@@ -32,8 +33,10 @@ import com.nksoftware.library.location.ExtendedLocation
 @Composable
 fun WeatherCommands(weather: Weather, location: ExtendedLocation, snackBar: (str: String) -> Unit) {
 
+   val ctx = LocalContext.current
+
    NkFloatingActionButton(
-      onClick = { weather.downloadNearestStation(location, snackBar) },
+      onClick = { weather.downloadNearestStation(ctx, location, snackBar) },
       icon = Outlined.Download,
       contentDescription = "Download weather data from station"
    )

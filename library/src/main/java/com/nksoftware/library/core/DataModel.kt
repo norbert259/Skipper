@@ -24,11 +24,11 @@ package com.nksoftware.library.core
 import android.content.SharedPreferences
 import android.util.Log
 import com.nksoftware.library.location.ExtendedLocation
-import com.nksoftware.library.map.OsmMap
+import com.nksoftware.library.map.OsmMapView
 import com.nksoftware.library.map.logTag
 
 
-open class DataModel(val mapModeToBeUpdated: Int = 0) {
+abstract class DataModel(val mapModeToBeUpdated: Int = 0) {
 
    companion object Register {
       val dm: MutableList<DataModel> = mutableListOf()
@@ -43,7 +43,7 @@ open class DataModel(val mapModeToBeUpdated: Int = 0) {
             model.storePreferences(edit)
       }
 
-      fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+      fun updateMap(mapView: OsmMapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
          for (model in dm) {
             try {
                model.updateMap(mapView, mapMode, location, snackbar)
@@ -62,13 +62,12 @@ open class DataModel(val mapModeToBeUpdated: Int = 0) {
    }
 
    open fun loadPreferences(preferences: SharedPreferences) {}
-
    open fun storePreferences(edit: SharedPreferences.Editor) {}
 
    open fun updateMap(
-      mapView: OsmMap,
-      mapMode: Int,
-      location: ExtendedLocation,
-      snackbar: (String) -> Unit
+       mapView: OsmMapView,
+       mapMode: Int,
+       location: ExtendedLocation,
+       snackbar: (String) -> Unit
    ) {}
 }

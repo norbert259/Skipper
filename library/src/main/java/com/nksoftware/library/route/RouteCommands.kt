@@ -86,6 +86,7 @@ fun RouteCommands(
          NkFloatingActionButton(
             onClick = {
                route.deletePoint(
+                  ctx,
                   mapView.mapCenter.latitude,
                   mapView.mapCenter.longitude,
                   snackBar
@@ -109,6 +110,7 @@ fun RouteCommands(
       NkFloatingActionButton(
          onClick = {
             route.addPoint(
+               ctx,
                mapView.mapCenter.latitude,
                mapView.mapCenter.longitude,
                snackBar
@@ -122,6 +124,7 @@ fun RouteCommands(
          NkFloatingActionButton(
             onClick = {
                route.insertPoint(
+                  ctx,
                   mapView.mapCenter.latitude,
                   mapView.mapCenter.longitude,
                   snackBar

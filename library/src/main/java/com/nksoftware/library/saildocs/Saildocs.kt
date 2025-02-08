@@ -27,11 +27,11 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import androidx.core.content.ContextCompat.startActivity
+import com.nksoftware.library.R
 import com.nksoftware.library.composables.MultipleSelectList
 import com.nksoftware.library.composables.SingleSelectList
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.utilities.nkHandleException
-import com.nksoftware.library.R
 import org.osmdroid.util.BoundingBox
 import java.util.Locale
 
@@ -51,7 +51,7 @@ data class WeatherModelParameter(
 )
 
 
-class SailDocs(val ctx: Context): DataModel(0) {
+class SailDocs: DataModel(0) {
 
    val sailDocsModels = mapOf(
 
@@ -95,6 +95,7 @@ class SailDocs(val ctx: Context): DataModel(0) {
       get() = sailDocsModels[modelName.value]!!
 
 
+
    override fun loadPreferences(preferences: SharedPreferences) {
       modelName.index = preferences.getInt(weatherModelKey, 0)
       actualModel.resolutions.index = preferences.getInt(weatherResolutionKey, 0)
@@ -110,7 +111,6 @@ class SailDocs(val ctx: Context): DataModel(0) {
       }
    }
 
-
    override fun storePreferences(edit: SharedPreferences.Editor) {
       edit.putInt(weatherModelKey, modelName.index)
       edit.putInt(weatherResolutionKey, actualModel.resolutions.index)
@@ -121,8 +121,8 @@ class SailDocs(val ctx: Context): DataModel(0) {
       actualModel.parameters.indices.forEachIndexed { i: Int, v: Int -> edit.putInt("WeatherParameter$i", v) }
    }
 
-
    fun sendSailDocsRequest(
+      ctx: Context,
       boundingBox: BoundingBox,
       msg: ((String) -> Unit)? = null
    ) {

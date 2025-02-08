@@ -37,7 +37,7 @@ import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.location.TrackPoint
 import com.nksoftware.library.map.NkMarker
 import com.nksoftware.library.map.NkPolyline
-import com.nksoftware.library.map.OsmMap
+import com.nksoftware.library.map.OsmMapView
 import com.nksoftware.library.utilities.nkHandleException
 import org.osmdroid.util.GeoPoint
 import kotlin.math.abs
@@ -49,7 +49,7 @@ const val tackAngleKey = "TackAngle"
 const val logTag = "Track"
 
 
-class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
+class Route(mapMode: Int) : DataModel(mapMode) {
 
    var active by mutableStateOf(false)
    var sailingMode: Boolean by mutableStateOf(false)
@@ -65,9 +65,6 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
    val selectedPoint: ExtendedLocation?
       get() = if (selectedRoutePoint in routePoints.indices) routePoints[selectedRoutePoint] else null
 
-   private val routeIconYellow = ContextCompat.getDrawable(ctx, R.drawable.circle_yellow)
-   private val routeIconRed = ContextCompat.getDrawable(ctx, R.drawable.circle_red)
-
    private var courseLine: NkPolyline? = null
    private var bearingLine: NkPolyline? = null
    private var tackLine: NkPolyline? = null
@@ -76,7 +73,7 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
    private val routeMarker: MutableList<NkMarker> = mutableListOf()
 
 
-   fun addPoint(lat: Double, lon: Double, msg: ((String) -> Unit)? = null) {
+   fun addPoint(ctx: Context, lat: Double, lon: Double, msg: ((String) -> Unit)? = null) {
       try {
          val loc = ExtendedLocation(lat, lon)
 
@@ -99,7 +96,7 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
       }
    }
 
-   fun insertPoint(lat: Double, lon: Double, msg: ((String) -> Unit)? = null) {
+   fun insertPoint(ctx: Context, lat: Double, lon: Double, msg: ((String) -> Unit)? = null) {
       try {
          val loc = ExtendedLocation(lat, lon)
 
@@ -123,7 +120,7 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
       routePoints.clear()
    }
 
-   fun deletePoint(lat: Double, lon: Double, msg: ((String) -> Unit)? = null) {
+   fun deletePoint(ctx: Context, lat: Double, lon: Double, msg: ((String) -> Unit)? = null) {
       try {
          val loc = ExtendedLocation(lat, lon)
 
@@ -255,7 +252,7 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
    }
 
 
-   fun deleteRouteMarkers(mapView: OsmMap) {
+   fun deleteRouteMarkers(mapView: OsmMapView) {
       if (routeMarker.isNotEmpty()) {
          for (marker in routeMarker) marker.remove(mapView)
          routeMarker.clear()
@@ -263,7 +260,10 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
    }
 
 
-   override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+   override fun updateMap(mapView: OsmMapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+
+      val routeIconYellow = ContextCompat.getDrawable(mapView.ctx, R.drawable.circle_yellow)
+      val routeIconRed = ContextCompat.getDrawable(mapView.ctx, R.drawable.circle_red)
 
       if (routeLine == null)
          routeLine = NkPolyline(mapView, width = 5.0f, Color.RED)
@@ -313,7 +313,7 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
                   isEnabled = true
                   setPoints(listOf(locGp, wpGP))
                   setInfoWindow(
-                     ctx.getString(
+                     mapView.ctx.getString(
                         R.string.bearingline_description,
                         location.bearingTo(wp),
                         ExtendedLocation.applyDistance(location.distanceTo(wp)),
@@ -348,7 +348,7 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
                      isEnabled = true
                      setPoints(listOf(locGp, tlGP))
                      setInfoWindow(
-                        ctx.getString(
+                        mapView.ctx.getString(
                            R.string.tackline_description,
                            ExtendedLocation.applyCourse(tackCourse)
                         )
@@ -373,7 +373,7 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
                      isEnabled = true
                      icon = if (index == selectedRoutePoint) routeIconYellow else routeIconRed
                      position = GeoPoint(routePt.latitude, routePt.longitude)
-                     title = ctx.getString(R.string.routing_point).format(
+                     title = mapView.ctx.getString(R.string.routing_point).format(
                         index + 1,
                         routePoints[index].latStr,
                         routePoints[index].lonStr
@@ -394,7 +394,7 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
                      isEnabled = true
                      icon = if (index == selectedRoutePoint) routeIconYellow else routeIconRed
                      position = GeoPoint(routePoints[index].latitude, routePoints[index].longitude)
-                     title = ctx.getString(R.string.routing_point).format(
+                     title = mapView.ctx.getString(R.string.routing_point).format(
                         index + 1,
                         routePoints[index].latStr,
                         routePoints[index].lonStr
@@ -407,9 +407,10 @@ class Route(val ctx: Context, mapMode: Int) : DataModel(mapMode) {
       } else {
          deleteRouteMarkers(mapView)
 
+         routeLine?.apply { isEnabled = false }
          bearingLine?.apply { isEnabled = false }
          tackLine?.apply { isEnabled = false }
-         routeLine?.apply { isEnabled = false }
+         courseLine?.apply { isEnabled = false }
       }
    }
 }

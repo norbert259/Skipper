@@ -22,8 +22,6 @@
 package com.nksoftware.library.location
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Context.LOCATION_SERVICE
 import android.content.SharedPreferences
 import android.location.Location
 import android.location.LocationListener
@@ -34,6 +32,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.nksoftware.library.composables.SingleSelectList
+import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.locationservice.SkipperLocTag
 
 
@@ -42,9 +41,10 @@ const val gpsEnabledKey = "gpsEnabled"
 
 
 @SuppressLint("MissingPermission")
-class GpsLocation(ctx: Context, provider: Int = 0): LocationListener {
-
-   val mgr: LocationManager = ctx.getSystemService(LOCATION_SERVICE) as LocationManager
+class GpsLocation(
+   val mgr: LocationManager,
+   provider: Int = 0
+): DataModel(0), LocationListener {
 
    val gpsProviders = mgr.getProviders(true)
    val gpsProvider = SingleSelectList(listOf(LocationManager.FUSED_PROVIDER, LocationManager.GPS_PROVIDER), provider)
@@ -59,18 +59,15 @@ class GpsLocation(ctx: Context, provider: Int = 0): LocationListener {
       loc?.let { location = ExtendedLocation(it) }
    }
 
-
-   fun loadSharedPreferences(preferences: SharedPreferences) {
+   override fun loadPreferences(preferences: SharedPreferences) {
       gpsProvider.index = preferences.getInt(gpsProviderKey, 0)
       gps = preferences.getBoolean(gpsEnabledKey, true)
    }
 
-
-   fun storeSharedPreferences(edit: SharedPreferences.Editor) {
+   override fun storePreferences(edit: SharedPreferences.Editor) {
       edit.putInt(gpsProviderKey, gpsProvider.index)
       edit.putBoolean(gpsEnabledKey, gps)
    }
-
 
    fun activate() {
       mgr.removeUpdates(this)
@@ -79,7 +76,6 @@ class GpsLocation(ctx: Context, provider: Int = 0): LocationListener {
          mgr.requestLocationUpdates(gpsProvider.value, 3000, 0f, this)
    }
 
-
    fun update(loc: Location?) {
       if (loc != null) {
          location = ExtendedLocation(loc)
@@ -87,16 +83,13 @@ class GpsLocation(ctx: Context, provider: Int = 0): LocationListener {
       }
    }
 
-
    override fun onLocationChanged(p0: Location) {
       update(p0)
    }
 
-
    override fun onProviderDisabled(provider: String) {
       Log.i(SkipperLocTag, "Provider $provider disabled")
    }
-
 
    override fun onProviderEnabled(provider: String) {
       Log.i(SkipperLocTag, "Provider $provider enabled")

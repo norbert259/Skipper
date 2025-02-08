@@ -34,7 +34,7 @@ import com.nksoftware.library.R
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.map.NkMarker
-import com.nksoftware.library.map.OsmMap
+import com.nksoftware.library.map.OsmMapView
 import com.nksoftware.library.utilities.downloadFile
 import com.nksoftware.library.utilities.nkHandleException
 import kotlinx.coroutines.CoroutineScope
@@ -69,7 +69,7 @@ data class DwdMosmixStation(
 }
 
 
-class DwdMosmixStationList(val ctx: Context, scope: CoroutineScope, private val dir: String) {
+class DwdMosmixStationList(scope: CoroutineScope, private val dir: String) {
 
    private val stationFileDownload =
       "https://www.dwd.de/DE/leistungen/met_verfahren_mosmix/mosmix_stationskatalog.cfg?view=nasPublication&nn=16102"
@@ -152,21 +152,17 @@ class DwdMosmixStationList(val ctx: Context, scope: CoroutineScope, private val 
 
 
 class Weather(
-   val ctx: Context,
    private val scope: CoroutineScope,
    private val dir: String,
    mapMode: Int
 ) : DataModel(mapMode) {
 
-   val stations = DwdMosmixStationList(ctx, scope, dir)
+   val stations = DwdMosmixStationList(scope, dir)
    var forecast by mutableStateOf<Forecast?>(null)
 
    private val forecastDownload =
       "https://opendata.dwd.de/weather/local_forecasts/mos/MOSMIX_L/single_stations/xxxxx/kml/MOSMIX_L_LATEST_xxxxx.kmz"
    private val tmpFileName = "$dir/weather.zip"
-
-   private val stationIcon = ContextCompat.getDrawable(ctx, R.drawable.outline_partly_cloudy_day_24)
-   private val selectedStationIcon = ContextCompat.getDrawable(ctx, R.drawable.outline_partly_cloudy_day_24_red)
 
    private val stationMarker: MutableMap<Int, NkMarker> = mutableMapOf()
 
@@ -183,7 +179,7 @@ class Weather(
    }
 
 
-   fun downloadNearestStation(pos: Location, msg: (String) -> Unit) {
+   fun downloadNearestStation(ctx: Context, pos: Location, msg: (String) -> Unit) {
       scope.launch(Dispatchers.Default) {
          try {
             val selectedStationId = stations.getClosestStationId(pos)
@@ -239,8 +235,11 @@ class Weather(
    }
 
 
-   override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+   override fun updateMap(mapView: OsmMapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
       if (mapMode == mapModeToBeUpdated && stations.size > 0) {
+
+         val stationIcon = ContextCompat.getDrawable(mapView.ctx, R.drawable.outline_partly_cloudy_day_24)
+         val selectedStationIcon = ContextCompat.getDrawable(mapView.ctx, R.drawable.outline_partly_cloudy_day_24_red)
 
          if (stationMarker.isEmpty() || mapView.outerBoundingBox == null || mapView.checkOutsideOfOuterBoundary()) {
             mapView.outerBoundingBox = mapView.boundingBox.increaseByScale(2.0f)
@@ -254,12 +253,12 @@ class Weather(
                val marker = NkMarker(
                   mapview = mapView,
                   clickFunc = { lat: Double, lon: Double ->
-                     downloadNearestStation(ExtendedLocation(lat, lon), snackbar)
+                     downloadNearestStation(mapView.ctx, ExtendedLocation(lat, lon), snackbar)
                   }
                ).apply {
                   icon = if (entry.key == stations.selectedStationIndex) selectedStationIcon else stationIcon
                   position = entry.value.gp
-                  title = ctx.getString(
+                  title = mapView.ctx.getString(
                      R.string.station_elevation,
                      entry.value.name,
                      entry.value.elevation,

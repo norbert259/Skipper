@@ -34,7 +34,7 @@ import com.nksoftware.library.R
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.map.NkMarker
-import com.nksoftware.library.map.OsmMap
+import com.nksoftware.library.map.OsmMapView
 import com.nksoftware.library.map.getWindSpeedIcon
 import com.nksoftware.library.map.windIcons
 import com.nksoftware.library.utilities.convertUnits
@@ -45,10 +45,9 @@ import java.io.InputStream
 import java.nio.ByteBuffer
 import java.util.Calendar
 import java.util.Date
-import kotlin.collections.forEach
-import kotlin.collections.forEachIndexed
-import kotlin.collections.get
-import kotlin.collections.isNotEmpty
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.set
 import kotlin.math.PI
 import kotlin.math.atan2
 import kotlin.math.pow
@@ -73,7 +72,7 @@ abstract class GribFileEntry {
 }
 
 
-class GribFile(private val ctx: Context, mapMode: Int) : DataModel(mapMode) {
+class GribFile(mapMode: Int) : DataModel(mapMode) {
 
    var showGrib by mutableStateOf(false)
    var gribFileName by mutableStateOf("")
@@ -171,7 +170,7 @@ class GribFile(private val ctx: Context, mapMode: Int) : DataModel(mapMode) {
    }
 
 
-   private fun scanV1(uri: Uri) {
+   private fun scanV1(ctx: Context, uri: Uri) {
       val inp: InputStream? = ctx.contentResolver.openInputStream(uri)
 
       if (inp != null) {
@@ -197,7 +196,7 @@ class GribFile(private val ctx: Context, mapMode: Int) : DataModel(mapMode) {
    }
 
 
-   private fun scanV2(uri: Uri) {
+   private fun scanV2(ctx: Context, uri: Uri) {
 
       val inp: InputStream? = ctx.contentResolver.openInputStream(uri)
 
@@ -224,7 +223,7 @@ class GribFile(private val ctx: Context, mapMode: Int) : DataModel(mapMode) {
    }
 
 
-   fun scan(uri: Uri, loc: Location, message: (str: String) -> Unit) {
+   fun scan(ctx: Context, uri: Uri, loc: Location, message: (str: String) -> Unit) {
       var version = 0
 
       val inp: InputStream? = ctx.contentResolver.openInputStream(uri)
@@ -245,8 +244,8 @@ class GribFile(private val ctx: Context, mapMode: Int) : DataModel(mapMode) {
       gribValues.clear()
 
       when (version) {
-         1    -> scanV1(uri)
-         2    -> scanV2(uri)
+         1    -> scanV1(ctx, uri)
+         2    -> scanV2(ctx, uri)
          else -> {
             message(ctx.getString(R.string.grib_file_version_not_supported))
          }
@@ -330,8 +329,7 @@ class GribFile(private val ctx: Context, mapMode: Int) : DataModel(mapMode) {
       message(ctx.getString(R.string.grib_file_successfully_scanned))
    }
 
-
-   override fun updateMap(mapView: OsmMap, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
+   override fun updateMap(mapView: OsmMapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
       if (mapMode == mapModeToBeUpdated && showGrib) {
          val gribValues = getGridValues()
 
@@ -350,9 +348,9 @@ class GribFile(private val ctx: Context, mapMode: Int) : DataModel(mapMode) {
                   gribValues.forEachIndexed { i, value ->
                      gribMarker[i].apply {
                         position = GeoPoint(value.lat.toDouble(), value.lon.toDouble())
-                        title = ctx.getString(R.string.windspeed_s, value.value) + "\n" +
-                                ctx.getString(R.string.winddirection_s, value.value2)
-                        icon = ContextCompat.getDrawable(ctx, windIcons[getWindSpeedIcon(value.value)])
+                        title = mapView.ctx.getString(R.string.windspeed_s, value.value) + "\n" +
+                                mapView.ctx.getString(R.string.winddirection_s, value.value2)
+                        icon = ContextCompat.getDrawable(mapView.ctx, windIcons[getWindSpeedIcon(value.value)])
                         rotation = -90f - value.value2
                         isEnabled = true
                      }

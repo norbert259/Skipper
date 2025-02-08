@@ -1,6 +1,5 @@
 package com.nksoftware.library.composables
 
-import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,12 +41,12 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NkScaffold(
-    ctx: ComponentActivity,
     title: String,
     topButtons: @Composable ((String) -> Unit) -> Unit,
     optionContent: @Composable ((String) -> Unit) -> Unit,
     content: @Composable ((String) -> Unit) -> Unit,
     bottomSheeetContent: @Composable ((String) -> Unit) -> Unit,
+    finish: () -> Unit
 ) {
 
     val scaffoldState = rememberBottomSheetScaffoldState()
@@ -88,7 +87,7 @@ fun NkScaffold(
                                 )
                                 NkText(text = stringResource(R.string.options), size = 16)
                                 NkIconButton(
-                                    onClick = { coroutineScope.launch { ctx.finish() } },
+                                    onClick = { coroutineScope.launch { finish() } },
                                     icon = Icons.AutoMirrored.Outlined.ExitToApp,
                                     contentDescription = "Close App"
                                 )
