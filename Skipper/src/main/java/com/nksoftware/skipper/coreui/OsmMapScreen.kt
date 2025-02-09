@@ -117,7 +117,7 @@ fun OsmMapScreen(
                    .padding(start = 10.dp)
                    .offset(y = 80.dp)
             ) {
-                NkFloatingActionButton(onClick = { vm.gpsLocation.gps = !vm.gpsLocation.gps }) {
+                NkFloatingActionButton(onClick = { vm.gpsLocation.toggleState() }) {
                     Icon(
                         imageVector = if (vm.gpsLocation.gps) Outlined.GpsFixed else Outlined.GpsOff,
                         contentDescription = "De-/Activate GPS"

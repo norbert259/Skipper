@@ -22,7 +22,6 @@
 package com.nksoftware.skipper.core
 
 import android.content.SharedPreferences
-import android.location.Location
 import android.location.LocationManager
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -64,9 +63,7 @@ class SkipperViewModel(
     dir: String,
 ) : ViewModel() {
 
-    private var locService: LocationService.LocalBinder? = null
     val gpsLocation = GpsLocation(mgr, 0)
-
     val map = OsmMap()
 
     val track = Track(ScreenMode.Navigation.ordinal)
@@ -84,17 +81,8 @@ class SkipperViewModel(
 
 
     fun setService(binder: LocationService.LocalBinder) {
-        locService = binder
-
         track.setService(binder)
         anchorAlarm.setService(binder)
-    }
-
-    fun setLocation(loc: Location?, trackUpdate: Boolean = false) {
-        gpsLocation.update(loc)
-
-        if (trackUpdate)
-            track.updateTrack()
     }
 
     fun load(preferences: SharedPreferences, trackDb: TrackDatabase) {

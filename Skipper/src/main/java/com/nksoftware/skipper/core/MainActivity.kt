@@ -69,7 +69,8 @@ class MainActivity : ComponentActivity() {
             val loc: Location? = intent.getParcelableExtra("location")
             val trackUpdate = intent.getBooleanExtra("track", false)
 
-            if (viewModel.gpsLocation.gps) viewModel.setLocation(loc, trackUpdate)
+            if (trackUpdate && viewModel.track.saveTrack)
+                viewModel.track.updateTrack()
         }
     }
 
@@ -128,6 +129,9 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
         Log.i(logTag, "Activity started")
+
+        Log.i(logTag, "Start GPS")
+        viewModel.gpsLocation.activate()
 
         Intent(applicationContext, LocationService::class.java).also { intent ->
             bindService(intent, connection, BIND_AUTO_CREATE)

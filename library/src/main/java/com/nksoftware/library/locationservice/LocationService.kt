@@ -188,15 +188,20 @@ class LocationService : Service(), LocationListener {
       mgr.removeUpdates(this)
       provider = p
 
-      mgr.requestLocationUpdates(provider, 3000, 0f, this)
+      mgr.requestLocationUpdates(provider, 10000, 0f, this)
       updateNotification()
    }
 
    override fun onLocationChanged(loc: Location) {
-      alarm.checkForAnchorDrift(loc, mediaPlayer)
+      if (alarm.anchorAlarmSet)
+         alarm.checkForAnchorDrift(loc, mediaPlayer)
 
-      val update = track.addLocation(loc)
-      sendLocation(loc, update)
+      if (track.trackingEnabled) {
+         val update = track.addLocation(loc)
+
+         if (update)
+            sendLocation(loc, update)
+      }
    }
 
    override fun onProviderDisabled(provider: String) {

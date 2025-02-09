@@ -83,10 +83,11 @@ class Track(mapMode: Int) : DataModel(mapMode) {
    }
 
    fun clearTrack() {
-      saveTrack = false
-
       locService?.setTracking(saveTrack)
       locService?.clearTrack()
+
+      saveTrack = false
+      track = listOf()
    }
 
    fun updateTrack() {
@@ -168,7 +169,9 @@ class Track(mapMode: Int) : DataModel(mapMode) {
             val pts = mutableListOf<GeoPoint>()
 
             track.forEach { t -> pts.add(GeoPoint(t.latitude, t.longitude))}
-            pts.add(location.locGp)
+
+            if (saveTrack)
+               pts.add(location.locGp)
 
             trackLine!!.apply {
                isEnabled = true

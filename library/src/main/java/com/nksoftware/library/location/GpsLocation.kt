@@ -69,11 +69,25 @@ class GpsLocation(
       edit.putBoolean(gpsEnabledKey, gps)
    }
 
+   fun toggleState() {
+      if (gps)
+         deactivate()
+      else
+         activate()
+   }
+
    fun activate() {
       mgr.removeUpdates(this)
 
-      if (gpsProvider.value in gpsProviders)
+      if (gpsProvider.value in gpsProviders) {
+         gps = true
          mgr.requestLocationUpdates(gpsProvider.value, 3000, 0f, this)
+      }
+   }
+
+   fun deactivate() {
+      mgr.removeUpdates(this)
+      gps = false
    }
 
    fun update(loc: Location?) {
@@ -83,8 +97,9 @@ class GpsLocation(
       }
    }
 
-   override fun onLocationChanged(p0: Location) {
-      update(p0)
+   override fun onLocationChanged(loc: Location) {
+      location = ExtendedLocation(loc)
+      updateCounter++
    }
 
    override fun onProviderDisabled(provider: String) {

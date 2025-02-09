@@ -78,7 +78,7 @@ fun MainScreen(viewModel: SkipperViewModel, finish: () -> Unit) {
     val mapView by remember { mutableStateOf(
         OsmMapView(ctx, viewModel.map, ctx.applicationInfo.dataDir,
             viewModel.gpsLocation.location,
-            { lat, lon -> viewModel.setLocation(loc = ExtendedLocation(lat, lon), trackUpdate = false) }
+            { lat, lon -> viewModel.gpsLocation.update(loc = ExtendedLocation(lat, lon)) }
         )
     ) }
 
