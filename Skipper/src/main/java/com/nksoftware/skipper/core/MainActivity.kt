@@ -161,6 +161,8 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
         Log.i(logTag, "Activity destroy")
 
+        trackDb.close()
+
         if (!viewModel.track.saveTrack)
             stopService(Intent(this, LocationService::class.java))
 

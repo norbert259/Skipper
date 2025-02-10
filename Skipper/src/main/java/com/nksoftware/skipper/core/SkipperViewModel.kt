@@ -94,8 +94,6 @@ class SkipperViewModel(
 
         route.loadRoutePoints(rt)
         Log.i(logTag, "active route loaded with ${rt.size} points")
-
-        trackDb.close()
     }
 
     fun store(preferences: SharedPreferences, trackDb: TrackDatabase) {
@@ -110,7 +108,5 @@ class SkipperViewModel(
         val rtPts = route.getRoutePoints(activeRouteKey)
         if (rtPts.isNotEmpty()) dao.insertAll(rtPts)
         Log.i(logTag, "Number of route points saved: ${rtPts.size}")
-
-        trackDb.close()
     }
 }

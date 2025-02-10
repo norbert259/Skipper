@@ -136,7 +136,7 @@ fun TrackDashboard(
                            value = stringResource(R.string.no),
                         )
                         NkTableCell(
-                           modifier = Modifier.weight(1.0f),
+                           modifier = Modifier.weight(1.2f),
                            value = stringResource(R.string.time),
                         )
                         NkTableCell(
@@ -184,7 +184,7 @@ fun TrackDashboard(
                                     icon = blueDot
                                  )
                                  NkTableCell(
-                                    modifier = Modifier.weight(1.0f),
+                                    modifier = Modifier.weight(1.2f),
                                     value = if (index > 0)
                                        ExtendedLocation.getTimeStr(track.timeSlots[index], "EEE HH:mm")
                                     else
@@ -193,7 +193,7 @@ fun TrackDashboard(
                                  NkTableCell(
                                     modifier = Modifier.weight(1.0f),
                                     value = if (index > 0)
-                                       "%.1f %s".format(
+                                       "%.2f %s".format(
                                           ExtendedLocation.applyDistance(track.distances[index - 1]),
                                           ExtendedLocation.distanceDimension
                                        ) else "",
