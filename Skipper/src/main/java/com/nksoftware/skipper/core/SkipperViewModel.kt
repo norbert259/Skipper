@@ -23,7 +23,6 @@ package com.nksoftware.skipper.core
 
 import android.content.SharedPreferences
 import android.location.LocationManager
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -90,10 +89,8 @@ class SkipperViewModel(
         DataModel.loadPreferences(preferences)
 
         val dao = trackDb.userDao()
-        val rt = dao.findByName(activeRouteKey)
-
-        route.loadRoutePoints(rt)
-        Log.i(logTag, "active route loaded with ${rt.size} points")
+        route.loadRoute(dao)
+        track.loadTrack(dao)
     }
 
     fun store(preferences: SharedPreferences, trackDb: TrackDatabase) {
@@ -103,10 +100,7 @@ class SkipperViewModel(
         edit.apply()
 
         val dao = trackDb.userDao()
-        dao.delete(activeRouteKey)
-
-        val rtPts = route.getRoutePoints(activeRouteKey)
-        if (rtPts.isNotEmpty()) dao.insertAll(rtPts)
-        Log.i(logTag, "Number of route points saved: ${rtPts.size}")
+        route.storeRoute(dao)
+        track.storeTrack(dao)
     }
 }

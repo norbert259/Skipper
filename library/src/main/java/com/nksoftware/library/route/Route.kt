@@ -24,6 +24,7 @@ package com.nksoftware.library.route
 import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.Color
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
@@ -35,6 +36,7 @@ import com.nksoftware.library.R
 import com.nksoftware.library.core.DataModel
 import com.nksoftware.library.location.ExtendedLocation
 import com.nksoftware.library.location.TrackPoint
+import com.nksoftware.library.location.TrackPointDao
 import com.nksoftware.library.map.NkMarker
 import com.nksoftware.library.map.NkPolyline
 import com.nksoftware.library.map.OsmMapView
@@ -46,7 +48,9 @@ import kotlin.math.abs
 const val routeActiveKey = "RouteActive"
 const val sailingModeKey = "SailingMode"
 const val tackAngleKey = "TackAngle"
-const val logTag = "Track"
+
+const val activeRouteKey = "activeRoute"
+const val logTag = "Route"
 
 
 class Route(mapMode: Int) : DataModel(mapMode) {
@@ -217,33 +221,11 @@ class Route(mapMode: Int) : DataModel(mapMode) {
       }
    }
 
-   fun loadRoutePoints(trPts: List<TrackPoint>) {
-      routePoints.clear()
-
-      trPts.forEach { pt ->
-         val loc = ExtendedLocation(pt.locLat.toDouble(), pt.locLon.toDouble())
-         loc.time = pt.time ?: 0
-
-         routePoints.add(loc)
-      }
-   }
-
-   fun getRoutePoints(name: String): List<TrackPoint> {
-      return List(size, init = { i ->
-         TrackPoint(
-            name = "activeRoute",
-            locLat = routePoints[i].latitude.toFloat(),
-            locLon = routePoints[i].longitude.toFloat()
-         )
-      })
-   }
-
    override fun loadPreferences(preferences: SharedPreferences) {
       active = preferences.getBoolean(routeActiveKey, false)
       sailingMode = preferences.getBoolean(sailingModeKey, false)
       tackAngle = preferences.getFloat(tackAngleKey, 90f)
    }
-
 
    override fun storePreferences(edit: SharedPreferences.Editor) {
       edit.putBoolean(sailingModeKey, sailingMode)
@@ -251,6 +233,34 @@ class Route(mapMode: Int) : DataModel(mapMode) {
       edit.putFloat(tackAngleKey, tackAngle)
    }
 
+   fun loadRoute(dao: TrackPointDao) {
+      routePoints.clear()
+      val rt = dao.findByName(activeRouteKey)
+
+      rt.forEach { pt ->
+         val loc = ExtendedLocation(pt.locLat.toDouble(), pt.locLon.toDouble())
+         loc.time = pt.time ?: 0
+
+         routePoints.add(loc)
+      }
+
+      Log.i(logTag, "active route loaded with ${rt.size} points")
+   }
+
+   fun storeRoute(dao: TrackPointDao) {
+      dao.delete(activeRouteKey)
+
+      val rtPts = List(size, init = { i ->
+         TrackPoint(
+            name = activeRouteKey,
+            locLat = routePoints[i].latitude.toFloat(),
+            locLon = routePoints[i].longitude.toFloat()
+         )
+      })
+
+      if (rtPts.isNotEmpty()) dao.insertAll(rtPts)
+      Log.i(logTag, "Number of route points saved: ${rtPts.size}")
+   }
 
    fun deleteRouteMarkers(mapView: OsmMapView) {
       if (routeMarker.isNotEmpty()) {
@@ -258,7 +268,6 @@ class Route(mapMode: Int) : DataModel(mapMode) {
          routeMarker.clear()
       }
    }
-
 
    override fun updateMap(mapView: OsmMapView, mapMode: Int, location: ExtendedLocation, snackbar: (String) -> Unit) {
 

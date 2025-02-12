@@ -32,7 +32,6 @@ import android.content.IntentFilter
 import android.content.ServiceConnection
 import android.content.SharedPreferences
 import android.content.res.Configuration
-import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
@@ -66,7 +65,6 @@ class MainActivity : ComponentActivity() {
     private val broadcastReceiver = object : BroadcastReceiver() {
 
         override fun onReceive(context: Context, intent: Intent) {
-            val loc: Location? = intent.getParcelableExtra("location")
             val trackUpdate = intent.getBooleanExtra("track", false)
 
             if (trackUpdate && viewModel.track.saveTrack)
